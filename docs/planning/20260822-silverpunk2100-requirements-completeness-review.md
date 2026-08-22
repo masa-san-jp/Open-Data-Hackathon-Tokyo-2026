@@ -33,10 +33,10 @@
 
 1. [10領域ギャップ分解・下位課題一覧](https://github.com/masa-san-jp/Open-Data-Hackathon-Tokyo-2026/blob/main/docs/planning/20260822-silverpunk2100-gap-decomposition-and-hackathon-scope.md)
 2. [G1〜G10課題ブレイクダウン](https://github.com/masa-san-jp/Open-Data-Hackathon-Tokyo-2026/blob/main/docs/planning/20260822-silverpunk2100-gap-closure-task-breakdown.md)
-3. [戦略・作戦計画書](https://github.com/masa-san-jp/Open-Data-Hackathon-Tokyo-2026/blob/main/docs/hypothesis-validation/20260822-silverpunk2100-strategy-gap-analysis-and-operational-plan.md)
-4. [都市構想調査分析報告書](https://github.com/masa-san-jp/Open-Data-Hackathon-Tokyo-2026/blob/main/docs/hypothesis-validation/20260822-silverpunk-2100-urban-concept-research-report.md)
-5. [労働・集客インフラ要件コンセプトリサーチ](https://github.com/masa-san-jp/Open-Data-Hackathon-Tokyo-2026/blob/main/docs/hypothesis-validation/20260822-silverpunk-2100-labor-attraction-infrastructure-concept-research.md)
-6. [Universal Assist Design概念整理](https://github.com/masa-san-jp/Open-Data-Hackathon-Tokyo-2026/blob/main/docs/hypothesis-validation/20260822-universal-assist-design-mobility-logistics-concept.md)
+3. [戦略・作戦計画書](https://github.com/masa-san-jp/Open-Data-Hackathon-Tokyo-2026/blob/main/docs/concept-research/20260822-silverpunk2100-strategy-gap-analysis-and-operational-plan.md)
+4. [都市構想調査分析報告書](https://github.com/masa-san-jp/Open-Data-Hackathon-Tokyo-2026/blob/main/docs/concept-research/20260822-silverpunk-2100-urban-concept-research-report.md)
+5. [労働・集客インフラ要件コンセプトリサーチ](https://github.com/masa-san-jp/Open-Data-Hackathon-Tokyo-2026/blob/main/docs/concept-research/20260822-silverpunk-2100-labor-attraction-infrastructure-concept-research.md)
+6. [Universal Assist Design概念整理](https://github.com/masa-san-jp/Open-Data-Hackathon-Tokyo-2026/blob/main/docs/concept-research/20260822-universal-assist-design-mobility-logistics-concept.md)
 
 ### 2.2 外部の監査基準
 

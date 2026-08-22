@@ -854,4 +854,4 @@ PROOF MAPの出力は、次の順序にする。
 - [G1〜G10課題ブレイクダウン](https://github.com/masa-san-jp/Open-Data-Hackathon-Tokyo-2026/blob/main/docs/planning/20260822-silverpunk2100-gap-closure-task-breakdown.md)
 - [77下位課題・完了条件・依存関係](https://github.com/masa-san-jp/Open-Data-Hackathon-Tokyo-2026/blob/main/docs/planning/20260822-silverpunk2100-gap-decomposition-and-hackathon-scope.md)
 - [ハッカソンスコープ判断ブリーフ](https://github.com/masa-san-jp/Open-Data-Hackathon-Tokyo-2026/blob/main/docs/planning/20260822-hackathon-scope-overview-and-decision-brief.md)
-- [SILVERPUNK戦略・作戦計画](https://github.com/masa-san-jp/Open-Data-Hackathon-Tokyo-2026/blob/main/docs/hypothesis-validation/20260822-silverpunk2100-strategy-gap-analysis-and-operational-plan.md)
+- [SILVERPUNK戦略・作戦計画](https://github.com/masa-san-jp/Open-Data-Hackathon-Tokyo-2026/blob/main/docs/concept-research/20260822-silverpunk2100-strategy-gap-analysis-and-operational-plan.md)

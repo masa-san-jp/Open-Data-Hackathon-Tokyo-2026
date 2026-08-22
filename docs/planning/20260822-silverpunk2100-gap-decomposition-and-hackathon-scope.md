@@ -1,7 +1,7 @@
 # SILVERPUNK // 2100 — 10領域ギャップ分解・下位課題一覧
 
 作成日: 2026-08-22  
-対象: `masa-san-jp/Open-Data-Hackathon-Tokyo-2026/docs/hypothesis-validation`  
+対象: `masa-san-jp/Open-Data-Hackathon-Tokyo-2026/docs/concept-research`  
 目的: 現状→未来→ギャップ→課題→取り組みを、実証・設計・制度化へ進められる単位まで分解する
 
 ## 1. 分解の前提
@@ -582,7 +582,7 @@ SILVERPUNKは未発表のため、名前を取るだけではブランドにな�
 
 ## 16. 参照した構想文書
 
-- [戦略・作戦計画書](https://github.com/masa-san-jp/Open-Data-Hackathon-Tokyo-2026/blob/main/docs/hypothesis-validation/20260822-silverpunk2100-strategy-gap-analysis-and-operational-plan.md)
-- [労働・集客インフラ要件に関するコンセプトリサーチ](https://github.com/masa-san-jp/Open-Data-Hackathon-Tokyo-2026/blob/main/docs/hypothesis-validation/20260822-silverpunk-2100-labor-attraction-infrastructure-concept-research.md)
-- [Universal Assist Design モビリティ・物流コンセプト](https://github.com/masa-san-jp/Open-Data-Hackathon-Tokyo-2026/blob/main/docs/hypothesis-validation/20260822-universal-assist-design-mobility-logistics-concept.md)
+- [戦略・作戦計画書](https://github.com/masa-san-jp/Open-Data-Hackathon-Tokyo-2026/blob/main/docs/concept-research/20260822-silverpunk2100-strategy-gap-analysis-and-operational-plan.md)
+- [労働・集客インフラ要件に関するコンセプトリサーチ](https://github.com/masa-san-jp/Open-Data-Hackathon-Tokyo-2026/blob/main/docs/concept-research/20260822-silverpunk-2100-labor-attraction-infrastructure-concept-research.md)
+- [Universal Assist Design モビリティ・物流コンセプト](https://github.com/masa-san-jp/Open-Data-Hackathon-Tokyo-2026/blob/main/docs/concept-research/20260822-universal-assist-design-mobility-logistics-concept.md)
 - [ハッカソンのスコープ絞り込み案](sandbox:/workspace/scratch/30eda3804188/20260822-silverpunk2100-hackathon-scope-narrowing.md)

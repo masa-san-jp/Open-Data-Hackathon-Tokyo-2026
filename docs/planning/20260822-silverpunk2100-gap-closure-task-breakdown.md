@@ -1,6 +1,6 @@
 # SILVERPUNK // 2100 ギャップ10領域(G1〜G10)の課題ブレイクダウン
 
-作成日: 2026-08-22／出典: `docs/hypothesis-validation/20260822-silverpunk2100-strategy-gap-analysis-and-operational-plan.md` の他、`labor-attraction-infrastructure-concept-research.md`・`urban-concept-research-report.md`・`universal-assist-design-mobility-logistics-concept.md`・`tokyo-2100-research-report-precedents.md`
+作成日: 2026-08-22／出典: `docs/concept-research/20260822-silverpunk2100-strategy-gap-analysis-and-operational-plan.md` の他、`labor-attraction-infrastructure-concept-research.md`・`urban-concept-research-report.md`・`universal-assist-design-mobility-logistics-concept.md`・`tokyo-2100-research-report-precedents.md`
 
 ## 前提の整理
 
