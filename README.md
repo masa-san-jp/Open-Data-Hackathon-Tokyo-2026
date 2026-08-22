@@ -307,8 +307,10 @@ cd open-data-hackathon-tokyo-2026
 | [`ai-agent-government/`](docs/research/ai-agent-government) | AIエージェントの行政活用・行政経営（3本） |
 | [`reasoning-modes/`](docs/research/reasoning-modes) | アブダクション/演繹/帰納/生成AI推論の比較（3本） |
 | [`quasi-public/`](docs/research/quasi-public) | 「準公共」概念の理論・制度・オープン性（3本） |
-| [`population/`](docs/research/population) | 人口動態予測・人口移動・単身/未婚率、2100年の東京の一次情報整理（7本） |
+| [`population/`](docs/research/population) | 人口動態予測・人口移動・単身/未婚率、2100年の東京の一次情報整理（9本＋統計CSV2件） |
 | [`urban-planning/`](docs/research/urban-planning) | 都市計画の歴史と未来、15分都市（2本） |
+
+作品の前提が成り立つかを自分たちで確かめた記録は [`docs/hypothesis-validation/`](docs/hypothesis-validation) に置く（SILVERPUNK 2100 戦略・UAD概念整理・先行事例調査・転入ゼロ試算のコードとデータ）。
 | [`data/`](docs/research/data) | 東京都オープンデータ全カタログ 9,678件（CSV, 2026-07-04取得） |
 
 ### open-data-cases
@@ -337,6 +339,8 @@ cd open-data-hackathon-tokyo-2026
 
 ### population
 
+- [2100年の東京の未来予測：公的一次情報を中心とした網羅的整理](docs/research/population/20260822-tokyo-2100-future-forecast-public-primary-sources.md)
+- [2100年の東京・日本の地方・国外に関する長期将来情報整理](docs/research/population/20260822-tokyo-japan-global-2100-future-primary-sources-report.md)
 - [2100年の東京：一次情報中心の調査整理（環境・人口・都市機能・経済・住環境）](docs/research/population/20260822-tokyo-2100-primary-source-research.md)
 - [2100年における地球・日本・東京の人口動態予測とその構造的影響](docs/research/population/20260813-global-japan-tokyo-population-2100-structural-impacts.md)
 - [2100年の地球・日本・東京：人口動態予測](docs/research/population/20260813-global-japan-tokyo-population-projections-2100.md)

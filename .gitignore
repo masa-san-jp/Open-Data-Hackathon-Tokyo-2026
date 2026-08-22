@@ -1,0 +1,10 @@
+# Google Docs 連携ツールの中間生成物（生ダンプ・リビジョンID等。プロジェクト資産ではない）
+bridge/
+
+# Google ドライブへのポインタ（実体はクラウド側にあり、リポジトリ上では機能しない）
+*.gdoc
+*.gsheet
+*.gslides
+
+# OS / エディタ
+.DS_Store
