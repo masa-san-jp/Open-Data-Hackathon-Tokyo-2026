@@ -38,7 +38,7 @@
 - [チーム](#チーム)
 - [ライセンス](#ライセンス)
 - [調査資料](#調査資料-docsresearch)
-- [仮説検証](#仮説検証-docshypothesis-validation)
+- [コンセプトリサーチ](#コンセプトリサーチ-docsconcept-research)
 
 ## サービス概要
 
@@ -100,7 +100,7 @@ cyberpunk が「ハイテク・ローライフ」への反逆だったように�
 - 高齢就労が「福祉」ではなく **「花形」** として認知され、特区での就労が競争的・選抜的である
 - 体調・意欲に応じて **週1時間から働ける完全流動シフト** が標準で、労働と療養がシームレスに切り替わる
 
-これを物理層で支える設計思想が **ユニバーサルアシストデザイン（UAD）** である。バリアフリーが障壁の「除去」、ユニバーサルデザインが「全員が使える受動的な設計」であるのに対し、UAD は**環境・機器・情報の三層が能動的にアシストする**点が決定的に異なる。→ [概念整理](docs/hypothesis-validation/20260822-universal-assist-design-mobility-logistics-concept.md)
+これを物理層で支える設計思想が **ユニバーサルアシストデザイン（UAD）** である。バリアフリーが障壁の「除去」、ユニバーサルデザインが「全員が使える受動的な設計」であるのに対し、UAD は**環境・機器・情報の三層が能動的にアシストする**点が決定的に異なる。→ [概念整理](docs/concept-research/20260822-universal-assist-design-mobility-logistics-concept.md)
 
 ### 3. 現在とのギャップ
 
@@ -197,7 +197,7 @@ flowchart LR
 
 ---
 
-*本節の出典: [SILVERPUNK // 2100 戦略・作戦計画書](docs/hypothesis-validation/20260822-silverpunk2100-strategy-gap-analysis-and-operational-plan.md) ／ [ユニバーサルアシストデザイン概念整理](docs/hypothesis-validation/20260822-universal-assist-design-mobility-logistics-concept.md) ／ [2100年の東京：一次情報中心の調査整理](docs/research/population/20260822-tokyo-2100-primary-source-research.md)。§2 の経済指標など数値目標はフェーズ計画で段階目標に分解する目標水準であり、予測値ではない。*
+*本節の出典: [SILVERPUNK // 2100 戦略・作戦計画書](docs/concept-research/20260822-silverpunk2100-strategy-gap-analysis-and-operational-plan.md) ／ [ユニバーサルアシストデザイン概念整理](docs/concept-research/20260822-universal-assist-design-mobility-logistics-concept.md) ／ [2100年の東京：一次情報中心の調査整理](docs/research/population/20260822-tokyo-2100-primary-source-research.md)。§2 の経済指標など数値目標はフェーズ計画で段階目標に分解する目標水準であり、予測値ではない。*
 
 ## デモ
 
@@ -271,7 +271,7 @@ cd open-data-hackathon-tokyo-2026
 ├── docs/
 │   ├── assets/     # スクリーンショット・図版
 │   ├── research/   # 事前調査レポート（下記）
-│   └── hypothesis-validation/   # 仮説と、それを確かめた記録（下記）
+│   └── concept-research/   # コンセプト、成立条件、反証、シナリオの調査（下記）
 └── ...             # TODO: アプリケーションのディレクトリ
 ```
 
@@ -312,7 +312,7 @@ cd open-data-hackathon-tokyo-2026
 | [`population/`](docs/research/population) | 人口動態予測・人口移動・単身/未婚率、2100年の東京の一次情報整理（9本＋統計CSV2件） |
 | [`urban-planning/`](docs/research/urban-planning) | 都市計画の歴史と未来、15分都市（2本） |
 
-作品の前提が成り立つかを自分たちで確かめた記録は [`docs/hypothesis-validation/`](docs/hypothesis-validation) に置く（SILVERPUNK 2100 戦略・UAD概念整理・先行事例調査・転入ゼロ試算のコードとデータ）。
+作品のコンセプトを設計するための調査・成立条件・反証・シナリオは [`docs/concept-research/`](docs/concept-research) に置く（SILVERPUNK 2100 戦略・UAD概念整理・先行事例調査・転入ゼロ試算のコードとデータ）。
 | [`data/`](docs/research/data) | 東京都オープンデータ全カタログ 9,678件（CSV, 2026-07-04取得） |
 
 ### open-data-cases
@@ -362,16 +362,13 @@ cd open-data-hackathon-tokyo-2026
 
 ---
 
-## 仮説検証 (docs/hypothesis-validation)
+## コンセプトリサーチ (docs/concept-research)
 
-作品の前提になっている仮説と、それを確かめた記録の置き場。
-`docs/research/` が「世の中で何が分かっているか」なのに対して、こちらは
-「この作品の前提が本当に成り立つのか」を手元のデータと実測で確かめた結果を置く。
+作品のコンセプトを設計し、実装・実測へ進む前に、成立条件・先行事例・設計要件・反証・シナリオを整理する場所。
+`docs/research/` が「世の中で何が分かっているか」を集めるのに対して、こちらは
+「この作品を成立させるには何が必要か」「どの前提が崩れうるか」を作品固有の問いに沿って調査・設計する。
 
-- [書き方と決めごと](docs/hypothesis-validation/README.md)
+- [書き方と決めごと](docs/concept-research/README.md)
 
-決めていること。
-
-- 判定の閾値は測る前に書く。結果を見てから基準を動かさない
-- 否定された仮説も消さず、状態だけ「否定された」に変えて残す
-- 数字には出典URLと取得日を付ける
+このディレクトリでは、事実・解釈・提案を分け、先行事例の限界や反証、未検証事項も残す。
+再現可能な試算やシナリオモデルを置く場合は、入力データ、出典URL、取得日、実行方法、前提と限界を明記する。

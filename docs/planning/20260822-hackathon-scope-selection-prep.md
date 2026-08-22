@@ -65,7 +65,7 @@ UAD概念整理の実証手法 **「D: 単一動線集中型＝最頻経路1本�
 ### 候補C: 転入ゼロ×2100 東京シミュレータ（視界切れを埋める）
 
 一次情報調査で確定した事実 **「東京都の2100年人口には現行の公式単一値が存在しない。公的推計は2050/2065年で切れる」** への直接の応答。
-**実装資産が既にある**: `docs/hypothesis-validation/20260822-tokyo-zero-inflow-cohort.py`（コーホート要因法・公式ソースを実行時取得・CSV出力済み）。
+**実装資産が既にある**: `docs/concept-research/20260822-tokyo-zero-inflow-cohort.py`（コーホート要因法・公式ソースを実行時取得・CSV出力済み）。
 
 | 必要データ | カタログ実測 | 判定 |
 | :-- | --: | :-- |
@@ -151,6 +151,6 @@ PY
 ---
 
 *実測データ: 東京都オープンデータカタログ全9,678件（2026-07-04取得、[docs/research/data](../research/data)）。
-戦略の出典: [SILVERPUNK 2100 戦略書](../hypothesis-validation/20260822-silverpunk2100-strategy-gap-analysis-and-operational-plan.md) ／
-[UAD概念整理](../hypothesis-validation/20260822-universal-assist-design-mobility-logistics-concept.md) ／
+戦略の出典: [SILVERPUNK 2100 戦略書](../concept-research/20260822-silverpunk2100-strategy-gap-analysis-and-operational-plan.md) ／
+[UAD概念整理](../concept-research/20260822-universal-assist-design-mobility-logistics-concept.md) ／
 [2100年の東京 一次情報整理](../research/population/20260822-tokyo-2100-primary-source-research.md)。*
