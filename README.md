@@ -31,6 +31,7 @@
 - [今後の展望・運用体制](#今後の展望運用体制)
 - [チーム](#チーム)
 - [ライセンス](#ライセンス)
+- [仮説検証](#仮説検証-docshypothesis-validation)
 - [調査資料](#調査資料-docsresearch)
 
 ## サービス概要
@@ -132,9 +133,10 @@ cd open-data-hackathon-tokyo-2026
 ```text
 .
 ├── docs/
-│   ├── assets/     # スクリーンショット・図版
-│   └── research/   # 事前調査レポート（下記）
-└── ...             # TODO: アプリケーションのディレクトリ
+│   ├── assets/               # スクリーンショット・図版
+│   ├── hypothesis-validation/ # 仮説検証レポート＋再現用コード（下記）
+│   └── research/             # 事前調査レポート（下記）
+└── ...                       # TODO: アプリケーションのディレクトリ
 ```
 
 ## 今後の展望・運用体制
@@ -160,6 +162,16 @@ cd open-data-hackathon-tokyo-2026
 - 利用オープンデータ: 各データの提供元ライセンスに従う（[利用オープンデータ](#利用オープンデータ)を参照）
 
 ---
+
+## 仮説検証 (docs/hypothesis-validation)
+
+調査資料から立てた仮説を、公的統計の突合と再現可能なモデルで検証した結果。実データと独自仮定を区別し、検証に使ったコードとデータを同梱している。
+
+| レポート | 検証対象 | 判定の要約 |
+| :-- | :-- | :-- |
+| [東京都の人口は移動にどれだけ依存しているか](docs/hypothesis-validation/20260822-tokyo-population-migration-dependency.md) | 東京都の人口増加が国内転入・海外からの流入にどの程度依存しているか | 5仮説すべて支持。2100年時点で人口の40.9%が移動由来 |
+
+索引と記述方針は [`docs/hypothesis-validation/`](docs/hypothesis-validation) を参照。
 
 ## 調査資料 (docs/research)
 
