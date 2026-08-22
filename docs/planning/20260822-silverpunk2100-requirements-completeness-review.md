@@ -4,6 +4,7 @@
 - 検証対象: [20260822-silverpunk2100-gap-closure-detailed-requirements.md](https://github.com/masa-san-jp/Open-Data-Hackathon-Tokyo-2026/blob/main/docs/planning/20260822-silverpunk2100-gap-closure-detailed-requirements.md)
 - 対象ファイルのBlob SHA: `f6faa0a7edc6b264fd93ab509371da93fb8976bf`
 - 検証目的: 「既存の10領域を詳細化した文書」としての網羅性と、「SILVERPUNK // 2100都市構想全体の要件定義」としての網羅性を分けて判定する
+- 関連調査: [20260822-silverpunk2100-global-precedents-and-white-space-analysis.md](./20260822-silverpunk2100-global-precedents-and-white-space-analysis.md)
 
 ## 1. 結論
 
