@@ -50,10 +50,20 @@ def check_data() -> dict | None:
             want(abs(got - expected) < 0.01,
                  f"{name} {year} {key} が {expected} でない（{got}）")
 
-    # 「支え手1.0未満」は 2020年 0件 → 2045年 12件。ここが企画の核なので固定する
+    # 「支え手1.0未満」は 2020年 0件 → 2045年 12件
     for year, expected in ((2020, 0), (2045, 12)):
         n = sum(1 for m in munis if m["series"][str(year)]["support_ratio"] < 1.0)
         want(n == expected, f"{year}年の支え手1.0未満が{expected}件でない（{n}件）")
+
+    # 企画の中心＝65歳以上の労働が増えること。全就業者は減ること
+    ew20 = sum(m["series"]["2020"]["elderly_workers"] for m in munis)
+    ew45 = sum(m["series"]["2045"]["elderly_workers"] for m in munis)
+    aw20 = sum(m["series"]["2020"]["workers"] for m in munis)
+    aw45 = sum(m["series"]["2045"]["workers"] for m in munis)
+    want(abs(ew20 - 1_007_253) < 10, f"2020年の65歳以上就業者が1,007,253でない（{ew20:,}）")
+    want(abs(ew45 - 1_349_833) < 10, f"2045年の65歳以上就業者が1,349,833でない（{ew45:,}）")
+    want(ew45 > ew20, "65歳以上就業者が増えていない")
+    want(aw45 < aw20, "全就業者が減っていない")
 
     for m in munis:
         for year, s in m["series"].items():
@@ -71,6 +81,7 @@ def check_prototype() -> None:
     want(len(html) > 2000, "prototype/index.html が小さすぎる")
     want("http://" not in html and "https://" not in html.replace("https://www.ipss", ""),
          "外部URLを読んでいる。プロトタイプは単体で開けること（出典表記のリンクは除く）")
+    want("65歳以上就業者" in html, "65歳以上就業者が画面に出ていない")
     want("支え手" in html, "支え手比率が画面に出ていない")
 
 

@@ -60,11 +60,23 @@ def main() -> int:
         print("✗ 社人研データに東京都のシートが無い", file=sys.stderr)
         return 1
 
+    emp_rows = read_csv("employment_by_age.csv", "utf-8-sig")
     employment = {
         r["地域名"]: {y: int(r[f"{y}年"]) for y in YEARS_ALL}
-        for r in read_csv("employment_by_age.csv", "utf-8-sig")
+        for r in emp_rows
         if r["性別"] == "男女計" and r["年齢階級区分"] == "総数"
     }
+    # 65歳以上の昼間就業者＝「老いが価値を生んでいる」側の実数。
+    # 凡例は区市町村を階層コード3と書いているが、実データは4（2026-08-23 実測）。
+    # ここでは階層コードに頼らず、年齢階級を足し上げる。
+    OLD = {"65～69", "70～74", "75～79", "80～84", "85歳以上"}
+    elderly_workers: dict[str, dict[int, int]] = {}
+    for r in emp_rows:
+        if r["性別"] != "男女計" or r["年齢階級区分"] not in OLD:
+            continue
+        d = elderly_workers.setdefault(r["地域名"], {y: 0 for y in YEARS_ALL})
+        for y in YEARS_ALL:
+            d[y] += int(r[f"{y}年"])
     general = {r["地域名"]: r for r in read_csv("households_general.csv", "utf-8-sig")}
     single = {
         r["地域名"]: r
@@ -76,7 +88,8 @@ def main() -> int:
     for name in [n for n in pop if n != TOKYO]:
         missing = [
             label
-            for label, src in (("就業者", employment), ("一般世帯", general), ("単独世帯", single))
+            for label, src in (("就業者", employment), ("高齢就業者", elderly_workers),
+                               ("一般世帯", general), ("単独世帯", single))
             if name not in src
         ]
         if missing:
@@ -87,6 +100,7 @@ def main() -> int:
             i = YEARS.index(year)
             elderly = pop[name]["elderly"][i]
             workers = employment[name][year]
+            old_workers = elderly_workers[name][year]
             households = int(general[name][f"{year}年"])
             singles = int(single[name][f"{year}年"])
             series[year] = {
@@ -96,11 +110,15 @@ def main() -> int:
                 "workers": workers,
                 # 支え手比率＝高齢者1人あたりの昼間就業者。3本を結合して初めて出る
                 "support_ratio": round(workers / elderly, 2),
+                # 高齢者のうち何割が働いているか／就業者のうち何割が高齢者か
+                "elderly_workers": old_workers,
+                "elderly_working_rate": round(old_workers / elderly * 100, 1),
+                "workforce_elderly_share": round(old_workers / workers * 100, 1),
                 "single_household_rate": round(singles / households * 100, 1),
             }
         records.append({"name": name, "series": series})
 
-    records.sort(key=lambda r: r["series"][2045]["support_ratio"])
+    records.sort(key=lambda r: -r["series"][2045]["elderly_workers"])
     payload = {
         "generated_from": "社人研 地域別将来推計人口(令和5年推計) / 東京都就業者数の予測(令和7年) / 東京都世帯数の予測",
         "years": YEARS_ALL,
@@ -115,7 +133,8 @@ def main() -> int:
     with (OUT / "stress_test.csv").open("w", encoding="utf-8-sig", newline="") as f:
         cols = ["自治体"] + [
             f"{k}{y}" for y in (2020, 2030, 2040, 2045)
-            for k in ("高齢化率", "高齢者数", "昼間就業者", "支え手比率", "単独世帯率")
+            for k in ("高齢化率", "高齢者数", "昼間就業者", "65歳以上就業者",
+                      "高齢者就業率", "就業者に占める高齢者割合", "支え手比率", "単独世帯率")
         ]
         w = csv.writer(f)
         w.writerow(cols)
@@ -123,7 +142,8 @@ def main() -> int:
             row = [rec["name"]]
             for year in (2020, 2030, 2040, 2045):
                 s = rec["series"][year]
-                row += [s["aging_rate"], s["elderly"], s["workers"],
+                row += [s["aging_rate"], s["elderly"], s["workers"], s["elderly_workers"],
+                        s["elderly_working_rate"], s["workforce_elderly_share"],
                         s["support_ratio"], s["single_household_rate"]]
             w.writerow(row)
 

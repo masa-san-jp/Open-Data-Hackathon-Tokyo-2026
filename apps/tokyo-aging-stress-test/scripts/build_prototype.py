@@ -21,7 +21,7 @@ TEMPLATE = """<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>東京都 高齢化ストレステスト</title>
+<title>東京の働き手は、いま入れ替わっている</title>
 <style>
  :root{--bg:#fbfbfa;--fg:#1c1b19;--mut:#6b675f;--line:#e2ded6;--accent:#9a3412;--card:#fff}
  @media (prefers-color-scheme:dark){
@@ -66,31 +66,33 @@ TEMPLATE = """<!doctype html>
 </head>
 <body>
 <div class="wrap">
-<h1>東京都 高齢化ストレステスト</h1>
-<div class="sub">高齢者1人を支える昼間の働き手は、2045年に何人になるか</div>
+<h1>東京の働き手は、いま入れ替わっている</h1>
+<div class="sub">65歳以上の昼間就業者が、どこで、どれだけ増えるか（2020→2045）</div>
 
 <div class="lead">
-  <h2>支え手が1人を切る街の数</h2>
+  <h2>東京で働く65歳以上</h2>
   <div class="big">
-    <span><b id="n2020">-</b> <span class="yr">2020年</span></span>
+    <span><b id="w2020">-</b> <span class="yr">2020年</span></span>
     <span class="arrow">→</span>
-    <span><b id="n2045" style="color:var(--accent)">-</b> <span class="yr">2045年</span></span>
-    <span class="yr" id="denom"></span>
+    <span><b id="w2045" style="color:var(--accent)">-</b> <span class="yr">2045年</span></span>
+    <span class="yr" id="wdelta"></span>
   </div>
-  <p>いま東京のどの区市町村も、高齢者1人に対して働き手が1人以上いる。20年後、そうでない街ができる。</p>
+  <p id="lead2"></p>
 </div>
 
-<div class="hint">列の見出しを押すと並べ替わる。<b>高齢化率で並べ替えると、順位が入れ替わる。</b>
-高齢化率は「街に高齢者が何割いるか」しか言わず、昼間そこに働き手がいるかを言わないため。</div>
+<div class="hint">既定は<b>増加数の多い順</b>。列の見出しを押すと並べ替わる。
+<b>「就業者に占める割合」で並べ替えると、都心と郊外が入れ替わる。</b>
+都心は人数が増え、郊外は割合が高くなる。増える場所と、頼りになる場所は違う。</div>
 
 <div class="scroll">
 <table id="t">
  <thead><tr>
   <th data-k="name">自治体</th>
+  <th data-k="delta">増加数 2020→2045</th>
+  <th data-k="elderly_workers">65歳以上就業者 2045</th>
+  <th data-k="workforce_elderly_share">就業者に占める割合</th>
+  <th data-k="elderly_working_rate">高齢者の就業率</th>
   <th data-k="aging_rate">高齢化率 2045</th>
-  <th data-k="support_ratio">支え手比率 2045</th>
-  <th data-k="single_household_rate">単独世帯率 2045</th>
-  <th data-k="elderly">65歳以上 2045</th>
  </tr></thead>
  <tbody></tbody>
 </table>
@@ -98,9 +100,18 @@ TEMPLATE = """<!doctype html>
 
 <div id="detail"><p class="none">行を押すと、2020年から2045年までの推移が出ます。</p></div>
 
+<div class="lead" style="margin-top:24px;border-left-color:var(--mut)">
+  <h2>受け皿が要る規模</h2>
+  <p style="color:var(--fg)">全体の就業者は<b id="allw"></b>。その中で65歳以上だけが<b id="oldw"></b>。
+  <b>減っていく労働力を、高齢者の労働が埋めている。</b>
+  この人たちが働き続けられる環境（移動・暑さ・仕事の割り当て）は、いま設計されていない。</p>
+</div>
+
 <footer>
- <div>支え手比率 ＝ その自治体の<b>昼間就業者数</b> ÷ 65歳以上人口。
-  昼間就業者はその自治体で<b>働く</b>人で、住む人ではない。</div>
+ <div>65歳以上就業者 ＝ その自治体で働く65歳以上（従業地ベース。住んでいる場所ではない）。
+  高齢者の就業率 ＝ 65歳以上就業者 ÷ その自治体に住む65歳以上人口。
+  <b>分子は従業地、分母は常住地なので、昼間人口の流入が大きい都心では100%を超える。</b>
+  参考として支え手比率（昼間就業者 ÷ 65歳以上人口）も詳細に出している。</div>
  <h4>結合できなかった自治体</h4>
  <ul id="ex"></ul>
  <h4>出典</h4>
@@ -122,27 +133,38 @@ const M = DATA.municipalities, Y = DATA.years;
 const nf = n => n.toLocaleString('ja-JP');
 const s45 = m => m.series['2045'];
 
-document.getElementById('n2020').textContent =
-  M.filter(m => m.series['2020'].support_ratio < 1).length;
-document.getElementById('n2045').textContent =
-  M.filter(m => s45(m).support_ratio < 1).length;
-document.getElementById('denom').textContent = '（' + M.length + '自治体中）';
+const sum = (y,k) => M.reduce((a,m) => a + m.series[String(y)][k], 0);
+const w20 = sum(2020,'elderly_workers'), w45 = sum(2045,'elderly_workers');
+const a20 = sum(2020,'workers'), a45 = sum(2045,'workers');
+const pct = (a,b) => ((b/a-1)*100).toFixed(1);
+document.getElementById('w2020').textContent = (w20/10000).toFixed(0) + '万人';
+document.getElementById('w2045').textContent = (w45/10000).toFixed(0) + '万人';
+document.getElementById('wdelta').textContent = '（+' + pct(w20,w45) + '%）';
+document.getElementById('lead2').textContent =
+  '同じ期間、東京の全就業者は ' + pct(a20,a45) + '% 。全体が減る中で、'
+  + '高齢者の労働だけが3割増える。2045年、東京で働く人の '
+  + (w45/a45*100).toFixed(1) + '% が65歳以上になる。';
+document.getElementById('allw').textContent = nf(a20) + '人 → ' + nf(a45) + '人（' + pct(a20,a45) + '%）';
+document.getElementById('oldw').textContent = nf(w20) + '人 → ' + nf(w45) + '人（+' + pct(w20,w45) + '%）';
 
-let sortKey = 'support_ratio', asc = true, picked = null;
+const delta = m => s45(m).elderly_workers - m.series['2020'].elderly_workers;
+let sortKey = 'delta', asc = false, picked = null;
 const tbody = document.querySelector('#t tbody');
 
 function draw(){
   const rows = [...M].sort((a,b) => {
     if (sortKey === 'name') return asc ? a.name.localeCompare(b.name,'ja') : b.name.localeCompare(a.name,'ja');
-    const d = s45(a)[sortKey] - s45(b)[sortKey];
+    const d = sortKey === 'delta' ? delta(a) - delta(b) : s45(a)[sortKey] - s45(b)[sortKey];
     return asc ? d : -d;
   });
   tbody.innerHTML = rows.map(m => {
-    const s = s45(m), low = s.support_ratio < 1 ? ' class="low"' : '';
+    const s = s45(m), d = delta(m);
     return `<tr data-n="${m.name}"${m.name===picked?' class="on"':''}>`
-      + `<td>${m.name}</td><td>${s.aging_rate.toFixed(1)}%</td>`
-      + `<td${low}>${s.support_ratio.toFixed(2)}</td>`
-      + `<td>${s.single_household_rate.toFixed(1)}%</td><td>${nf(s.elderly)}</td></tr>`;
+      + `<td>${m.name}</td><td${d>0?' class="low"':''}>${d>0?'+':''}${nf(d)}</td>`
+      + `<td>${nf(s.elderly_workers)}</td>`
+      + `<td>${s.workforce_elderly_share.toFixed(1)}%</td>`
+      + `<td>${s.elderly_working_rate.toFixed(1)}%</td>`
+      + `<td>${s.aging_rate.toFixed(1)}%</td></tr>`;
   }).join('');
   document.querySelectorAll('#t thead th').forEach(th => {
     if (th.dataset.k === sortKey) th.setAttribute('aria-sort', asc ? 'ascending' : 'descending');
@@ -162,11 +184,14 @@ tbody.onclick = e => {
   const m = M.find(x => x.name === picked);
   document.getElementById('detail').innerHTML =
     `<h3>${m.name}</h3><div class="scroll"><table><thead><tr><th>年</th>`
-    + `<th>高齢化率</th><th>65歳以上</th><th>昼間就業者</th><th>支え手比率</th></tr></thead><tbody>`
+    + `<th>65歳以上就業者</th><th>就業者に占める割合</th><th>高齢者の就業率</th>`
+    + `<th>全就業者</th><th>65歳以上人口</th><th>支え手比率</th></tr></thead><tbody>`
     + Y.map(y => { const s = m.series[String(y)];
-        return `<tr><td>${y}</td><td>${s.aging_rate.toFixed(1)}%</td><td>${nf(s.elderly)}</td>`
-          + `<td>${nf(s.workers)}</td>`
-          + `<td${s.support_ratio<1?' class="low"':''}>${s.support_ratio.toFixed(2)}</td></tr>`;
+        return `<tr><td>${y}</td><td class="low">${nf(s.elderly_workers)}</td>`
+          + `<td>${s.workforce_elderly_share.toFixed(1)}%</td>`
+          + `<td>${s.elderly_working_rate.toFixed(1)}%</td>`
+          + `<td>${nf(s.workers)}</td><td>${nf(s.elderly)}</td>`
+          + `<td>${s.support_ratio.toFixed(2)}</td></tr>`;
       }).join('') + '</tbody></table></div>';
   draw();
 };
