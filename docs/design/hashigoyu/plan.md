@@ -111,6 +111,7 @@
 **`T1-04` ルート構築**
 
 - 依存: `T1-03`
+- 状態: 完了
 - 作るもの: `packages/domain/src/route.ts`
 - 内容: spec §4-9・§4-10。`BATHE_HOURS = 1.1`、`ALLOCATION_WEIGHT = 0.7` を定数として export
 - 受け入れ条件:

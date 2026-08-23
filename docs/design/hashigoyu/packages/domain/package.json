@@ -5,7 +5,8 @@
   "type": "module",
   "exports": {
     "./types": "./src/types.ts",
-    "./calc": "./src/calc.ts"
+    "./calc": "./src/calc.ts",
+    "./route": "./src/route.ts"
   },
   "scripts": {
     "build": "tsc --noEmit",
