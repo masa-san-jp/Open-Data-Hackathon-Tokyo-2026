@@ -1,0 +1,111 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-08-23T13:30:00+09:00",
+  "note": "画面（prototype/index.html）が表示する主張の原本。UIの文言はここから生成されたものと一致させる。status: illustrative は demo-fixture.json の例示値に基づく主張であり、実測値の主張ではない。",
+  "claims": [
+    {
+      "id": "claim-fixture-is-illustrative",
+      "text": "モデル地区A〜Dは実在の東京都区市町村ではなく、設計仕様書の指標定義を満たすための例示レコードである",
+      "status": "illustrative",
+      "sources": [],
+      "calculation": "該当なし（データ設計上の宣言）",
+      "limitations": "Phase 2 で実データに置き換える際、地区IDと名称の対応関係は失われる。実自治体名との混同を避けるための一時的な措置"
+    },
+    {
+      "id": "claim-priority-district-d",
+      "text": "モデル地区Dの demo priority は 0.65（4地区中、優先度を算出できた2地区のうち最高）",
+      "status": "illustrative",
+      "sources": [],
+      "calculation": "score_v1 = 0.45×norm(aged_share) + 0.35×norm(hazard_exposure) + 0.20×norm(1/max(support_points,1))。入力（aged_share=41.5%, hazard_exposure=48, support_points=9件）はすべて illustrative",
+      "limitations": "危険度・安全度の順位ではない。正規化は算出できた2地区間の相対比較にすぎず、絶対的な閾値を持たない"
+    },
+    {
+      "id": "claim-priority-district-a",
+      "text": "モデル地区Aの demo priority は 0.35",
+      "status": "illustrative",
+      "sources": [],
+      "calculation": "score_v1（claim-priority-district-d と同一式）。入力（aged_share=34.2%, hazard_exposure=62, support_points=18件）はすべて illustrative",
+      "limitations": "危険度・安全度の順位ではない"
+    },
+    {
+      "id": "claim-priority-not-computable-district-b",
+      "text": "モデル地区Bの demo priority は算出不可（hazard_exposure が missing）",
+      "status": "illustrative",
+      "sources": [],
+      "calculation": "score_v1 の必須入力 aged_share, hazard_exposure, support_points のうち hazard_exposure が missing のため計算式を実行していない",
+      "limitations": "算出不可であること自体は fixture のデータ設計から導けるが、fixture 自体が例示データのため主張全体は illustrative とする。実測データの主張ではない"
+    },
+    {
+      "id": "claim-priority-not-computable-district-c",
+      "text": "モデル地区Cの demo priority は算出不可（aged_share が not_verified）",
+      "status": "illustrative",
+      "sources": [],
+      "calculation": "score_v1 の必須入力 aged_share が not_verified のため計算式を実行していない",
+      "limitations": "算出不可であること自体は fixture のデータ設計から導けるが、fixture 自体が例示データのため主張全体は illustrative とする"
+    },
+    {
+      "id": "claim-heat-shelter-catalog-candidate",
+      "text": "涼しく休める場所（heat_shelter）の件数は、公開カタログでの網羅性が未確認",
+      "status": "not_verified",
+      "sources": ["src-tokyo-catalog-cooling-shelter"],
+      "calculation": "該当なし（件数はfixtureの例示値）",
+      "limitations": "カタログに掲載されていない施設の不存在を意味しない。件数は例示であり実測ではない"
+    },
+    {
+      "id": "claim-medical-care-not-verified-district-a",
+      "text": "モデル地区Aの医療・介護の相談先4件は、公開カタログ候補があるが中身は未確認",
+      "status": "not_verified",
+      "sources": ["src-tokyo-catalog-cooling-shelter"],
+      "calculation": "該当なし",
+      "limitations": "URLの存在を確認しただけであり、区市町村単位の件数・粒度は未確認"
+    },
+    {
+      "id": "claim-evacuation-source-candidate",
+      "text": "避難所・避難場所の一次情報の候補として東京都地域防災計画を想定しているが、個別データセットは未特定",
+      "status": "not_verified",
+      "sources": ["src-tokyo-regional-disaster-plan"],
+      "calculation": "該当なし",
+      "limitations": "候補ソースのトップページを認識しているのみで、区市町村単位の抽出方法は未確定"
+    },
+    {
+      "id": "claim-aged-share-source-candidate",
+      "text": "高齢化率（aged_share）の実測値取得候補として、日本の地域別将来推計人口（令和5年推計）を想定している",
+      "status": "not_verified",
+      "sources": ["src-ipss-population-2023"],
+      "calculation": "該当なし",
+      "limitations": "ファイル未取得。年齢区分・対象年・地域粒度が demo-fixture.json の定義と一致するかは未確認"
+    },
+    {
+      "id": "claim-district-c-not-comparable-supporter-ratio",
+      "text": "モデル地区C（島しょ想定）の支え手比率は、本土の区市町村と統計粒度が一致しないため比較対象外",
+      "status": "illustrative",
+      "sources": [],
+      "calculation": "該当なし（データ設計上の宣言。island部の昼間就業者統計は本土と同一粒度で公開されていないことが多いという一般的傾向を反映した例示）",
+      "limitations": "実際の島しょ部データの公開状況は未確認。Phase 2 で実データ取得時に再検証する"
+    },
+    {
+      "id": "claim-district-d-stale-water-rest",
+      "text": "モデル地区Dの給水・休憩拠点2件は2019年取得のまま更新されておらず、古いデータとして扱う",
+      "status": "illustrative",
+      "sources": [],
+      "calculation": "該当なし（基準日2026-08-23に対し取得日2019年は6年超過。stale の例示として設計）",
+      "limitations": "実データではないため、実際の再取得要否はPhase 2で判断する"
+    },
+    {
+      "id": "claim-heat-disaster-score-methodology",
+      "text": "heat_disaster シナリオの demo priority（score_v1）は、aged_share・hazard_exposure・support_pointsの3入力すべてがverifiedまたはillustrativeの地区でのみ算出する",
+      "status": "illustrative",
+      "sources": ["src-ipss-population-2023"],
+      "calculation": "score_v1 = 0.45×norm(aged_share) + 0.35×norm(hazard_exposure) + 0.20×norm(1/max(support_points,1))。normは算出できた地区同士の範囲（min-max）での相対正規化。重み（0.45/0.35/0.20）はPhase 1の仮設定であり、実データでの再検証前",
+      "limitations": "重みの根拠は仮設定であり、専門家や自治体担当者との合意を経ていない。正規化範囲は算出できた地区集合に依存するため、対象地区が増減すると同じ入力値でもスコアが変わる。危険度・安全度の順位ではない"
+    },
+    {
+      "id": "claim-phase2-all-districts-not-computable",
+      "text": "Phase 2実データ（東京都62自治体）は、hazard_exposureとsupport_pointsが全62自治体でmissingのため、demo priorityを1件も算出していない",
+      "status": "verified",
+      "sources": ["src-ipss-population-2023"],
+      "calculation": "data/build_dataset.py が生成する data/gaps.json の集計値（62/62地区で両指標ともmissing）",
+      "limitations": "population・aged_shareのみverifiedな段階。暑熱曝露・生活支援拠点データを取得するまで、実データでの地区比較・優先順位付けはできない"
+    }
+  ]
+}

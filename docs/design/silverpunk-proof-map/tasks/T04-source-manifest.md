@@ -1,8 +1,8 @@
 ---
 id: T04
 phase: 2
-status: ready
-owner: unassigned
+status: done
+owner: agent
 depends_on: [T01]
 files:
   - apps/silverpunk-proof-map/evidence/sources.json
@@ -29,4 +29,11 @@ files:
 - すべての `verified` ソースに確認方法がある
 - すべての `verified` 主張からソースへたどれる
 - データが存在しないことと、カタログで横並び比較できないことを区別している
+
+## 実施記録（2026-08-23）
+
+変更: `apps/silverpunk-proof-map/evidence/sources.json`（候補ソース3件）、`evidence/claims.json`（主張11件）。
+検査: JSON読み込み確認、`claims[].sources`の参照整合性チェック（未知ID・空sourcesでのverified主張が無いこと）をスクリプトで確認。`python3 scripts/verify.py --phase 1` 終了コード0。
+観測: `verified`のソース・主張は0件（実データ未取得のため）。`missing`（データが存在しない）と`not_comparable`（横並び比較不可）は明確に区別して登録。
+残課題: T05（検証済みデータの再生成）は実際にソースを開いて検証してから着手する。
 

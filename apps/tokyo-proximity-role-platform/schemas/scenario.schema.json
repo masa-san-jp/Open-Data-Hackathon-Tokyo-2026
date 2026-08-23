@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tokyo-proximity-role-platform/schemas/scenario.schema.json",
+  "title": "InterventionScenarioResult",
+  "description": "介入シナリオ適用結果（Before/After）。SPEC.md §3.7「出力」に対応。D0はブラウザ内JSで生成し保存はしない。",
+  "type": "object",
+  "required": [
+    "demo",
+    "intervention_type",
+    "placed_at",
+    "assumptions",
+    "affected_cell_ids",
+    "households_newly_within_threshold",
+    "elderly_single_households_improved",
+    "functions_improved",
+    "before_classification_counts",
+    "after_classification_counts"
+  ],
+  "properties": {
+    "demo": { "const": true },
+    "intervention_type": { "enum": ["local_service_point", "human_bridge", "mobility_stop"] },
+    "placed_at": {
+      "type": "object",
+      "required": ["col", "row"],
+      "properties": {
+        "col": { "type": "integer" },
+        "row": { "type": "integer" }
+      }
+    },
+    "assumptions": {
+      "type": "object",
+      "description": "この計算に使った仮定（半径・容量・速度・勾配係数等）を必ず含める"
+    },
+    "affected_cell_ids": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "households_newly_within_threshold": { "type": "integer", "minimum": 0 },
+    "elderly_single_households_improved": { "type": "integer", "minimum": 0 },
+    "functions_improved": {
+      "type": "array",
+      "items": { "enum": ["pharmacy", "clinic", "welfare", "mobility_node"] }
+    },
+    "before_classification_counts": { "type": "object" },
+    "after_classification_counts": { "type": "object" }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,132 @@
+{
+  "demo": true,
+  "note": "承認済みテンプレートカタログ。AIはこの中から下書きを生成し、自由生成しない（SPEC.md §4.2）。",
+  "templates": [
+    {
+      "problem_type": "food_access",
+      "title": "電話・端末による注文受付",
+      "task_units": [
+        "注文内容を定型画面へ入力",
+        "受渡し時間を案内"
+      ],
+      "functional_requirements": {
+        "main_posture": "seated",
+        "lifting_kg_max": 0,
+        "standing_minutes_max": 10,
+        "customer_contact": true
+      },
+      "supervision": "required_initially",
+      "compensation_required": true,
+      "route_candidates": [
+        "senior_employment",
+        "disability_employment",
+        "welfare_work"
+      ],
+      "schedule": {
+        "min_minutes": 60,
+        "frequency": "weekly"
+      }
+    },
+    {
+      "problem_type": "pharmacy_access",
+      "title": "薬受取・配送の受渡し窓口",
+      "task_units": [
+        "処方引換券の確認",
+        "受渡し記録の記入",
+        "配送業者への引継ぎ"
+      ],
+      "functional_requirements": {
+        "main_posture": "seated",
+        "lifting_kg_max": 3,
+        "standing_minutes_max": 15,
+        "customer_contact": true
+      },
+      "supervision": "required_initially",
+      "compensation_required": true,
+      "route_candidates": [
+        "silver_human_resources",
+        "welfare_work",
+        "community_participation"
+      ],
+      "schedule": {
+        "min_minutes": 90,
+        "frequency": "weekly"
+      }
+    },
+    {
+      "problem_type": "welfare_access",
+      "title": "見守り訪問の同行支援",
+      "task_units": [
+        "訪問予定の確認",
+        "同行",
+        "訪問記録の共有"
+      ],
+      "functional_requirements": {
+        "main_posture": "mixed",
+        "lifting_kg_max": 0,
+        "standing_minutes_max": 30,
+        "customer_contact": true
+      },
+      "supervision": "required_ongoing",
+      "compensation_required": true,
+      "route_candidates": [
+        "welfare_work",
+        "disability_employment"
+      ],
+      "schedule": {
+        "min_minutes": 120,
+        "frequency": "weekly"
+      }
+    },
+    {
+      "problem_type": "mobility_gap",
+      "title": "乗降支援・ルート案内",
+      "task_units": [
+        "乗降時の声かけ・付き添い",
+        "ルートの案内",
+        "運行状況の共有"
+      ],
+      "functional_requirements": {
+        "main_posture": "standing",
+        "lifting_kg_max": 5,
+        "standing_minutes_max": 60,
+        "customer_contact": true
+      },
+      "supervision": "required_initially",
+      "compensation_required": true,
+      "route_candidates": [
+        "senior_employment",
+        "silver_human_resources",
+        "community_participation"
+      ],
+      "schedule": {
+        "min_minutes": 60,
+        "frequency": "weekly"
+      }
+    },
+    {
+      "problem_type": "clinic_access",
+      "title": "受診予約・端末操作支援",
+      "task_units": [
+        "予約端末の操作補助",
+        "受診票の記入補助（代理権限を要する手続きは対象外）"
+      ],
+      "functional_requirements": {
+        "main_posture": "seated",
+        "lifting_kg_max": 0,
+        "standing_minutes_max": 5,
+        "customer_contact": true
+      },
+      "supervision": "required_initially",
+      "compensation_required": true,
+      "route_candidates": [
+        "welfare_work",
+        "community_participation"
+      ],
+      "schedule": {
+        "min_minutes": 45,
+        "frequency": "weekly"
+      }
+    }
+  ]
+}

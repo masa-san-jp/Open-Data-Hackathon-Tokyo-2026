@@ -1,0 +1,94 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tokyo-proximity-role-platform/schemas/role-card.schema.json",
+  "title": "RoleCard",
+  "description": "地域役割カード。SPEC.md §4.3 に対応。ROLE-001〜ROLE-007のルールを構造で強制する。",
+  "type": "object",
+  "required": [
+    "role_id",
+    "source_cell_id",
+    "problem_type",
+    "title",
+    "schedule",
+    "task_units",
+    "functional_requirements",
+    "supervision",
+    "compensation_required",
+    "route_candidates",
+    "legal_status",
+    "status"
+  ],
+  "properties": {
+    "role_id": { "type": "string", "pattern": "^ROLE-\\d{4}$" },
+    "source_cell_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "ROLE-001: 地域課題（セル）IDなしでは役割カードを作れない"
+    },
+    "problem_type": {
+      "enum": ["food_access", "pharmacy_access", "clinic_access", "welfare_access", "mobility_gap"]
+    },
+    "title": { "type": "string", "minLength": 1 },
+    "schedule": {
+      "type": "object",
+      "required": ["min_minutes", "frequency"],
+      "properties": {
+        "min_minutes": { "type": "integer", "exclusiveMinimum": 0 },
+        "frequency": { "type": "string" }
+      }
+    },
+    "task_units": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string" },
+      "description": "ROLE-002: 作業単位は必須"
+    },
+    "functional_requirements": {
+      "type": "object",
+      "required": ["main_posture", "lifting_kg_max", "standing_minutes_max", "customer_contact"],
+      "description": "診断名ではなく作業に必要な機能条件のみを記述する（ROLE-006）",
+      "properties": {
+        "main_posture": { "enum": ["seated", "standing", "mixed"] },
+        "lifting_kg_max": { "type": "number", "minimum": 0 },
+        "standing_minutes_max": { "type": "number", "minimum": 0 },
+        "customer_contact": { "type": "boolean" },
+        "diagnosis": { "not": {} },
+        "medical_condition": { "not": {} },
+        "vitals": { "not": {} }
+      },
+      "additionalProperties": false
+    },
+    "supervision": {
+      "enum": ["required_initially", "required_ongoing", "not_required"],
+      "description": "ROLE-002: 監督の要否は必須"
+    },
+    "compensation_required": {
+      "type": "boolean",
+      "description": "ROLE-002: 報酬要否は必須"
+    },
+    "route_candidates": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "enum": [
+          "senior_employment",
+          "silver_human_resources",
+          "disability_employment",
+          "welfare_work",
+          "community_participation",
+          "commercial_service_provider"
+        ]
+      },
+      "description": "ROLE-004: 制度候補は複数許容"
+    },
+    "legal_status": {
+      "const": "human_review_required",
+      "description": "AIは法的区分を確定しない"
+    },
+    "status": {
+      "const": "draft",
+      "description": "ROLE-003/ROLE-005: AI生成直後は必ずdraft。AI単独でapprovedにできない"
+    }
+  },
+  "additionalProperties": false
+}

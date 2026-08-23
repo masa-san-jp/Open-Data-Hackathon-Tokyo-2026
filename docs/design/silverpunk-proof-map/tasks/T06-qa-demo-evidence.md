@@ -1,8 +1,8 @@
 ---
 id: T06
 phase: 1
-status: ready
-owner: unassigned
+status: done
+owner: agent
 depends_on: [T03]
 files:
   - apps/silverpunk-proof-map/evidence/run-log.md
@@ -35,3 +35,12 @@ files:
 ## フォールバック
 
 ブラウザ自動検査が利用できない場合は、手動確認の日時・URL・確認項目を記録する。地図は未実装でも Phase 1 の完了を妨げない。
+
+## 実施記録（2026-08-23）
+
+変更: `apps/silverpunk-proof-map/README.md`（60秒デモ手順を追記）、`evidence/run-log.md`。
+検査: `python3 scripts/verify.py --phase 1` 終了コード0（最終再実行）。
+観測: claude-in-chrome + `http.server` で60秒デモをリハーサル。4地区表示、並べ替え4種、詳細・根拠・欠損・30日カードの操作、外部通信なしを確認。コンソールエラーなし。
+制約: `resize_window`と合成`Tab`キーがこの自動化環境の実ページに反映されない既知の制約を確認。390pxはJS強制での代替確認、キーボード操作可能性はネイティブ`<button>`構成によるコードレビューで担保。実ブラウザでの目視Tab確認は次回持ち越し。
+残課題: 実機ブラウザでのキーボードTab目視確認。T04（出典・主張台帳）、T05（データ再生成）、T07（比較・優先度レイヤー拡張）、T08（地図）は未着手。
+Phase 1 最短デモ経路（T00→T01→T02→T03→T06）はここで完了。

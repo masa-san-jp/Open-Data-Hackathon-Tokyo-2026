@@ -1,0 +1,59 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tokyo-proximity-role-platform/schemas/infrastructure.schema.json",
+  "title": "InterventionCatalog",
+  "description": "D0で仮置き可能な介入タイプの定義とデモ既定パラメータ。SPEC.md §3.7, ADR-0003, ADR-0005 に対応。",
+  "type": "object",
+  "required": ["demo", "walking_profiles", "reference_speed_m_per_min", "slope_model", "priority_thresholds", "intervention_types"],
+  "properties": {
+    "demo": { "const": true },
+    "walking_profiles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "speed_m_per_min"],
+        "properties": {
+          "id": { "type": "string" },
+          "label": { "type": "string" },
+          "speed_m_per_min": { "type": "number", "exclusiveMinimum": 0 }
+        }
+      }
+    },
+    "reference_speed_m_per_min": { "const": 80 },
+    "slope_model": {
+      "type": "object",
+      "required": ["id", "max_uphill_factor", "note"],
+      "properties": {
+        "id": { "const": "demo-linear-v1" },
+        "max_uphill_factor": { "const": 0.4 },
+        "note": { "type": "string" }
+      }
+    },
+    "priority_thresholds": {
+      "type": "object",
+      "required": ["min_population_threshold", "priority_households_threshold"],
+      "properties": {
+        "min_population_threshold": { "const": 3 },
+        "priority_households_threshold": { "const": 8 }
+      }
+    },
+    "intervention_types": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "label", "affected_functions", "radius_cells"],
+        "properties": {
+          "type": { "enum": ["local_service_point", "human_bridge", "mobility_stop"] },
+          "label": { "type": "string" },
+          "affected_functions": {
+            "type": "array",
+            "items": { "enum": ["pharmacy", "clinic", "welfare", "mobility_node"] }
+          },
+          "radius_cells": { "type": "integer", "minimum": 0 },
+          "daily_capacity_households": { "type": ["integer", "null"] }
+        }
+      }
+    }
+  },
+  "additionalProperties": true
+}

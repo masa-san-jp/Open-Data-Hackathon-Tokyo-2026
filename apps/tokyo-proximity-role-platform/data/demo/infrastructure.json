@@ -1,0 +1,69 @@
+{
+  "demo": true,
+  "walking_profiles": [
+    {
+      "id": "slow_senior",
+      "label": "高齢者目安",
+      "speed_m_per_min": 60
+    },
+    {
+      "id": "cane_assist",
+      "label": "杖使用等",
+      "speed_m_per_min": 45
+    },
+    {
+      "id": "wheelchair_user",
+      "label": "車椅子等利用者",
+      "speed_m_per_min": 55
+    },
+    {
+      "id": "standard",
+      "label": "成人目安",
+      "speed_m_per_min": 80
+    }
+  ],
+  "reference_speed_m_per_min": 80,
+  "slope_model": {
+    "id": "demo-linear-v1",
+    "max_uphill_factor": 0.4,
+    "note": "デモ仮定。実測標高・実測歩行データではない（DECISIONS.md ADR-0003）。"
+  },
+  "priority_thresholds": {
+    "min_population_threshold": 3,
+    "priority_households_threshold": 8
+  },
+  "intervention_types": [
+    {
+      "type": "local_service_point",
+      "label": "小規模生活拠点",
+      "description": "食料・薬受取等の小規模拠点を仮置きする",
+      "affected_functions": [
+        "pharmacy",
+        "clinic",
+        "welfare"
+      ],
+      "radius_cells": 1,
+      "daily_capacity_households": null
+    },
+    {
+      "type": "human_bridge",
+      "label": "Human Bridge（暫定人的支援）",
+      "description": "配送・同行・送迎等の暫定人的支援。容量制約あり（ADR-0005）",
+      "affected_functions": [
+        "welfare"
+      ],
+      "radius_cells": 2,
+      "daily_capacity_households": 10
+    },
+    {
+      "type": "mobility_stop",
+      "label": "モビリティノード",
+      "description": "短距離モビリティ乗降点を仮置きする",
+      "affected_functions": [
+        "mobility_node"
+      ],
+      "radius_cells": 2,
+      "daily_capacity_households": null
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-08-23T13:30:00+09:00",
+  "note": "Phase 1 時点では、いずれのソースもファイルを開いて粒度・定義・取得日を確認していない。verification はすべて not_verified。URLの存在確認のみを候補登録の条件とし、値の実測利用には使わない。",
+  "sources": [
+    {
+      "id": "src-ipss-population-2023",
+      "title": "日本の地域別将来推計人口（令和5年推計）東京都",
+      "url": "https://www.ipss.go.jp/pp-shicyoson/j/shicyoson23/3kekka/Municipalities/13.xlsx",
+      "provider": "国立社会保障・人口問題研究所",
+      "retrieved_at": null,
+      "target_year": null,
+      "granularity": "unknown（候補段階のため未確認）",
+      "format": "xlsx（想定）",
+      "verification": "not_verified",
+      "verification_method": null,
+      "how_to_verify": "ファイルを開き、区市町村別の年次・年齢区分・単位が demo-fixture.json の aged_share / population 定義と一致するかを確認してから verified にする",
+      "used_by_claims": ["claim-aged-share-source-candidate"]
+    },
+    {
+      "id": "src-tokyo-catalog-cooling-shelter",
+      "title": "東京都オープンデータカタログ クーリングシェルター一覧（候補）",
+      "url": "https://catalog.data.metro.tokyo.lg.jp/",
+      "provider": "東京都",
+      "retrieved_at": null,
+      "target_year": null,
+      "granularity": "unknown（カタログ検索結果の候補段階）",
+      "format": "unknown",
+      "verification": "not_verified",
+      "verification_method": null,
+      "how_to_verify": "カタログ内で個別データセットを特定し、区市町村単位のクーリングシェルター件数・住所・開設期間を確認する",
+      "used_by_claims": ["claim-heat-shelter-catalog-candidate", "claim-medical-care-not-verified-district-a"]
+    },
+    {
+      "id": "src-tokyo-regional-disaster-plan",
+      "title": "東京都地域防災計画（候補）",
+      "url": "https://www.bousai.metro.tokyo.lg.jp/",
+      "provider": "東京都",
+      "retrieved_at": null,
+      "target_year": null,
+      "granularity": "unknown（候補段階）",
+      "format": "unknown",
+      "verification": "not_verified",
+      "verification_method": null,
+      "how_to_verify": "避難所・避難場所の指定一覧データセットを特定し、区市町村単位で件数・種別・バリアフリー対応状況を確認する",
+      "used_by_claims": ["claim-evacuation-source-candidate"]
+    }
+  ]
+}

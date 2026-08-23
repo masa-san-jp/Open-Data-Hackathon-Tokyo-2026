@@ -1,0 +1,71 @@
+{
+  "schema_version": "0.1.0",
+  "source": "data/proof_map.json",
+  "total_districts": 62,
+  "note": "件数が多い項目ほど、次に取得すべきデータの優先度が高い（多くの地区の比較を止めているため）",
+  "gap_summary": [
+    {
+      "item": "昼間就業者",
+      "status": "missing",
+      "affected_districts": 62,
+      "note": "未取得（東京都昼夜間人口関連の公開データを次に探す）",
+      "share": 1.0
+    },
+    {
+      "item": "65歳以上就業者",
+      "status": "missing",
+      "affected_districts": 62,
+      "note": "未取得",
+      "share": 1.0
+    },
+    {
+      "item": "支え手比率",
+      "status": "missing",
+      "affected_districts": 62,
+      "note": "未取得（昼間就業者データが無いため算出不可）",
+      "share": 1.0
+    },
+    {
+      "item": "暑熱・災害曝露指数",
+      "status": "missing",
+      "affected_districts": 62,
+      "note": "未取得（暑熱・災害曝露の指標データを次に探す）",
+      "share": 1.0
+    },
+    {
+      "item": "生活支援拠点数",
+      "status": "missing",
+      "affected_districts": 62,
+      "note": "未取得（生活支援拠点カテゴリ別の一次情報を次に探す）",
+      "share": 1.0
+    },
+    {
+      "item": "涼しく休める場所",
+      "status": "missing",
+      "affected_districts": 62,
+      "note": "未取得。Phase 2 の次段階で一次情報を探す",
+      "share": 1.0
+    },
+    {
+      "item": "給水・休憩拠点",
+      "status": "missing",
+      "affected_districts": 62,
+      "note": "未取得。Phase 2 の次段階で一次情報を探す",
+      "share": 1.0
+    },
+    {
+      "item": "医療・介護の相談先",
+      "status": "missing",
+      "affected_districts": 62,
+      "note": "未取得。Phase 2 の次段階で一次情報を探す",
+      "share": 1.0
+    },
+    {
+      "item": "避難所・避難場所",
+      "status": "missing",
+      "affected_districts": 62,
+      "note": "未取得。Phase 2 の次段階で一次情報を探す",
+      "share": 1.0
+    }
+  ]
+}

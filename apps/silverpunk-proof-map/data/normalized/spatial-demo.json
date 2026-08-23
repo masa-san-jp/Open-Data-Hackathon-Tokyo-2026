@@ -1,0 +1,236 @@
+{
+  "schema_version": "0.1.0",
+  "layer_id": "spatial-demo-schematic",
+  "status": "illustrative",
+  "as_of": "2026-08-23",
+  "coordinate_system": "schematic-svg-viewbox-800x430",
+  "note": "実在の地理座標・縮尺ではない。例示4地区のID結合と施設カテゴリ操作を確認するためのローカル模式図であり、位置の正確性・網羅性・到達可能性を示さない。",
+  "source": {
+    "id": "src-spatial-demo-schematic",
+    "title": "アプリ内位置関係確認用・模式図",
+    "retrieved_at": "2026-08-23",
+    "verification": "not_verified",
+    "note": "公開元から取得した境界・施設位置ではない。実データの地図として扱わない。"
+  },
+  "view_box": "0 0 800 430",
+  "districts": [
+    {
+      "id": "model-district-a",
+      "label": "モデル地区A",
+      "path": "M 58 74 L 296 60 L 354 176 L 244 224 L 70 188 Z",
+      "label_x": 192,
+      "label_y": 142,
+      "status": "illustrative",
+      "source_id": "src-spatial-demo-schematic",
+      "as_of": "2026-08-23"
+    },
+    {
+      "id": "model-district-b",
+      "label": "モデル地区B",
+      "path": "M 392 56 L 704 78 L 748 202 L 602 238 L 354 178 Z",
+      "label_x": 548,
+      "label_y": 146,
+      "status": "illustrative",
+      "source_id": "src-spatial-demo-schematic",
+      "as_of": "2026-08-23"
+    },
+    {
+      "id": "model-district-c",
+      "label": "モデル地区C",
+      "path": "M 66 256 L 276 218 L 360 344 L 216 404 L 60 350 Z",
+      "label_x": 202,
+      "label_y": 318,
+      "status": "illustrative",
+      "source_id": "src-spatial-demo-schematic",
+      "as_of": "2026-08-23"
+    },
+    {
+      "id": "model-district-d",
+      "label": "モデル地区D",
+      "path": "M 380 238 L 596 222 L 738 306 L 646 412 L 430 366 Z",
+      "label_x": 560,
+      "label_y": 320,
+      "status": "illustrative",
+      "source_id": "src-spatial-demo-schematic",
+      "as_of": "2026-08-23"
+    }
+  ],
+  "facilities": [
+    {
+      "id": "facility-model-district-a-heat-01",
+      "district_id": "model-district-a",
+      "category": "heat_shelter",
+      "label": "休憩拠点・例示01",
+      "x": 135,
+      "y": 116,
+      "status": "illustrative",
+      "source_id": "src-spatial-demo-schematic",
+      "as_of": "2026-08-23"
+    },
+    {
+      "id": "facility-model-district-a-water-01",
+      "district_id": "model-district-a",
+      "category": "water_rest",
+      "label": "給水・休憩拠点・例示01",
+      "x": 235,
+      "y": 158,
+      "status": "illustrative",
+      "source_id": "src-spatial-demo-schematic",
+      "as_of": "2026-08-23"
+    },
+    {
+      "id": "facility-model-district-a-medical-01",
+      "district_id": "model-district-a",
+      "category": "medical_care",
+      "label": "医療・介護相談先・例示01",
+      "x": 108,
+      "y": 168,
+      "status": "illustrative",
+      "source_id": "src-spatial-demo-schematic",
+      "as_of": "2026-08-23"
+    },
+    {
+      "id": "facility-model-district-a-evacuation-01",
+      "district_id": "model-district-a",
+      "category": "evacuation",
+      "label": "避難所・避難場所・例示01",
+      "x": 286,
+      "y": 108,
+      "status": "illustrative",
+      "source_id": "src-spatial-demo-schematic",
+      "as_of": "2026-08-23"
+    },
+    {
+      "id": "facility-model-district-b-heat-01",
+      "district_id": "model-district-b",
+      "category": "heat_shelter",
+      "label": "休憩拠点・例示01",
+      "x": 460,
+      "y": 110,
+      "status": "illustrative",
+      "source_id": "src-spatial-demo-schematic",
+      "as_of": "2026-08-23"
+    },
+    {
+      "id": "facility-model-district-b-water-01",
+      "district_id": "model-district-b",
+      "category": "water_rest",
+      "label": "給水・休憩拠点・例示01",
+      "x": 550,
+      "y": 166,
+      "status": "illustrative",
+      "source_id": "src-spatial-demo-schematic",
+      "as_of": "2026-08-23"
+    },
+    {
+      "id": "facility-model-district-b-medical-01",
+      "district_id": "model-district-b",
+      "category": "medical_care",
+      "label": "医療・介護相談先・例示01",
+      "x": 656,
+      "y": 124,
+      "status": "illustrative",
+      "source_id": "src-spatial-demo-schematic",
+      "as_of": "2026-08-23"
+    },
+    {
+      "id": "facility-model-district-b-evacuation-01",
+      "district_id": "model-district-b",
+      "category": "evacuation",
+      "label": "避難所・避難場所・例示01",
+      "x": 632,
+      "y": 198,
+      "status": "illustrative",
+      "source_id": "src-spatial-demo-schematic",
+      "as_of": "2026-08-23"
+    },
+    {
+      "id": "facility-model-district-c-heat-01",
+      "district_id": "model-district-c",
+      "category": "heat_shelter",
+      "label": "休憩拠点・例示01",
+      "x": 126,
+      "y": 300,
+      "status": "illustrative",
+      "source_id": "src-spatial-demo-schematic",
+      "as_of": "2026-08-23"
+    },
+    {
+      "id": "facility-model-district-c-water-01",
+      "district_id": "model-district-c",
+      "category": "water_rest",
+      "label": "給水・休憩拠点・例示01",
+      "x": 238,
+      "y": 270,
+      "status": "illustrative",
+      "source_id": "src-spatial-demo-schematic",
+      "as_of": "2026-08-23"
+    },
+    {
+      "id": "facility-model-district-c-medical-01",
+      "district_id": "model-district-c",
+      "category": "medical_care",
+      "label": "医療・介護相談先・例示01",
+      "x": 184,
+      "y": 354,
+      "status": "illustrative",
+      "source_id": "src-spatial-demo-schematic",
+      "as_of": "2026-08-23"
+    },
+    {
+      "id": "facility-model-district-c-evacuation-01",
+      "district_id": "model-district-c",
+      "category": "evacuation",
+      "label": "避難所・避難場所・例示01",
+      "x": 302,
+      "y": 320,
+      "status": "illustrative",
+      "source_id": "src-spatial-demo-schematic",
+      "as_of": "2026-08-23"
+    },
+    {
+      "id": "facility-model-district-d-heat-01",
+      "district_id": "model-district-d",
+      "category": "heat_shelter",
+      "label": "休憩拠点・例示01",
+      "x": 454,
+      "y": 282,
+      "status": "illustrative",
+      "source_id": "src-spatial-demo-schematic",
+      "as_of": "2026-08-23"
+    },
+    {
+      "id": "facility-model-district-d-water-01",
+      "district_id": "model-district-d",
+      "category": "water_rest",
+      "label": "給水・休憩拠点・例示01",
+      "x": 540,
+      "y": 334,
+      "status": "illustrative",
+      "source_id": "src-spatial-demo-schematic",
+      "as_of": "2026-08-23"
+    },
+    {
+      "id": "facility-model-district-d-medical-01",
+      "district_id": "model-district-d",
+      "category": "medical_care",
+      "label": "医療・介護相談先・例示01",
+      "x": 626,
+      "y": 286,
+      "status": "illustrative",
+      "source_id": "src-spatial-demo-schematic",
+      "as_of": "2026-08-23"
+    },
+    {
+      "id": "facility-model-district-d-evacuation-01",
+      "district_id": "model-district-d",
+      "category": "evacuation",
+      "label": "避難所・避難場所・例示01",
+      "x": 658,
+      "y": 354,
+      "status": "illustrative",
+      "source_id": "src-spatial-demo-schematic",
+      "as_of": "2026-08-23"
+    }
+  ]
+}

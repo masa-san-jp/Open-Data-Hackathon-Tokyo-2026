@@ -1,8 +1,8 @@
 ---
 id: T00
 phase: 0
-status: ready
-owner: unassigned
+status: done
+owner: agent
 depends_on: []
 files:
   - apps/silverpunk-proof-map/README.md
@@ -48,3 +48,10 @@ files:
 観測: ディレクトリ構成と起動コマンドを確認
 残課題: T01 が JSON fixture を追加する
 ```
+
+## 実施記録（2026-08-23）
+
+実装: `apps/silverpunk-proof-map/`（README.md, AGENTS.md, data/, data/raw/, data/normalized/, evidence/, prototype/, scripts/, tasks/）を作成。
+検査: `python3 -m http.server` の起動確認（`curl` で200応答）。
+観測: 既存 `apps/tokyo-aging-stress-test/` は無変更。詳細は `apps/silverpunk-proof-map/evidence/run-log.md` の該当エントリ。
+残課題: なし（T01 へ引き渡し済み）。

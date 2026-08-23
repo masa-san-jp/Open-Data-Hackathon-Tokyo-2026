@@ -25,12 +25,22 @@
   header.app-header { padding: 10px 16px 6px; border-bottom: 1px solid var(--line); }
   header.app-header h1 { font-size: 18px; margin: 0 0 2px; }
   header.app-header p.sub { margin: 0; color: var(--sub); font-size: 12px; }
+  .controls-bar { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px 18px; padding: 10px 16px; border-bottom: 1px solid var(--line); background: #fff; }
+  .control-group { display: flex; align-items: center; gap: 6px; min-height: 30px; }
+  .group-label { font-size: 12px; font-weight: 700; white-space: nowrap; }
+  .threshold-buttons { display: flex; gap: 4px; }
+  .threshold-buttons button { border: 1px solid #94a3b8; border-radius: 4px; background: #fff; color: var(--ink); padding: 5px 10px; font: inherit; font-size: 12px; cursor: pointer; }
+  .threshold-buttons button.active { border-color: #1d4ed8; background: #1d4ed8; color: #fff; }
+  .control-group select, .control-group input[type="number"] { min-height: 28px; border: 1px solid #94a3b8; border-radius: 4px; background: #fff; color: var(--ink); padding: 3px 6px; font: inherit; font-size: 12px; }
+  .control-group input[type="number"] { width: 74px; }
+  .condition-status { flex: 1 1 100%; margin: 0; padding: 6px 8px; border: 1px solid #f59e0b; border-radius: 4px; background: #fffbeb; color: #92400e; font-size: 11px; line-height: 1.45; }
   main.layout { display: grid; grid-template-columns: 260px 1fr; min-height: 640px; }
   aside.side-panel { border-right: 1px solid var(--line); padding: 12px; font-size: 12px; background: var(--panel-bg); }
   aside.side-panel h2 { font-size: 13px; margin: 12px 0 6px; }
   aside.side-panel h2:first-child { margin-top: 0; }
   .legend-row { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
   .dot { width: 10px; height: 10px; border-radius: 50%; flex: none; border: 1px solid rgba(0,0,0,0.2); }
+  .layer-group-label { margin: 8px 0 4px; color: #64748b; font-size: 11px; font-weight: 700; }
   .layer-toggle { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
   .map-status { margin: 0 0 8px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 4px; background: #fff; color: var(--sub); font-size: 11px; line-height: 1.45; }
   .sources { font-size: 11px; color: var(--sub); line-height: 1.6; }
@@ -55,16 +65,44 @@
   <p class="sub">D0（合成デモ）とは別系統。実座標の行政区域・施設点・座標グリッドに、オンライン時は表示専用の背景地図を重ねています。出典は左側パネルを参照してください。</p>
 </header>
 
+<div class="controls-bar" aria-label="徒歩条件">
+  <div class="control-group">
+    <span class="group-label">徒歩時間閾値</span>
+    <div class="threshold-buttons" role="group" aria-label="徒歩時間閾値">
+      <button type="button" data-threshold="5">5分</button>
+      <button type="button" data-threshold="10" class="active">10分</button>
+      <button type="button" data-threshold="15">15分</button>
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="group-label" for="speedProfile">歩行速度</label>
+    <select id="speedProfile">
+      <option value="80">成人目安（80m/min）</option>
+    </select>
+    <input id="customSpeed" type="number" min="20" max="100" step="1" value="80" aria-label="歩行速度（m/min）" />
+    <span aria-hidden="true">m/min</span>
+  </div>
+  <div class="control-group">
+    <label><input type="checkbox" id="slopeToggle" checked /> 勾配補正 ON</label>
+  </div>
+  <p class="condition-status" id="conditionStatus">計算条件（表示のみ）: 徒歩10分 / 80m/min / 勾配補正 ON。徒歩到達圏は未実装です。</p>
+</div>
+
 <main class="layout">
   <aside class="side-panel">
     <h2>凡例</h2>
     <div class="legend-row"><span class="dot" style="background:var(--clinic)"></span>診療所・病院（<span id="clinicCount"></span>件表示 / 全<span id="clinicTotal"></span>件）</div>
     <div class="legend-row"><span class="dot" style="background:var(--welfare)"></span>介護サービス事業所（<span id="welfareCount"></span>件表示 / 全<span id="welfareTotal"></span>件）</div>
 
-    <h2>レイヤー表示</h2>
+    <h2>レイヤー構造</h2>
+    <div class="layer-group-label">背景</div>
+    <div class="layer-toggle"><input type="checkbox" id="toggleBasemap" checked /><label for="toggleBasemap">背景地図（オンライン）</label></div>
+    <div class="layer-toggle"><input type="checkbox" id="toggleGrid" checked /><label for="toggleGrid">座標グリッド</label></div>
+    <div class="layer-group-label">行政区域</div>
+    <div class="layer-toggle"><input type="checkbox" id="toggleBoundary" checked /><label for="toggleBoundary">青梅市行政区域</label></div>
+    <div class="layer-group-label">施設</div>
     <div class="layer-toggle"><input type="checkbox" id="toggleClinic" checked /><label for="toggleClinic">診療所・病院</label></div>
     <div class="layer-toggle"><input type="checkbox" id="toggleWelfare" checked /><label for="toggleWelfare">介護サービス事業所</label></div>
-    <div class="layer-toggle"><input type="checkbox" id="toggleBasemap" checked /><label for="toggleBasemap">背景地図（オンライン）</label></div>
     <div class="map-status" id="basemapStatus">背景地図を読み込み中。失敗時は座標グリッドを表示します。</div>
 
     <h2>データ品質</h2>
@@ -90,6 +128,7 @@
       <g id="welfareLayer"></g>
       <g id="mapAnnotations" pointer-events="none"></g>
     </svg>
+    <p class="map-help" id="accessibilityStatus">徒歩到達圏: 未実装。道路網・標高データ未接続のため、上の条件は表示のみです。施設点の位置や色は徒歩条件で変化しません。</p>
     <p class="map-help">© OpenStreetMap contributors（背景地図は表示専用）。青梅市行政区域と施設点は、下記の出典付き実データを描画しています。座標グリッド・北矢印・縮尺は実座標から算出しています。</p>
   </section>
 </main>
@@ -5366,7 +5405,7 @@
     var scaleLabel = svgElement("text", { x: String(barX + barWidth / 2), y: String(barY - 7), fill: "#0f172a", "font-size": "11", "font-weight": "700", "text-anchor": "middle" }, scaleGroup);
     scaleLabel.textContent = "2 km";
 
-    var attributionGroup = svgElement("g", {}, annotations);
+    var attributionGroup = svgElement("g", { id: "osmAttribution" }, annotations);
     svgElement("rect", { x: "674", y: "586", width: "214", height: "24", rx: "3", fill: "#ffffff", "fill-opacity": "0.88" }, attributionGroup);
     var attribution = svgElement("text", { x: "880", y: "602", fill: "#1f2937", "font-size": "11", "text-anchor": "end" }, attributionGroup);
     attribution.textContent = "© OpenStreetMap contributors";
@@ -5394,9 +5433,11 @@
     var status = document.getElementById("basemapStatus");
     layer.replaceChildren();
     var boundary = document.getElementById("boundaryPolygon");
+    var attribution = document.getElementById("osmAttribution");
     if (!enabled) {
       status.textContent = "背景地図: OFF。実座標のグリッドと行政区域を表示中。";
       boundary.setAttribute("fill-opacity", "0.82");
+      attribution.style.display = "none";
       return;
     }
 
@@ -5409,6 +5450,7 @@
     var loaded = 0, failed = 0;
     status.textContent = "背景地図: OpenStreetMapを読み込み中（表示専用）。";
     boundary.setAttribute("fill-opacity", "0.28");
+    attribution.style.display = "";
 
     function updateStatus() {
       if (loaded + failed < total) return;
@@ -5507,6 +5549,49 @@
   document.getElementById("toggleBasemap").addEventListener("change", function (e) {
     renderBasemap(e.target.checked);
   });
+  document.getElementById("toggleGrid").addEventListener("change", function (e) {
+    document.getElementById("gridLayer").style.display = e.target.checked ? "" : "none";
+  });
+  document.getElementById("toggleBoundary").addEventListener("change", function (e) {
+    document.getElementById("boundaryPolygon").style.display = e.target.checked ? "" : "none";
+  });
+
+  var conditionState = { threshold: 10, speed: 80, slope: true };
+
+  function updateConditionStatus() {
+    var slopeText = conditionState.slope ? "勾配補正 ON" : "勾配補正 OFF";
+    var summary = "徒歩" + conditionState.threshold + "分 / " + conditionState.speed + "m/min / " + slopeText;
+    document.getElementById("conditionStatus").textContent =
+      "計算条件（表示のみ）: " + summary + "。徒歩到達圏は未実装です。";
+    document.getElementById("accessibilityStatus").textContent =
+      "徒歩到達圏: 未実装。道路網・標高データ未接続のため、選択条件（" + summary + "）は表示のみです。施設点の位置や色は徒歩条件で変化しません。";
+  }
+
+  document.querySelectorAll("[data-threshold]").forEach(function (button) {
+    button.addEventListener("click", function () {
+      conditionState.threshold = Number(button.getAttribute("data-threshold"));
+      document.querySelectorAll("[data-threshold]").forEach(function (other) {
+        other.classList.toggle("active", other === button);
+      });
+      updateConditionStatus();
+    });
+  });
+  document.getElementById("speedProfile").addEventListener("change", function (e) {
+    conditionState.speed = Number(e.target.value);
+    document.getElementById("customSpeed").value = conditionState.speed;
+    updateConditionStatus();
+  });
+  document.getElementById("customSpeed").addEventListener("input", function (e) {
+    var value = Number(e.target.value);
+    if (!Number.isFinite(value)) return;
+    conditionState.speed = Math.max(20, Math.min(100, Math.round(value)));
+    updateConditionStatus();
+  });
+  document.getElementById("slopeToggle").addEventListener("change", function (e) {
+    conditionState.slope = e.target.checked;
+    updateConditionStatus();
+  });
+  updateConditionStatus();
 
   var sourcesEl = document.getElementById("sourcesList");
   (DATA.sources || []).concat(DATA.display_sources || []).forEach(function (s) {

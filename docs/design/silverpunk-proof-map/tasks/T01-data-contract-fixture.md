@@ -1,8 +1,8 @@
 ---
 id: T01
 phase: 0
-status: ready
-owner: unassigned
+status: done
+owner: agent
 depends_on: [T00]
 files:
   - apps/silverpunk-proof-map/data/demo-fixture.json
@@ -40,3 +40,11 @@ files:
 ## 完了時の引き渡し
 
 変更ファイル、JSON の読み込みコマンド、地区数、意図的に含めた欠損状態をタスク末尾に追記する。
+
+## 実施記録（2026-08-23）
+
+変更: `apps/silverpunk-proof-map/data/demo-fixture.json`, `data/README.md`。
+読み込み確認: `python3 -c "import json; json.load(open('data/demo-fixture.json'))"`。
+地区数: 4（モデル地区A〜D、実在自治体名は不使用）。
+含めた状態値: `illustrative`, `missing`, `not_verified`, `not_comparable`, `not_applicable`, `stale`, `not_computable`（priority）を各1件以上。
+残課題: なし（T02・T04V へ引き渡し済み）。

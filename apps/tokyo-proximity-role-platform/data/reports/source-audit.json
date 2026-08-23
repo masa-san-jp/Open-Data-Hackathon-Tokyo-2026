@@ -1,0 +1,1021 @@
+{
+  "municipality": "青梅市",
+  "functions": {
+    "food": [
+      {
+        "query": "青梅市 食料品店",
+        "count": 39,
+        "results": [
+          {
+            "title": "東京都青梅市における飲食店一覧",
+            "organization": "青梅市",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T09:02:47.434984",
+            "resources": [
+              {
+                "format": "XLSX",
+                "url": "https://www.opendata.metro.tokyo.lg.jp/ome/132055_food_business_all.xlsx"
+              }
+            ]
+          },
+          {
+            "title": "町田市名産品",
+            "organization": "町田市",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T09:44:54.167093",
+            "resources": [
+              {
+                "format": "CSV",
+                "url": "https://www.city.machida.tokyo.jp/shisei/opendata/sangyo/meisanhin.files/meisanhin.csv"
+              }
+            ]
+          },
+          {
+            "title": "あなたの町の野菜メニュー店_昭島市の野菜メニュー店（PDF：643KB）",
+            "organization": "東京都保健医療局",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T07:49:17.517300",
+            "resources": [
+              {
+                "format": "CSV",
+                "url": "https://www.opendata.metro.tokyo.lg.jp/hokeniryou/20200626tthc-yasaimenyuten-2.csv"
+              },
+              {
+                "format": "CSV",
+                "url": "https://www.opendata.metro.tokyo.lg.jp/hokeniryou/20200626tthc-yasaimenyuten-3.csv"
+              },
+              {
+                "format": "CSV",
+                "url": "https://www.opendata.metro.tokyo.lg.jp/hokeniryou/2902tthc-yasaimenyu-ten-5.csv"
+              }
+            ]
+          },
+          {
+            "title": "区市町村民葬儀取扱店一覧",
+            "organization": "清瀬市",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2026-06-09T06:59:55.842347",
+            "resources": [
+              {
+                "format": "HTML",
+                "url": "https://www.city.kiyose.lg.jp/opendata/opendata/opendataichiran/1001604.html"
+              }
+            ]
+          },
+          {
+            "title": "私の好きなお店大賞",
+            "organization": "町田市",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T09:44:53.183367",
+            "resources": [
+              {
+                "format": "CSV",
+                "url": "https://www.city.machida.tokyo.jp/shisei/opendata/sangyo/sukinaomise.files/sukinaomise.csv"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "query": "青梅市 スーパーマーケット",
+        "count": 0,
+        "results": []
+      }
+    ],
+    "pharmacy": [
+      {
+        "query": "青梅市 薬局",
+        "count": 3,
+        "results": [
+          {
+            "title": "薬局等台帳",
+            "organization": "東京都保健医療局",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T07:51:47.009771",
+            "resources": [
+              {
+                "format": "HTML",
+                "url": "https://www.hokeniryo.metro.tokyo.lg.jp/kenkou/hokenjo_daicho/shokuhineigyokyokadaicho"
+              }
+            ]
+          },
+          {
+            "title": "指定自立支援医療機関の情報提供（育成医療・更生医療）",
+            "organization": "東京都福祉局",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T07:40:58.367386",
+            "resources": [
+              {
+                "format": "XLS",
+                "url": "https://www.fukushi.metro.tokyo.lg.jp/documents/d/fukushi/shitei_ik_byouin"
+              },
+              {
+                "format": "XLS",
+                "url": "https://www.fukushi.metro.tokyo.lg.jp/documents/d/fukushi/shitei_ik_yakkyoku"
+              },
+              {
+                "format": "XLS",
+                "url": "https://www.fukushi.metro.tokyo.lg.jp/documents/d/fukushi/shitei_ik_houkan"
+              }
+            ]
+          },
+          {
+            "title": "医療機関等の施設一覧",
+            "organization": "町田市",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T09:45:01.515269",
+            "resources": [
+              {
+                "format": "XLSX",
+                "url": "https://www.city.machida.tokyo.jp/shisei/opendata/shisetsu/iryoukikan.files/imuichiran.xlsx"
+              },
+              {
+                "format": "XLSX",
+                "url": "https://www.city.machida.tokyo.jp/shisei/opendata/shisetsu/iryoukikan.files/yakujiichiran.xlsx"
+              },
+              {
+                "format": "XLSX",
+                "url": "https://www.city.machida.tokyo.jp/shisei/opendata/shisetsu/iryoukikan.files/imushinkihaishi.xlsx"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "query": "青梅市 薬局等台帳",
+        "count": 295,
+        "results": [
+          {
+            "title": "薬局等台帳",
+            "organization": "東京都保健医療局",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T07:51:47.009771",
+            "resources": [
+              {
+                "format": "HTML",
+                "url": "https://www.hokeniryo.metro.tokyo.lg.jp/kenkou/hokenjo_daicho/shokuhineigyokyokadaicho"
+              }
+            ]
+          },
+          {
+            "title": "医療機関等台帳",
+            "organization": "東京都保健医療局",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T07:51:45.801292",
+            "resources": [
+              {
+                "format": "HTML",
+                "url": "https://www.hokeniryo.metro.tokyo.lg.jp/kenkou/hokenjo_daicho/shokuhineigyokyokadaicho"
+              }
+            ]
+          },
+          {
+            "title": "東村山市食品等営業許可・届出一覧",
+            "organization": "東村山市",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T09:47:40.252916",
+            "resources": [
+              {
+                "format": "CSV",
+                "url": "https://www.opendata.metro.tokyo.lg.jp/higashimurayama/20240619_food_business_all.csv"
+              }
+            ]
+          },
+          {
+            "title": "2018年度町田市観光客数等実態調査報告書",
+            "organization": "町田市",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T09:44:28.087523",
+            "resources": [
+              {
+                "format": "PDF",
+                "url": "https://www.city.machida.tokyo.jp/shisei/opendata/sangyo/kankoujittaichousa2018.files/gaiyouban.pdf"
+              },
+              {
+                "format": "PDF",
+                "url": "https://www.city.machida.tokyo.jp/shisei/opendata/sangyo/kankoujittaichousa2018.files/houkokusho.pdf"
+              },
+              {
+                "format": "XLSX",
+                "url": "https://www.city.machida.tokyo.jp/shisei/opendata/sangyo/kankoujittaichousa2018.files/irekomikyakusu.xlsx"
+              }
+            ]
+          },
+          {
+            "title": "【統計情報】住民基本台帳からみた三鷹市の人口",
+            "organization": "三鷹市",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T09:01:56.044851",
+            "resources": [
+              {
+                "format": "XLSX",
+                "url": "https://www.city.mitaka.lg.jp/c_service/074/attached/attach_74197_7.xlsx"
+              },
+              {
+                "format": "XLSX",
+                "url": "https://www.city.mitaka.lg.jp/c_service/074/attached/attach_74197_8.xlsx"
+              },
+              {
+                "format": "XLSX",
+                "url": "https://www.city.mitaka.lg.jp/c_service/074/attached/attach_74197_9.xlsx"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "clinic": [
+      {
+        "query": "青梅市 医療機関",
+        "count": 130,
+        "results": [
+          {
+            "title": "東京都青梅市における医療機関一覧",
+            "organization": "青梅市",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T09:02:49.626696",
+            "resources": [
+              {
+                "format": "XLSX",
+                "url": "https://www.opendata.metro.tokyo.lg.jp/ome/132055_hospital.xlsx"
+              }
+            ]
+          },
+          {
+            "title": "東京都青梅市における教育機関一覧",
+            "organization": "青梅市",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T09:02:42.722546",
+            "resources": [
+              {
+                "format": "XLSX",
+                "url": "https://www.opendata.metro.tokyo.lg.jp/ome/132055_educational_institution.xlsx"
+              }
+            ]
+          },
+          {
+            "title": "東村山市医療機関一覧",
+            "organization": "東村山市",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T09:47:35.047514",
+            "resources": [
+              {
+                "format": "CSV",
+                "url": "https://www.opendata.metro.tokyo.lg.jp/higashimurayama/20240619_hospital.csv"
+              }
+            ]
+          },
+          {
+            "title": "医療機関一覧",
+            "organization": "清瀬市",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2026-06-09T06:36:47.852989",
+            "resources": [
+              {
+                "format": "HTML",
+                "url": "https://www.city.kiyose.lg.jp/opendata/opendata/opendataichiran/1001604.html"
+              }
+            ]
+          },
+          {
+            "title": "医療機関一覧",
+            "organization": "羽村市",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-11-28T02:08:55.103306",
+            "resources": [
+              {
+                "format": "CSV",
+                "url": "https://www.opendata.metro.tokyo.lg.jp/hamura/132276_hospital.csv"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "query": "青梅市 診療所",
+        "count": 180,
+        "results": [
+          {
+            "title": "東京都青梅市における投票所一覧",
+            "organization": "青梅市",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T09:03:05.309324",
+            "resources": [
+              {
+                "format": "XLSX",
+                "url": "https://www.opendata.metro.tokyo.lg.jp/ome/132055_polling_place.xlsx"
+              },
+              {
+                "format": "XLSX",
+                "url": "https://www.opendata.metro.tokyo.lg.jp/ome/132055_facility_4.xlsx"
+              }
+            ]
+          },
+          {
+            "title": "東京都青梅市における避難所一覧",
+            "organization": "青梅市",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T09:02:43.803398",
+            "resources": [
+              {
+                "format": "XLSX",
+                "url": "https://www.opendata.metro.tokyo.lg.jp/ome/132055_evacuation_space.xlsx"
+              }
+            ]
+          },
+          {
+            "title": "病院・診療所一覧",
+            "organization": "西東京市",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T10:01:06.263970",
+            "resources": [
+              {
+                "format": "XLSX",
+                "url": "https://www.opendata.metro.tokyo.lg.jp/nishitokyo/132292_hospital_clinic.xlsx"
+              }
+            ]
+          },
+          {
+            "title": "東京都青梅市における介護サービス事業所一覧",
+            "organization": "青梅市",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T09:02:40.534994",
+            "resources": [
+              {
+                "format": "XLSX",
+                "url": "https://www.opendata.metro.tokyo.lg.jp/ome/132055_care_service.xlsx"
+              }
+            ]
+          },
+          {
+            "title": "歯科診療一覧",
+            "organization": "西東京市",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T10:01:07.405517",
+            "resources": [
+              {
+                "format": "XLSX",
+                "url": "https://www.opendata.metro.tokyo.lg.jp/nishitokyo/132292_dentalclinic.xlsx"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "welfare": [
+      {
+        "query": "青梅市 介護サービス事業所",
+        "count": 397,
+        "results": [
+          {
+            "title": "東京都青梅市における介護サービス事業所一覧",
+            "organization": "青梅市",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T09:02:40.534994",
+            "resources": [
+              {
+                "format": "XLSX",
+                "url": "https://www.opendata.metro.tokyo.lg.jp/ome/132055_care_service.xlsx"
+              }
+            ]
+          },
+          {
+            "title": "東村山市介護サービス事業所一覧",
+            "organization": "東村山市",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T09:47:33.744666",
+            "resources": [
+              {
+                "format": "CSV",
+                "url": "https://www.opendata.metro.tokyo.lg.jp/higashimurayama/20240619_care_service.csv"
+              }
+            ]
+          },
+          {
+            "title": "介護サービス事業所一覧",
+            "organization": "西東京市",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T10:01:24.726197",
+            "resources": [
+              {
+                "format": "XLSX",
+                "url": "https://www.opendata.metro.tokyo.lg.jp/nishitokyo/132292_care_service.xlsx"
+              }
+            ]
+          },
+          {
+            "title": "介護サービス事業所一覧",
+            "organization": "東大和市",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T09:56:48.808134",
+            "resources": [
+              {
+                "format": "CSV",
+                "url": "https://www.opendata.metro.tokyo.lg.jp/suisyoudataset/132209_care_service.csv"
+              }
+            ]
+          },
+          {
+            "title": "介護サービス事業所一覧",
+            "organization": "小金井市",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T09:45:46.576523",
+            "resources": [
+              {
+                "format": "CSV",
+                "url": "https://www.opendata.metro.tokyo.lg.jp/koganei/09_kaigojigyousyo.csv"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "query": "青梅市 福祉施設",
+        "count": 727,
+        "results": [
+          {
+            "title": "施設関連情報_青梅市",
+            "organization": "東京都教育庁",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T07:34:52.658320",
+            "resources": [
+              {
+                "format": "CSV",
+                "url": "https://www.opendata.metro.tokyo.lg.jp/kyouiku/R3/skseti_28.csv"
+              }
+            ]
+          },
+          {
+            "title": "東京都青梅市における公共施設一覧",
+            "organization": "青梅市",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T09:02:53.986618",
+            "resources": [
+              {
+                "format": "XLSX",
+                "url": "https://www.opendata.metro.tokyo.lg.jp/ome/132055_public_facility.xlsx"
+              }
+            ]
+          },
+          {
+            "title": "青梅市_連絡先一覧",
+            "organization": "東京都福祉局",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T07:43:41.963416",
+            "resources": [
+              {
+                "format": "CSV",
+                "url": "https://www.opendata.metro.tokyo.lg.jp/fukushihoken/R3/28_ome_shi.csv"
+              },
+              {
+                "format": "CSV",
+                "url": "https://www.opendata.metro.tokyo.lg.jp/fukushihoken/28_ome_shi.csv"
+              }
+            ]
+          },
+          {
+            "title": "東京都青梅市における子育て支援施設一覧",
+            "organization": "青梅市",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T09:03:06.608685",
+            "resources": [
+              {
+                "format": "XLSX",
+                "url": "https://www.opendata.metro.tokyo.lg.jp/ome/132055_baby_station.xlsx"
+              },
+              {
+                "format": "XLSX",
+                "url": "https://www.opendata.metro.tokyo.lg.jp/ome/132055_facility_5.xlsx"
+              }
+            ]
+          },
+          {
+            "title": "東京都青梅市における観光関連施設一覧",
+            "organization": "青梅市",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T09:03:00.707400",
+            "resources": [
+              {
+                "format": "XLSX",
+                "url": "https://www.opendata.metro.tokyo.lg.jp/ome/132055_tourism.xlsx"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "toilet_rest": [
+      {
+        "query": "青梅市 公衆トイレ",
+        "count": 40,
+        "results": [
+          {
+            "title": "東京都青梅市における公衆トイレ一覧",
+            "organization": "青梅市",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T09:02:54.996500",
+            "resources": [
+              {
+                "format": "XLSX",
+                "url": "https://www.opendata.metro.tokyo.lg.jp/ome/132055_public_toilet.xlsx"
+              }
+            ]
+          },
+          {
+            "title": "東村山市公衆トイレ一覧",
+            "organization": "東村山市",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T09:47:38.195907",
+            "resources": [
+              {
+                "format": "CSV",
+                "url": "https://www.opendata.metro.tokyo.lg.jp/higashimurayama/20240619_public_toilet"
+              }
+            ]
+          },
+          {
+            "title": "公衆トイレ一覧",
+            "organization": "青梅市",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T09:03:13.287207",
+            "resources": [
+              {
+                "format": "XLSX",
+                "url": "https://www.opendata.metro.tokyo.lg.jp/ome/ods/132055_public_toilet.xlsx"
+              }
+            ]
+          },
+          {
+            "title": "公衆トイレ一覧",
+            "organization": "清瀬市",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2026-06-09T06:36:42.213183",
+            "resources": [
+              {
+                "format": "HTML",
+                "url": "https://www.city.kiyose.lg.jp/opendata/opendata/opendataichiran/1001604.html"
+              }
+            ]
+          },
+          {
+            "title": "公衆トイレ一覧",
+            "organization": "西東京市",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T10:01:26.799689",
+            "resources": [
+              {
+                "format": "XLSX",
+                "url": "https://www.opendata.metro.tokyo.lg.jp/nishitokyo/132292_public_toilet.xlsx"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "query": "青梅市 公園",
+        "count": 95,
+        "results": [
+          {
+            "title": "東京都青梅市における公衆トイレ一覧",
+            "organization": "青梅市",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T09:02:54.996500",
+            "resources": [
+              {
+                "format": "XLSX",
+                "url": "https://www.opendata.metro.tokyo.lg.jp/ome/132055_public_toilet.xlsx"
+              }
+            ]
+          },
+          {
+            "title": "東京都青梅市における公営駐車場一覧",
+            "organization": "青梅市",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T09:03:02.964502",
+            "resources": [
+              {
+                "format": "XLSX",
+                "url": "https://www.opendata.metro.tokyo.lg.jp/ome/132055_car_park.xlsx"
+              },
+              {
+                "format": "XLSX",
+                "url": "https://www.opendata.metro.tokyo.lg.jp/ome/132055_facility_2.xlsx"
+              }
+            ]
+          },
+          {
+            "title": "東京都青梅市における公共施設一覧",
+            "organization": "青梅市",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T09:02:53.986618",
+            "resources": [
+              {
+                "format": "XLSX",
+                "url": "https://www.opendata.metro.tokyo.lg.jp/ome/132055_public_facility.xlsx"
+              }
+            ]
+          },
+          {
+            "title": "都市公園・都立公園一覧",
+            "organization": "青梅市",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2026-03-30T14:18:41.322946",
+            "resources": [
+              {
+                "format": "CSV",
+                "url": "https://www.opendata.metro.tokyo.lg.jp/ome/132055_omeshi_toshikouen.csv"
+              }
+            ]
+          },
+          {
+            "title": "都市公園・都立公園一覧",
+            "organization": "調布市",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2026-05-13T15:03:13.519486",
+            "resources": [
+              {
+                "format": "CSV",
+                "url": "https://www.opendata.metro.tokyo.lg.jp/chofu/132080_chofushi_toshitoritukouen.csv"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "mobility_node": [
+      {
+        "query": "青梅市 バス停",
+        "count": 1,
+        "results": [
+          {
+            "title": "【事業案内】みたかシティバス時刻表",
+            "organization": "三鷹市",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T09:02:22.565614",
+            "resources": [
+              {
+                "format": "XLSX",
+                "url": "https://www.city.mitaka.lg.jp/c_service/085/attached/attach_85861_2.xlsx"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "query": "青梅市 GTFS",
+        "count": 0,
+        "results": []
+      },
+      {
+        "query": "青梅市 コミュニティバス",
+        "count": 31,
+        "results": [
+          {
+            "title": "市民バス・コミュニティバス",
+            "organization": "町田市",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T09:44:32.365319",
+            "resources": [
+              {
+                "format": "CSV",
+                "url": "https://www.city.machida.tokyo.jp/shisei/opendata/unyu/communitybus.files/kawasemi.csv"
+              },
+              {
+                "format": "CSV",
+                "url": "https://www.city.machida.tokyo.jp/shisei/opendata/unyu/communitybus.files/karakida.csv"
+              },
+              {
+                "format": "CSV",
+                "url": "https://www.city.machida.tokyo.jp/shisei/opendata/unyu/communitybus.files/machikkokokyo.csv"
+              }
+            ]
+          },
+          {
+            "title": "都営バス　バスのりば",
+            "organization": "東京都交通局",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T07:29:44.535033",
+            "resources": [
+              {
+                "format": "CSV",
+                "url": "https://www.opendata.metro.tokyo.lg.jp/kotsu/bus_noriba_aomono_01.csv"
+              },
+              {
+                "format": "CSV",
+                "url": "https://www.opendata.metro.tokyo.lg.jp/kotsu/bus_noriba_akabane_01.csv"
+              },
+              {
+                "format": "CSV",
+                "url": "https://www.opendata.metro.tokyo.lg.jp/kotsu/bus_noriba_akabanehashi_01.csv"
+              }
+            ]
+          },
+          {
+            "title": "都営バス　窓口一覧",
+            "organization": "東京都交通局",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T07:29:49.816601",
+            "resources": [
+              {
+                "format": "CSV",
+                "url": "https://www.opendata.metro.tokyo.lg.jp/kotsu/bus_branch_chiyoda_minato_shinagawa.csv"
+              },
+              {
+                "format": "CSV",
+                "url": "https://www.opendata.metro.tokyo.lg.jp/kotsu/bus_branch_shinjuku_shibuya.csv"
+              },
+              {
+                "format": "CSV",
+                "url": "https://www.opendata.metro.tokyo.lg.jp/kotsu/bus_branch_nakano_suginami_nerima.csv"
+              }
+            ]
+          },
+          {
+            "title": "コミュニティセンター・市民フォーラム",
+            "organization": "町田市",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T09:44:50.123342",
+            "resources": [
+              {
+                "format": "CSV",
+                "url": "https://www.city.machida.tokyo.jp/shisei/opendata/shisetsu/community-center.files/community-center.csv"
+              },
+              {
+                "format": "XLSX",
+                "url": "https://www.city.machida.tokyo.jp/shisei/opendata/shisetsu/community-center.files/kamioyamada-siyouryou.xlsx"
+              },
+              {
+                "format": "XLS",
+                "url": "https://www.city.machida.tokyo.jp/shisei/opendata/shisetsu/community-center.files/naruse-siyouryou.xls"
+              }
+            ]
+          },
+          {
+            "title": "はちバス",
+            "organization": "八王子市",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T08:59:55.943325",
+            "resources": [
+              {
+                "format": "HTML",
+                "url": "https://www.city.hachioji.tokyo.jp/kurashi/life/001/002/002/p024199.html"
+              },
+              {
+                "format": "HTML",
+                "url": "https://www.city.hachioji.tokyo.jp/kurashi/life/001/002/002/p024202.html"
+              },
+              {
+                "format": "HTML",
+                "url": "https://www.city.hachioji.tokyo.jp/kurashi/life/001/002/002/p024206.html"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "population": [
+      {
+        "query": "青梅市 人口統計",
+        "count": 521,
+        "results": [
+          {
+            "title": "東京都青梅市における人口統計一覧",
+            "organization": "青梅市",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T09:02:51.759347",
+            "resources": [
+              {
+                "format": "XLSX",
+                "url": "https://www.opendata.metro.tokyo.lg.jp/ome/132055_population.xlsx"
+              }
+            ]
+          },
+          {
+            "title": "府中市統計書オープンデータ_人口",
+            "organization": "府中市",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T09:03:35.314708",
+            "resources": [
+              {
+                "format": "XLS",
+                "url": "https://www.city.fuchu.tokyo.jp/gyosei/opendata/toukeisyo-opendata.files/fuc22a02oth01others.xlsx"
+              },
+              {
+                "format": "CSV",
+                "url": "https://www.city.fuchu.tokyo.jp/gyosei/opendata/toukeisyo-opendata.files/fuc22a02oth01others.csv"
+              },
+              {
+                "format": "XLS",
+                "url": "https://www.city.fuchu.tokyo.jp/gyosei/opendata/toukeisyo-opendata.files/fuc22a02brl01basic_resident_ledger.xlsx"
+              }
+            ]
+          },
+          {
+            "title": "【統計情報】住民基本台帳からみた三鷹市の人口",
+            "organization": "三鷹市",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T09:01:56.044851",
+            "resources": [
+              {
+                "format": "XLSX",
+                "url": "https://www.city.mitaka.lg.jp/c_service/074/attached/attach_74197_7.xlsx"
+              },
+              {
+                "format": "XLSX",
+                "url": "https://www.city.mitaka.lg.jp/c_service/074/attached/attach_74197_8.xlsx"
+              },
+              {
+                "format": "XLSX",
+                "url": "https://www.city.mitaka.lg.jp/c_service/074/attached/attach_74197_9.xlsx"
+              }
+            ]
+          },
+          {
+            "title": "立川市の人口動態（年推移）",
+            "organization": "立川市",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T09:00:47.930951",
+            "resources": [
+              {
+                "format": "CSV",
+                "url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/007/022/2-1-4jinkodoutai-nensuii.csv"
+              },
+              {
+                "format": "XLS",
+                "url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/007/022/2-1-4jinkodoutai-nensuii.xlsx"
+              }
+            ]
+          },
+          {
+            "title": "立川市の人口動態（月別内訳）",
+            "organization": "立川市",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T09:00:46.893717",
+            "resources": [
+              {
+                "format": "CSV",
+                "url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/007/022/2-1-4jinkodoutai-tsukibetsuuchiwake.csv"
+              },
+              {
+                "format": "XLS",
+                "url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/007/022/2-1-4jinkodoutai-tsukibetsuuchiwake.xlsx"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "query": "青梅市 町丁目 人口",
+        "count": 447,
+        "results": [
+          {
+            "title": "町丁目・年齢別人口",
+            "organization": "杉並区",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T08:43:08.633519",
+            "resources": [
+              {
+                "format": "CSV",
+                "url": "https://www.city.suginami.tokyo.jp/documents/18016/zinko.csv"
+              }
+            ]
+          },
+          {
+            "title": "世帯と人口（町丁目別）",
+            "organization": "練馬区",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2026-06-11T01:41:52.098455",
+            "resources": [
+              {
+                "format": "ZIP",
+                "url": "https://www.city.nerima.tokyo.jp/kusei/tokei/opendata/opendatasite/tokei_kusei/chouchoubetu.files/2016chouchoubetu.zip"
+              },
+              {
+                "format": "ZIP",
+                "url": "https://www.city.nerima.tokyo.jp/kusei/tokei/opendata/opendatasite/tokei_kusei/chouchoubetu.files/2017chouchoubetu.zip"
+              },
+              {
+                "format": "ZIP",
+                "url": "https://www.city.nerima.tokyo.jp/kusei/tokei/opendata/opendatasite/tokei_kusei/chouchoubetu.files/2018chouchoubetu.zip"
+              }
+            ]
+          },
+          {
+            "title": "世帯と人口（町丁目別・年齢別）",
+            "organization": "練馬区",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2026-06-11T01:42:07.440614",
+            "resources": [
+              {
+                "format": "CSV",
+                "url": "https://www.city.nerima.tokyo.jp/kusei/tokei/opendata/opendatasite/tokei_kusei/chouchou_nenreibetu.files/h28man.csv"
+              },
+              {
+                "format": "CSV",
+                "url": "https://www.city.nerima.tokyo.jp/kusei/tokei/opendata/opendatasite/tokei_kusei/chouchou_nenreibetu.files/h28woman.csv"
+              },
+              {
+                "format": "CSV",
+                "url": "https://www.city.nerima.tokyo.jp/kusei/tokei/opendata/opendatasite/tokei_kusei/chouchou_nenreibetu.files/h29man.csv"
+              }
+            ]
+          },
+          {
+            "title": "東京都青梅市における人口統計一覧",
+            "organization": "青梅市",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T09:02:51.759347",
+            "resources": [
+              {
+                "format": "XLSX",
+                "url": "https://www.opendata.metro.tokyo.lg.jp/ome/132055_population.xlsx"
+              }
+            ]
+          },
+          {
+            "title": "町丁目別選挙人名簿登録者数",
+            "organization": "小金井市",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2026-06-11T01:28:18.420582",
+            "resources": [
+              {
+                "format": "XLSX",
+                "url": "https://www.opendata.metro.tokyo.lg.jp/koganei/20260601_cyoucyoumebetumeibo.xlsx"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "query": "青梅市 世帯数の予測",
+        "count": 1632,
+        "results": [
+          {
+            "title": "青梅市イベント一覧",
+            "organization": "青梅市",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T09:02:38.306102",
+            "resources": [
+              {
+                "format": "HTML",
+                "url": "https://www.city.ome.tokyo.jp/soshiki/80/2094.html"
+              }
+            ]
+          },
+          {
+            "title": "東京都青梅市における公衆トイレ一覧",
+            "organization": "青梅市",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T09:02:54.996500",
+            "resources": [
+              {
+                "format": "XLSX",
+                "url": "https://www.opendata.metro.tokyo.lg.jp/ome/132055_public_toilet.xlsx"
+              }
+            ]
+          },
+          {
+            "title": "東京都青梅市における支援制度一覧",
+            "organization": "青梅市",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T09:02:59.641172",
+            "resources": [
+              {
+                "format": "XLSX",
+                "url": "https://www.opendata.metro.tokyo.lg.jp/ome/132055_support_system.xlsx"
+              }
+            ]
+          },
+          {
+            "title": "東京都青梅市における公共施設一覧",
+            "organization": "青梅市",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T09:02:53.986618",
+            "resources": [
+              {
+                "format": "XLSX",
+                "url": "https://www.opendata.metro.tokyo.lg.jp/ome/132055_public_facility.xlsx"
+              }
+            ]
+          },
+          {
+            "title": "立川市の町丁別世帯数と人口",
+            "organization": "立川市",
+            "license_id": "CC-BY-4.0",
+            "metadata_modified": "2025-12-12T09:00:49.006110",
+            "resources": [
+              {
+                "format": "CSV",
+                "url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/007/022/2-1-5chochobetsusetaisutojinkou.csv"
+              },
+              {
+                "format": "XLS",
+                "url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/007/022/2-1-5chochobetsusetaisutojinkou.xlsx"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

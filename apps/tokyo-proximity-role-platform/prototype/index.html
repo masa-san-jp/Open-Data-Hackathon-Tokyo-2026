@@ -1,0 +1,828 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>東京10分生活圏・地域役割マップ（D0デモ）</title>
+<style>
+  :root {
+    --blue: #2563eb;
+    --yellow: #eab308;
+    --orange: #f97316;
+    --red: #dc2626;
+    --lightgray: #d1d5db;
+    --ink: #111827;
+    --sub: #4b5563;
+    --line: #d1d5db;
+    --panel-bg: #f9fafb;
+    --accent: #0f766e;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Hiragino Sans", "Yu Gothic", "Noto Sans JP", sans-serif;
+    color: var(--ink);
+    background: #ffffff;
+  }
+  .demo-banner {
+    background: #7f1d1d;
+    color: #fff;
+    text-align: center;
+    font-weight: 700;
+    padding: 6px 8px;
+    font-size: 13px;
+    letter-spacing: 0.03em;
+  }
+  header.app-header {
+    padding: 10px 16px 6px;
+    border-bottom: 1px solid var(--line);
+  }
+  header.app-header h1 {
+    font-size: 18px;
+    margin: 0 0 2px;
+  }
+  header.app-header p.sub {
+    margin: 0;
+    color: var(--sub);
+    font-size: 12px;
+  }
+  .controls-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    align-items: center;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--line);
+    background: var(--panel-bg);
+    font-size: 13px;
+  }
+  .control-group { display: flex; align-items: center; gap: 6px; }
+  .control-group label.group-label { font-weight: 600; margin-right: 4px; }
+  button.opt {
+    border: 1px solid var(--line);
+    background: #fff;
+    padding: 4px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+  }
+  button.opt.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+  select, input[type=number] {
+    font-size: 13px;
+    padding: 3px 6px;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+  }
+  main.layout {
+    display: grid;
+    grid-template-columns: 220px 1fr 340px;
+    gap: 0;
+    min-height: 640px;
+  }
+  aside.legend-panel {
+    border-right: 1px solid var(--line);
+    padding: 12px;
+    font-size: 12px;
+    background: var(--panel-bg);
+  }
+  aside.legend-panel h2 { font-size: 13px; margin: 0 0 8px; }
+  .legend-row { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+  .swatch { width: 16px; height: 16px; border-radius: 2px; border: 1px solid rgba(0,0,0,0.15); flex: none; }
+  .swatch.hatch {
+    background-image: repeating-linear-gradient(45deg, #9ca3af, #9ca3af 2px, #f3f4f6 2px, #f3f4f6 5px);
+  }
+  .legend-note { color: var(--sub); margin-top: 10px; line-height: 1.5; }
+  .assumptions { margin-top: 14px; border-top: 1px dashed var(--line); padding-top: 10px; }
+  .assumptions dt { font-weight: 600; margin-top: 6px; }
+  .assumptions dd { margin: 0 0 4px; color: var(--sub); }
+
+  section.map-panel { padding: 12px; }
+  .map-panel .resolution-note { font-size: 12px; color: var(--sub); margin: 0 0 6px; }
+  svg#grid { width: 100%; height: auto; max-width: 640px; display: block; }
+  .cell-rect { stroke: #ffffff; stroke-width: 2; cursor: pointer; }
+  .cell-rect.selected { stroke: #111827; stroke-width: 3; }
+  .cell-rect.unassessed { fill: url(#hatchPattern); }
+  .intervention-marker { pointer-events: none; }
+  .placement-hint {
+    margin-top: 8px;
+    font-size: 12px;
+    padding: 6px 8px;
+    background: #fef3c7;
+    border: 1px solid #f59e0b;
+    border-radius: 4px;
+    display: none;
+  }
+  .placement-hint.active { display: block; }
+
+  .intervention-toolbar { margin-top: 10px; font-size: 13px; }
+  .intervention-toolbar h3 { font-size: 13px; margin: 0 0 6px; }
+  .iv-buttons { display: flex; gap: 6px; flex-wrap: wrap; }
+  .iv-chip {
+    display: flex; align-items: center; gap: 6px;
+    border: 1px solid var(--line); border-radius: 999px;
+    padding: 3px 10px; font-size: 12px; margin: 4px 4px 0 0; background: #ecfeff;
+  }
+  .iv-chip button { border: none; background: none; cursor: pointer; color: #b91c1c; font-weight: 700; }
+
+  aside.detail-panel {
+    border-left: 1px solid var(--line);
+    padding: 12px;
+    font-size: 13px;
+    overflow-y: auto;
+    max-height: 900px;
+  }
+  aside.detail-panel h2 { font-size: 14px; margin: 0 0 8px; }
+  .detail-empty { color: var(--sub); font-size: 12px; }
+  table.detail-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 8px; }
+  table.detail-table th, table.detail-table td { text-align: left; padding: 3px 4px; border-bottom: 1px solid #eee; }
+  .tag { display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 11px; margin-right: 4px; }
+  .tag.ok { background: #dbeafe; color: #1e3a8a; }
+  .tag.unmet { background: #fee2e2; color: #7f1d1d; }
+  .tag.unassessed { background: #e5e7eb; color: #374151; }
+
+  .scenario-summary { margin-top: 10px; border-top: 1px dashed var(--line); padding-top: 8px; font-size: 12px; }
+  .scenario-summary table { width: 100%; border-collapse: collapse; }
+  .scenario-summary th, .scenario-summary td { padding: 2px 4px; border-bottom: 1px solid #eee; }
+
+  .role-panel { border-top: 1px dashed var(--line); margin-top: 12px; padding-top: 10px; }
+  .role-panel h2 { font-size: 14px; margin: 0 0 6px; }
+  .role-panel select, .role-panel button { font-size: 12px; }
+  button.primary {
+    background: var(--accent); color: #fff; border: none; border-radius: 4px;
+    padding: 6px 12px; cursor: pointer; font-size: 13px;
+  }
+  button.primary:disabled { background: #9ca3af; cursor: not-allowed; }
+  button.secondary { background: #fff; border: 1px solid var(--line); border-radius: 4px; padding: 5px 10px; cursor: pointer; font-size: 12px; }
+  .role-card {
+    border: 1px solid var(--line); border-radius: 6px; padding: 8px; margin-top: 8px; background: #fefce8;
+  }
+  .role-card .status-badge {
+    display: inline-block; background: #78350f; color: #fff; font-size: 11px; padding: 1px 8px; border-radius: 999px;
+  }
+  .role-card label { display: block; font-size: 11px; color: var(--sub); margin-top: 6px; }
+  .role-card input[type=text], .role-card textarea, .role-card select {
+    width: 100%; font-size: 12px; padding: 3px 5px; border: 1px solid var(--line); border-radius: 3px;
+  }
+  .role-card textarea { height: 50px; }
+  .route-checks label { display: inline-flex; align-items: center; gap: 3px; font-size: 11px; margin-right: 8px; color: var(--ink); }
+  .approve-row { margin-top: 8px; display: flex; align-items: center; gap: 8px; }
+  .approve-row button[disabled] { opacity: 0.6; }
+  pre.card-json { background: #111827; color: #d1fae5; font-size: 11px; padding: 8px; border-radius: 4px; overflow-x: auto; white-space: pre-wrap; }
+
+  footer.app-footer {
+    padding: 10px 16px; border-top: 1px solid var(--line); font-size: 11px; color: var(--sub);
+  }
+  @media (max-width: 1100px) {
+    main.layout { grid-template-columns: 1fr; }
+    aside.legend-panel, aside.detail-panel { border: none; border-top: 1px solid var(--line); }
+  }
+</style>
+</head>
+<body>
+
+<div class="demo-banner">DEMO DATA / NOT FOR POLICY DECISION — 本画面は合成デモデータであり、実在地域・実在人数を示すものではありません</div>
+
+<header class="app-header">
+  <h1>東京10分生活圏・地域役割マップ（D0 即時デモ）</h1>
+  <p class="sub">単身・高齢世帯が食・服薬・一次医療・福祉・交通へ実効徒歩で届くかを可視化し、改善案と地域役割カードの下書きまでを試すためのオフラインデモです。</p>
+</header>
+
+<div class="controls-bar">
+  <div class="control-group">
+    <span class="group-label">徒歩時間閾値</span>
+    <button class="opt" data-threshold="5">5分</button>
+    <button class="opt" data-threshold="10">10分</button>
+    <button class="opt" data-threshold="15">15分</button>
+  </div>
+  <div class="control-group">
+    <span class="group-label">歩行速度</span>
+    <select id="speedProfile"></select>
+    <input type="number" id="customSpeed" min="20" max="100" step="1" style="width:64px" title="任意の速度(m/min)を入力すると優先されます" />
+    <span style="color:var(--sub)">m/min</span>
+  </div>
+  <div class="control-group">
+    <label><input type="checkbox" id="slopeToggle" checked /> 勾配補正 ON</label>
+  </div>
+  <div class="control-group" style="margin-left:auto;color:var(--sub)">
+    分析単位: <strong id="resolutionLabel">—</strong> ／ 対象: 高齢単身世帯（合成データ）
+  </div>
+</div>
+
+<main class="layout">
+  <aside class="legend-panel">
+    <h2>凡例</h2>
+    <div class="legend-row"><span class="swatch" style="background:var(--blue)"></span>青: 必須機能すべて閾値内</div>
+    <div class="legend-row"><span class="swatch" style="background:var(--yellow)"></span>黄: 1機能が閾値外</div>
+    <div class="legend-row"><span class="swatch" style="background:var(--orange)"></span>橙: 2機能以上が閾値外</div>
+    <div class="legend-row"><span class="swatch" style="background:var(--red)"></span>赤: 2機能以上が閾値外 かつ 優先世帯数以上</div>
+    <div class="legend-row"><span class="swatch hatch"></span>灰ハッチ: データ未評価</div>
+    <div class="legend-row"><span class="swatch" style="background:var(--lightgray)"></span>薄灰: 対象人口が基準未満</div>
+    <div class="legend-note">必須機能（色判定対象）: 薬局・診療所・福祉・交通乗降点の4つ。<br/>食料は東京都全域データ未確認のため常に「未評価」として別表示します。</div>
+
+    <div class="assumptions" id="thresholdAssumptions">
+      <dt>優先基準（デモ仮定）</dt>
+      <dd id="popThresholdText">—</dd>
+      <dd id="priorityThresholdText">—</dd>
+      <dt>歩行モデル（デモ仮定）</dt>
+      <dd id="slopeModelText">—</dd>
+    </div>
+
+    <div class="intervention-toolbar">
+      <h3>改善モード（介入の仮置き）</h3>
+      <div class="iv-buttons" id="ivButtons"></div>
+      <div class="placement-hint" id="placementHint">地図上のセルをクリックして配置してください</div>
+      <div id="ivChips"></div>
+    </div>
+  </aside>
+
+  <section class="map-panel">
+    <p class="resolution-note">抽象化した地図表現（実座標・実境界ではない合成データ）。セルをクリックすると詳細を表示します。</p>
+    <svg id="grid" viewBox="0 0 640 500" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <pattern id="hatchPattern" patternUnits="userSpaceOnUse" width="6" height="6" patternTransform="rotate(45)">
+          <rect width="6" height="6" fill="#f3f4f6" />
+          <line x1="0" y1="0" x2="0" y2="6" stroke="#9ca3af" stroke-width="2" />
+        </pattern>
+      </defs>
+      <rect x="0" y="0" width="640" height="500" fill="#e8f2f8" />
+      <path d="M 30,70 C 10,40 60,15 130,20 C 230,5 350,10 430,25 C 520,10 610,35 625,90
+               C 640,160 630,260 622,320 C 635,390 590,450 500,465 C 400,485 280,470 180,478
+               C 90,485 20,440 12,370 C 2,300 15,230 8,170 C 0,120 15,95 30,70 Z"
+            fill="#f5f1e2" stroke="#c9c2a0" stroke-width="2" />
+      <g id="compassRose" transform="translate(590,50)">
+        <circle r="18" fill="#ffffff" stroke="#9ca3af" stroke-width="1" />
+        <polygon points="0,-13 5,4 0,-2 -5,4" fill="#374151" />
+        <text x="0" y="-18" text-anchor="middle" font-size="10" fill="#374151">N</text>
+      </g>
+      <g id="scaleBar" transform="translate(40,478)">
+        <line x1="0" y1="0" x2="70" y2="0" stroke="#374151" stroke-width="2" />
+        <line x1="0" y1="-4" x2="0" y2="4" stroke="#374151" stroke-width="2" />
+        <line x1="70" y1="-4" x2="70" y2="4" stroke="#374151" stroke-width="2" />
+        <text x="35" y="16" text-anchor="middle" font-size="11" fill="#374151">250m（1マス）</text>
+      </g>
+      <g id="cellsLayer"></g>
+      <g id="interventionsLayer"></g>
+    </svg>
+
+    <div class="scenario-summary" id="scenarioSummary" style="display:none">
+      <h3 style="margin:0 0 4px;font-size:13px">介入 Before / After</h3>
+      <table>
+        <thead><tr><th>状態</th><th>青</th><th>黄</th><th>橙</th><th>赤</th></tr></thead>
+        <tbody>
+          <tr><td>Before</td><td id="beforeBlue"></td><td id="beforeYellow"></td><td id="beforeOrange"></td><td id="beforeRed"></td></tr>
+          <tr><td>After</td><td id="afterBlue"></td><td id="afterYellow"></td><td id="afterOrange"></td><td id="afterRed"></td></tr>
+        </tbody>
+      </table>
+      <p id="scenarioHouseholds" style="margin:6px 0 0"></p>
+      <p id="scenarioAssumptions" style="margin:2px 0 0;color:var(--sub)"></p>
+    </div>
+  </section>
+
+  <aside class="detail-panel">
+    <h2>選択セル詳細</h2>
+    <div id="cellDetail"><p class="detail-empty">地図上のセルをクリックすると詳細が表示されます。</p></div>
+
+    <div class="role-panel">
+      <h2>地域役割カード下書き</h2>
+      <div id="roleGenerateArea">
+        <p class="detail-empty">不足（黄・橙・赤）セルを選択すると、地域役割カードの下書きを生成できます。</p>
+      </div>
+      <div id="roleCards"></div>
+    </div>
+  </aside>
+</main>
+
+<footer class="app-footer">
+  東京10分生活圏・地域役割プラットフォーム D0デモ — 合成データ。歩行速度・勾配・優先基準はすべてデモ仮定であり実測値ではありません。
+  詳細は SPEC.md / DECISIONS.md / OPEN-ISSUES.md を参照してください。
+</footer>
+
+<script id="cells-data" type="application/json">{"demo": true, "cells": [{"cell_id": "DEMO-0000", "demo": true, "grid": {"col": 0, "row": 0}, "analysis_resolution_m": 250, "elderly_population": 2, "elderly_single_households": 1, "data_quality": {"pharmacy": "demo", "clinic": "demo", "welfare": "demo", "mobility_node": "demo", "food": "unassessed"}, "base_access_minutes": {"pharmacy": 4.4, "clinic": 9.4, "welfare": 19.0, "mobility_node": 9.4}, "slope_index": 0.0}, {"cell_id": "DEMO-0001", "demo": true, "grid": {"col": 1, "row": 0}, "analysis_resolution_m": 250, "elderly_population": 7, "elderly_single_households": 4, "data_quality": {"pharmacy": "demo", "clinic": "demo", "welfare": "demo", "mobility_node": "demo", "food": "unassessed"}, "base_access_minutes": {"pharmacy": 3.1, "clinic": 6.2, "welfare": 15.9, "mobility_node": 9.9}, "slope_index": 0.0}, {"cell_id": "DEMO-0002", "demo": true, "grid": {"col": 2, "row": 0}, "analysis_resolution_m": 250, "elderly_population": 13, "elderly_single_households": 7, "data_quality": {"pharmacy": "demo", "clinic": "demo", "welfare": "demo", "mobility_node": "demo", "food": "unassessed"}, "base_access_minutes": {"pharmacy": 4.4, "clinic": 3.1, "welfare": 12.9, "mobility_node": 11.3}, "slope_index": 0.0}, {"cell_id": "DEMO-0003", "demo": true, "grid": {"col": 3, "row": 0}, "analysis_resolution_m": 250, "elderly_population": 18, "elderly_single_households": 10, "data_quality": {"pharmacy": "demo", "clinic": "demo", "welfare": "demo", "mobility_node": "demo", "food": "unassessed"}, "base_access_minutes": {"pharmacy": 7.0, "clinic": 0.0, "welfare": 9.9, "mobility_node": 13.3}, "slope_index": 0.0}, {"cell_id": "DEMO-0004", "demo": true, "grid": {"col": 4, "row": 0}, "analysis_resolution_m": 250, "elderly_population": 4, "elderly_single_households": 2, "data_quality": {"pharmacy": "demo", "clinic": "demo", "welfare": "demo", "mobility_node": "demo", "food": "unassessed"}, "base_access_minutes": {"pharmacy": 9.9, "clinic": 3.1, "welfare": 7.0, "mobility_node": 15.6}, "slope_index": 0.0}, {"cell_id": "DEMO-0005", "demo": true, "grid": {"col": 5, "row": 0}, "analysis_resolution_m": 250, "elderly_population": 9, "elderly_single_households": 5, "data_quality": {"pharmacy": "demo", "clinic": "demo", "welfare": "demo", "mobility_node": "demo", "food": "unassessed"}, "base_access_minutes": {"pharmacy": 12.9, "clinic": 6.2, "welfare": 4.4, "mobility_node": 16.8}, "slope_index": 0.0}, {"cell_id": "DEMO-0006", "demo": true, "grid": {"col": 6, "row": 0}, "analysis_resolution_m": 250, "elderly_population": 14, "elderly_single_households": 8, "data_quality": {"pharmacy": "demo", "clinic": "demo", "welfare": "demo", "mobility_node": "demo", "food": "unassessed"}, "base_access_minutes": {"pharmacy": 12.5, "clinic": 7.0, "welfare": 3.1, "mobility_node": 15.9}, "slope_index": 0.0}, {"cell_id": "DEMO-0007", "demo": true, "grid": {"col": 7, "row": 0}, "analysis_resolution_m": 250, "elderly_population": 20, "elderly_single_households": 11, "data_quality": {"pharmacy": "demo", "clinic": "demo", "welfare": "demo", "mobility_node": "demo", "food": "unassessed"}, "base_access_minutes": {"pharmacy": 12.9, "clinic": 6.2, "welfare": 4.4, "mobility_node": 15.6}, "slope_index": 0.0}, {"cell_id": "DEMO-0100", "demo": true, "grid": {"col": 0, "row": 1}, "analysis_resolution_m": 250, "elderly_population": 11, "elderly_single_households": 6, "data_quality": {"pharmacy": "demo", "clinic": "demo", "welfare": "demo", "mobility_node": "demo", "food": "unassessed"}, "base_access_minutes": {"pharmacy": 3.1, "clinic": 9.9, "welfare": 18.8, "mobility_node": 6.2}, "slope_index": 0.2}, {"cell_id": "DEMO-0101", "demo": true, "grid": {"col": 1, "row": 1}, "analysis_resolution_m": 250, "elderly_population": 16, "elderly_single_households": 9, "data_quality": {"pharmacy": "demo", "clinic": "demo", "welfare": "demo", "mobility_node": "demo", "food": "unassessed"}, "base_access_minutes": {"pharmacy": 0.0, "clinic": 7.0, "welfare": 15.6, "mobility_node": 7.0}, "slope_index": 0.2}, {"cell_id": "DEMO-0102", "demo": true, "grid": {"col": 2, "row": 1}, "analysis_resolution_m": 250, "elderly_population": 2, "elderly_single_households": 1, "data_quality": {"pharmacy": "demo", "clinic": "demo", "welfare": "demo", "mobility_node": "demo", "food": "unassessed"}, "base_access_minutes": {"pharmacy": 3.1, "clinic": 4.4, "welfare": 12.5, "mobility_node": 8.8}, "slope_index": 0.2}, {"cell_id": "DEMO-0103", "demo": true, "grid": {"col": 3, "row": 1}, "analysis_resolution_m": 250, "elderly_population": 7, "elderly_single_households": 4, "data_quality": {"pharmacy": "demo", "clinic": "demo", "welfare": "demo", "mobility_node": "demo", "food": "unassessed"}, "base_access_minutes": {"pharmacy": 6.2, "clinic": 3.1, "welfare": 9.4, "mobility_node": 11.3}, "slope_index": 0.2}, {"cell_id": "DEMO-0104", "demo": true, "grid": {"col": 4, "row": 1}, "analysis_resolution_m": 250, "elderly_population": 13, "elderly_single_households": 7, "data_quality": {"pharmacy": "demo", "clinic": "demo", "welfare": "demo", "mobility_node": "demo", "food": "unassessed"}, "base_access_minutes": {"pharmacy": 9.4, "clinic": 4.4, "welfare": 6.2, "mobility_node": 14.0}, "slope_index": 0.2}, {"cell_id": "DEMO-0105", "demo": true, "grid": {"col": 5, "row": 1}, "analysis_resolution_m": 250, "elderly_population": 18, "elderly_single_households": 10, "data_quality": {"pharmacy": "demo", "clinic": "demo", "welfare": "demo", "mobility_node": "demo", "food": "unassessed"}, "base_access_minutes": {"pharmacy": 9.9, "clinic": 7.0, "welfare": 3.1, "mobility_node": 14.0}, "slope_index": 0.2}, {"cell_id": "DEMO-0106", "demo": true, "grid": {"col": 6, "row": 1}, "analysis_resolution_m": 250, "elderly_population": 4, "elderly_single_households": 2, "data_quality": {"pharmacy": "demo", "clinic": "demo", "welfare": "demo", "mobility_node": "demo", "food": "unassessed"}, "base_access_minutes": {"pharmacy": 9.4, "clinic": 4.4, "welfare": 0.0, "mobility_node": 12.9}, "slope_index": 0.2}, {"cell_id": "DEMO-0107", "demo": true, "grid": {"col": 7, "row": 1}, "analysis_resolution_m": 250, "elderly_population": 9, "elderly_single_households": 5, "data_quality": {"pharmacy": "demo", "clinic": "demo", "welfare": "demo", "mobility_node": "demo", "food": "unassessed"}, "base_access_minutes": {"pharmacy": 9.9, "clinic": 3.1, "welfare": 3.1, "mobility_node": 12.5}, "slope_index": 0.2}, {"cell_id": "DEMO-0200", "demo": true, "grid": {"col": 0, "row": 2}, "analysis_resolution_m": 250, "elderly_population": 20, "elderly_single_households": 11, "data_quality": {"pharmacy": "demo", "clinic": "demo", "welfare": "demo", "mobility_node": "demo", "food": "unassessed"}, "base_access_minutes": {"pharmacy": 4.4, "clinic": 11.3, "welfare": 19.0, "mobility_node": 3.1}, "slope_index": 0.4}, {"cell_id": "DEMO-0201", "demo": true, "grid": {"col": 1, "row": 2}, "analysis_resolution_m": 250, "elderly_population": 5, "elderly_single_households": 3, "data_quality": {"pharmacy": "demo", "clinic": "demo", "welfare": "demo", "mobility_node": "demo", "food": "unassessed"}, "base_access_minutes": {"pharmacy": 3.1, "clinic": 8.8, "welfare": 15.9, "mobility_node": 4.4}, "slope_index": 0.4}, {"cell_id": "DEMO-0202", "demo": true, "grid": {"col": 2, "row": 2}, "analysis_resolution_m": 250, "elderly_population": 11, "elderly_single_households": 6, "data_quality": {"pharmacy": "demo", "clinic": "demo", "welfare": "demo", "mobility_node": "demo", "food": "unassessed"}, "base_access_minutes": {"pharmacy": 4.4, "clinic": 7.0, "welfare": 12.9, "mobility_node": 7.0}, "slope_index": 0.4}, {"cell_id": "DEMO-0203", "demo": true, "grid": {"col": 3, "row": 2}, "analysis_resolution_m": 250, "elderly_population": 16, "elderly_single_households": 9, "data_quality": {"pharmacy": "demo", "clinic": "demo", "welfare": "demo", "mobility_node": "demo", "food": "unassessed"}, "base_access_minutes": {"pharmacy": 7.0, "clinic": 6.2, "welfare": 9.9, "mobility_node": 9.9}, "slope_index": 0.4}, {"cell_id": "DEMO-0204", "demo": true, "grid": {"col": 4, "row": 2}, "analysis_resolution_m": 250, "elderly_population": 2, "elderly_single_households": 1, "data_quality": {"pharmacy": "demo", "clinic": "demo", "welfare": "demo", "mobility_node": "demo", "food": "unassessed"}, "base_access_minutes": {"pharmacy": 8.8, "clinic": 7.0, "welfare": 7.0, "mobility_node": 12.9}, "slope_index": 0.4}, {"cell_id": "DEMO-0205", "demo": true, "grid": {"col": 5, "row": 2}, "analysis_resolution_m": 250, "elderly_population": 7, "elderly_single_households": 4, "data_quality": {"pharmacy": "demo", "clinic": "demo", "welfare": "demo", "mobility_node": "demo", "food": "unassessed"}, "base_access_minutes": {"pharmacy": 7.0, "clinic": 6.2, "welfare": 4.4, "mobility_node": 11.3}, "slope_index": 0.4}, {"cell_id": "DEMO-0206", "demo": true, "grid": {"col": 6, "row": 2}, "analysis_resolution_m": 250, "elderly_population": 13, "elderly_single_households": 7, "data_quality": {"pharmacy": "demo", "clinic": "demo", "welfare": "demo", "mobility_node": "demo", "food": "unassessed"}, "base_access_minutes": {"pharmacy": 6.2, "clinic": 3.1, "welfare": 3.1, "mobility_node": 9.9}, "slope_index": 0.4}, {"cell_id": "DEMO-0207", "demo": true, "grid": {"col": 7, "row": 2}, "analysis_resolution_m": 250, "elderly_population": 18, "elderly_single_households": 10, "data_quality": {"pharmacy": "demo", "clinic": "demo", "welfare": "demo", "mobility_node": "demo", "food": "unassessed"}, "base_access_minutes": {"pharmacy": 7.0, "clinic": 0.0, "welfare": 4.4, "mobility_node": 9.4}, "slope_index": 0.4}, {"cell_id": "DEMO-0300", "demo": true, "grid": {"col": 0, "row": 3}, "analysis_resolution_m": 250, "elderly_population": 9, "elderly_single_households": 5, "data_quality": {"pharmacy": "demo", "clinic": "demo", "welfare": "demo", "mobility_node": "demo", "food": "unassessed"}, "base_access_minutes": {"pharmacy": 7.0, "clinic": 13.3, "welfare": 19.8, "mobility_node": 0.0}, "slope_index": 0.6}, {"cell_id": "DEMO-0301", "demo": true, "grid": {"col": 1, "row": 3}, "analysis_resolution_m": 250, "elderly_population": 14, "elderly_single_households": 8, "data_quality": {"pharmacy": "demo", "clinic": "demo", "welfare": "demo", "mobility_node": "demo", "food": "unassessed"}, "base_access_minutes": {"pharmacy": 6.2, "clinic": 11.3, "welfare": 16.8, "mobility_node": 3.1}, "slope_index": 0.6}, {"cell_id": "DEMO-0302", "demo": true, "grid": {"col": 2, "row": 3}, "analysis_resolution_m": 250, "elderly_population": 20, "elderly_single_households": 11, "data_quality": {"pharmacy": "demo", "clinic": "demo", "welfare": "demo", "mobility_node": "demo", "food": "unassessed"}, "base_access_minutes": {"pharmacy": 7.0, "clinic": 9.9, "welfare": 14.0, "mobility_node": 6.2}, "slope_index": 0.6}, {"cell_id": "DEMO-0303", "demo": true, "grid": {"col": 3, "row": 3}, "analysis_resolution_m": 250, "elderly_population": 5, "elderly_single_households": 3, "data_quality": {"pharmacy": "demo", "clinic": "demo", "welfare": "demo", "mobility_node": "demo", "food": "unassessed"}, "base_access_minutes": {"pharmacy": 8.8, "clinic": 9.4, "welfare": 11.3, "mobility_node": 9.4}, "slope_index": 0.6}, {"cell_id": "DEMO-0304", "demo": true, "grid": {"col": 4, "row": 3}, "analysis_resolution_m": 250, "elderly_population": 11, "elderly_single_households": 6, "data_quality": {"pharmacy": "demo", "clinic": "demo", "welfare": "demo", "mobility_node": "demo", "food": "unassessed"}, "base_access_minutes": {"pharmacy": 7.0, "clinic": 9.9, "welfare": 8.8, "mobility_node": 11.3}, "slope_index": 0.6}, {"cell_id": "DEMO-0305", "demo": true, "grid": {"col": 5, "row": 3}, "analysis_resolution_m": 250, "elderly_population": 16, "elderly_single_households": 9, "data_quality": {"pharmacy": "demo", "clinic": "demo", "welfare": "demo", "mobility_node": "demo", "food": "unassessed"}, "base_access_minutes": {"pharmacy": 4.4, "clinic": 7.0, "welfare": 7.0, "mobility_node": 8.8}, "slope_index": 0.6}, {"cell_id": "DEMO-0306", "demo": true, "grid": {"col": 6, "row": 3}, "analysis_resolution_m": 250, "elderly_population": 2, "elderly_single_households": 1, "data_quality": {"pharmacy": "demo", "clinic": "demo", "welfare": "demo", "mobility_node": "demo", "food": "unassessed"}, "base_access_minutes": {"pharmacy": 3.1, "clinic": 4.4, "welfare": 6.2, "mobility_node": 7.0}, "slope_index": 0.6}, {"cell_id": "DEMO-0307", "demo": true, "grid": {"col": 7, "row": 3}, "analysis_resolution_m": 250, "elderly_population": 7, "elderly_single_households": 4, "data_quality": {"pharmacy": "demo", "clinic": "demo", "welfare": "demo", "mobility_node": "demo", "food": "unassessed"}, "base_access_minutes": {"pharmacy": 4.4, "clinic": 3.1, "welfare": 7.0, "mobility_node": 6.2}, "slope_index": 0.6}, {"cell_id": "DEMO-0400", "demo": true, "grid": {"col": 0, "row": 4}, "analysis_resolution_m": 250, "elderly_population": 18, "elderly_single_households": 10, "data_quality": {"pharmacy": "demo", "clinic": "demo", "welfare": "demo", "mobility_node": "demo", "food": "unassessed"}, "base_access_minutes": {"pharmacy": 9.9, "clinic": 15.6, "welfare": 21.0, "mobility_node": 3.1}, "slope_index": 0.8}, {"cell_id": "DEMO-0401", "demo": true, "grid": {"col": 1, "row": 4}, "analysis_resolution_m": 250, "elderly_population": 4, "elderly_single_households": 2, "data_quality": {"pharmacy": "demo", "clinic": "demo", "welfare": "demo", "mobility_node": "demo", "food": "unassessed"}, "base_access_minutes": {"pharmacy": 9.4, "clinic": 14.0, "welfare": 18.2, "mobility_node": 4.4}, "slope_index": 0.8}, {"cell_id": "DEMO-0402", "demo": true, "grid": {"col": 2, "row": 4}, "analysis_resolution_m": 250, "elderly_population": 9, "elderly_single_households": 5, "data_quality": {"pharmacy": "demo", "clinic": "demo", "welfare": "demo", "mobility_node": "demo", "food": "unassessed"}, "base_access_minutes": {"pharmacy": 9.9, "clinic": 12.9, "welfare": 15.6, "mobility_node": 7.0}, "slope_index": 0.8}, {"cell_id": "DEMO-0403", "demo": true, "grid": {"col": 3, "row": 4}, "analysis_resolution_m": 250, "elderly_population": 14, "elderly_single_households": 8, "data_quality": {"pharmacy": "demo", "clinic": "demo", "welfare": "demo", "mobility_node": "demo", "food": "unassessed"}, "base_access_minutes": {"pharmacy": 9.4, "clinic": 12.5, "welfare": 13.3, "mobility_node": 9.9}, "slope_index": 0.8}, {"cell_id": "DEMO-0404", "demo": true, "grid": {"col": 4, "row": 4}, "analysis_resolution_m": 250, "elderly_population": 20, "elderly_single_households": 11, "data_quality": {"pharmacy": "demo", "clinic": "demo", "welfare": "demo", "mobility_node": "demo", "food": "unassessed"}, "base_access_minutes": {"pharmacy": 6.2, "clinic": 11.3, "welfare": 11.3, "mobility_node": 9.9}, "slope_index": 0.8}, {"cell_id": "DEMO-0405", "demo": true, "grid": {"col": 5, "row": 4}, "analysis_resolution_m": 250, "elderly_population": 5, "elderly_single_households": 3, "data_quality": {"pharmacy": "demo", "clinic": "demo", "welfare": "demo", "mobility_node": "demo", "food": "unassessed"}, "base_access_minutes": {"pharmacy": 3.1, "clinic": 8.8, "welfare": 9.9, "mobility_node": 7.0}, "slope_index": 0.8}, {"cell_id": "DEMO-0406", "demo": true, "grid": {"col": 6, "row": 4}, "analysis_resolution_m": 250, "elderly_population": 11, "elderly_single_households": 6, "data_quality": {"pharmacy": "demo", "clinic": "demo", "welfare": "unassessed", "mobility_node": "demo", "food": "unassessed"}, "base_access_minutes": {"pharmacy": 0.0, "clinic": 7.0, "welfare": 9.4, "mobility_node": 4.4}, "slope_index": 0.8}, {"cell_id": "DEMO-0407", "demo": true, "grid": {"col": 7, "row": 4}, "analysis_resolution_m": 250, "elderly_population": 16, "elderly_single_households": 9, "data_quality": {"pharmacy": "demo", "clinic": "demo", "welfare": "unassessed", "mobility_node": "demo", "food": "unassessed"}, "base_access_minutes": {"pharmacy": 3.1, "clinic": 6.2, "welfare": 9.9, "mobility_node": 3.1}, "slope_index": 0.8}, {"cell_id": "DEMO-0500", "demo": true, "grid": {"col": 0, "row": 5}, "analysis_resolution_m": 250, "elderly_population": 7, "elderly_single_households": 4, "data_quality": {"pharmacy": "demo", "clinic": "demo", "welfare": "demo", "mobility_node": "demo", "food": "unassessed"}, "base_access_minutes": {"pharmacy": 12.9, "clinic": 18.2, "welfare": 22.5, "mobility_node": 6.2}, "slope_index": 1.0}, {"cell_id": "DEMO-0501", "demo": true, "grid": {"col": 1, "row": 5}, "analysis_resolution_m": 250, "elderly_population": 13, "elderly_single_households": 7, "data_quality": {"pharmacy": "demo", "clinic": "demo", "welfare": "demo", "mobility_node": "demo", "food": "unassessed"}, "base_access_minutes": {"pharmacy": 12.5, "clinic": 16.8, "welfare": 20.0, "mobility_node": 7.0}, "slope_index": 1.0}, {"cell_id": "DEMO-0502", "demo": true, "grid": {"col": 2, "row": 5}, "analysis_resolution_m": 250, "elderly_population": 18, "elderly_single_households": 10, "data_quality": {"pharmacy": "demo", "clinic": "demo", "welfare": "demo", "mobility_node": "demo", "food": "unassessed"}, "base_access_minutes": {"pharmacy": 12.9, "clinic": 15.9, "welfare": 17.7, "mobility_node": 8.8}, "slope_index": 1.0}, {"cell_id": "DEMO-0503", "demo": true, "grid": {"col": 3, "row": 5}, "analysis_resolution_m": 250, "elderly_population": 4, "elderly_single_households": 2, "data_quality": {"pharmacy": "demo", "clinic": "demo", "welfare": "demo", "mobility_node": "demo", "food": "unassessed"}, "base_access_minutes": {"pharmacy": 9.9, "clinic": 15.6, "welfare": 15.6, "mobility_node": 11.3}, "slope_index": 1.0}, {"cell_id": "DEMO-0504", "demo": true, "grid": {"col": 4, "row": 5}, "analysis_resolution_m": 250, "elderly_population": 9, "elderly_single_households": 5, "data_quality": {"pharmacy": "demo", "clinic": "demo", "welfare": "demo", "mobility_node": "demo", "food": "unassessed"}, "base_access_minutes": {"pharmacy": 7.0, "clinic": 13.3, "welfare": 14.0, "mobility_node": 9.4}, "slope_index": 1.0}, {"cell_id": "DEMO-0505", "demo": true, "grid": {"col": 5, "row": 5}, "analysis_resolution_m": 250, "elderly_population": 14, "elderly_single_households": 8, "data_quality": {"pharmacy": "demo", "clinic": "demo", "welfare": "demo", "mobility_node": "demo", "food": "unassessed"}, "base_access_minutes": {"pharmacy": 4.4, "clinic": 11.3, "welfare": 12.9, "mobility_node": 6.2}, "slope_index": 1.0}, {"cell_id": "DEMO-0506", "demo": true, "grid": {"col": 6, "row": 5}, "analysis_resolution_m": 250, "elderly_population": 20, "elderly_single_households": 11, "data_quality": {"pharmacy": "demo", "clinic": "demo", "welfare": "unassessed", "mobility_node": "demo", "food": "unassessed"}, "base_access_minutes": {"pharmacy": 3.1, "clinic": 9.9, "welfare": 12.5, "mobility_node": 3.1}, "slope_index": 1.0}, {"cell_id": "DEMO-0507", "demo": true, "grid": {"col": 7, "row": 5}, "analysis_resolution_m": 250, "elderly_population": 5, "elderly_single_households": 3, "data_quality": {"pharmacy": "demo", "clinic": "demo", "welfare": "unassessed", "mobility_node": "demo", "food": "unassessed"}, "base_access_minutes": {"pharmacy": 4.4, "clinic": 9.4, "welfare": 12.9, "mobility_node": 0.0}, "slope_index": 1.0}]}</script>
+<script id="infrastructure-data" type="application/json">{"demo": true, "walking_profiles": [{"id": "slow_senior", "label": "高齢者目安", "speed_m_per_min": 60}, {"id": "cane_assist", "label": "杖使用等", "speed_m_per_min": 45}, {"id": "wheelchair_user", "label": "車椅子等利用者", "speed_m_per_min": 55}, {"id": "standard", "label": "成人目安", "speed_m_per_min": 80}], "reference_speed_m_per_min": 80, "slope_model": {"id": "demo-linear-v1", "max_uphill_factor": 0.4, "note": "デモ仮定。実測標高・実測歩行データではない（DECISIONS.md ADR-0003）。"}, "priority_thresholds": {"min_population_threshold": 3, "priority_households_threshold": 8}, "intervention_types": [{"type": "local_service_point", "label": "小規模生活拠点", "description": "食料・薬受取等の小規模拠点を仮置きする", "affected_functions": ["pharmacy", "clinic", "welfare"], "radius_cells": 1, "daily_capacity_households": null}, {"type": "human_bridge", "label": "Human Bridge（暫定人的支援）", "description": "配送・同行・送迎等の暫定人的支援。容量制約あり（ADR-0005）", "affected_functions": ["welfare"], "radius_cells": 2, "daily_capacity_households": 10}, {"type": "mobility_stop", "label": "モビリティノード", "description": "短距離モビリティ乗降点を仮置きする", "affected_functions": ["mobility_node"], "radius_cells": 2, "daily_capacity_households": null}]}</script>
+<script id="roles-data" type="application/json">{"demo": true, "note": "承認済みテンプレートカタログ。AIはこの中から下書きを生成し、自由生成しない（SPEC.md §4.2）。", "templates": [{"problem_type": "food_access", "title": "電話・端末による注文受付", "task_units": ["注文内容を定型画面へ入力", "受渡し時間を案内"], "functional_requirements": {"main_posture": "seated", "lifting_kg_max": 0, "standing_minutes_max": 10, "customer_contact": true}, "supervision": "required_initially", "compensation_required": true, "route_candidates": ["senior_employment", "disability_employment", "welfare_work"], "schedule": {"min_minutes": 60, "frequency": "weekly"}}, {"problem_type": "pharmacy_access", "title": "薬受取・配送の受渡し窓口", "task_units": ["処方引換券の確認", "受渡し記録の記入", "配送業者への引継ぎ"], "functional_requirements": {"main_posture": "seated", "lifting_kg_max": 3, "standing_minutes_max": 15, "customer_contact": true}, "supervision": "required_initially", "compensation_required": true, "route_candidates": ["silver_human_resources", "welfare_work", "community_participation"], "schedule": {"min_minutes": 90, "frequency": "weekly"}}, {"problem_type": "welfare_access", "title": "見守り訪問の同行支援", "task_units": ["訪問予定の確認", "同行", "訪問記録の共有"], "functional_requirements": {"main_posture": "mixed", "lifting_kg_max": 0, "standing_minutes_max": 30, "customer_contact": true}, "supervision": "required_ongoing", "compensation_required": true, "route_candidates": ["welfare_work", "disability_employment"], "schedule": {"min_minutes": 120, "frequency": "weekly"}}, {"problem_type": "mobility_gap", "title": "乗降支援・ルート案内", "task_units": ["乗降時の声かけ・付き添い", "ルートの案内", "運行状況の共有"], "functional_requirements": {"main_posture": "standing", "lifting_kg_max": 5, "standing_minutes_max": 60, "customer_contact": true}, "supervision": "required_initially", "compensation_required": true, "route_candidates": ["senior_employment", "silver_human_resources", "community_participation"], "schedule": {"min_minutes": 60, "frequency": "weekly"}}, {"problem_type": "clinic_access", "title": "受診予約・端末操作支援", "task_units": ["予約端末の操作補助", "受診票の記入補助（代理権限を要する手続きは対象外）"], "functional_requirements": {"main_posture": "seated", "lifting_kg_max": 0, "standing_minutes_max": 5, "customer_contact": true}, "supervision": "required_initially", "compensation_required": true, "route_candidates": ["welfare_work", "community_participation"], "schedule": {"min_minutes": 45, "frequency": "weekly"}}]}</script>
+
+<script>
+(function () {
+  "use strict";
+
+  // ---- データ読み込み ----------------------------------------------------
+  var CELLS_DATA = JSON.parse(document.getElementById("cells-data").textContent);
+  var INFRA_DATA = JSON.parse(document.getElementById("infrastructure-data").textContent);
+  var ROLES_DATA = JSON.parse(document.getElementById("roles-data").textContent);
+
+  var CELLS = CELLS_DATA.cells;
+  var RESOLUTION_M = CELLS[0].analysis_resolution_m;
+  var REFERENCE_SPEED = INFRA_DATA.reference_speed_m_per_min;
+  var SLOPE_MODEL = INFRA_DATA.slope_model;
+  var THRESHOLDS = INFRA_DATA.priority_thresholds;
+  var MIN_POPULATION_THRESHOLD = THRESHOLDS.min_population_threshold;
+  var PRIORITY_HOUSEHOLDS_THRESHOLD = THRESHOLDS.priority_households_threshold;
+  var REQUIRED_FUNCTIONS = ["pharmacy", "clinic", "welfare", "mobility_node"];
+  var FUNCTION_LABELS = { pharmacy: "薬局", clinic: "診療所", welfare: "福祉", mobility_node: "交通乗降点", food: "食料" };
+  var PROBLEM_TYPE_BY_FUNCTION = {
+    pharmacy: "pharmacy_access",
+    clinic: "clinic_access",
+    welfare: "welfare_access",
+    mobility_node: "mobility_gap"
+  };
+  var ROUTE_LABELS = {
+    senior_employment: "シニア(高齢者)雇用",
+    silver_human_resources: "シルバー人材センター",
+    disability_employment: "障害者雇用",
+    welfare_work: "福祉的就労",
+    community_participation: "地域参加",
+    commercial_service_provider: "民間事業者サービス"
+  };
+  var SUPERVISION_LABELS = {
+    required_initially: "当初は監督必要",
+    required_ongoing: "継続的に監督必要",
+    not_required: "監督不要"
+  };
+  var CLASS_COLOR = {
+    sufficient: "var(--blue)",
+    partial_deficit_low: "var(--yellow)",
+    partial_deficit_high: "var(--orange)",
+    priority_deficit: "var(--red)",
+    low_population: "var(--lightgray)"
+    // unassessed はハッチパターンで表現（塗り色なし）
+  };
+
+  var COLS = 0, ROWS = 0;
+  CELLS.forEach(function (c) {
+    COLS = Math.max(COLS, c.grid.col + 1);
+    ROWS = Math.max(ROWS, c.grid.row + 1);
+  });
+
+  // ---- 状態 ---------------------------------------------------------------
+  var state = {
+    threshold: 10,
+    speedMPerMin: REFERENCE_SPEED,
+    slopeOn: true,
+    selectedCellId: null,
+    placementMode: null, // intervention type currently being placed
+    interventions: [], // [{type, col, row}]
+    roleCounter: 0,
+    roleCards: []
+  };
+
+  // ---- 計算エンジン（純関数。cell/interventionsを一切変更しない） ----------
+  function activeInterventionDefs() {
+    var byType = {};
+    INFRA_DATA.intervention_types.forEach(function (d) { byType[d.type] = d; });
+    return byType;
+  }
+  var INTERVENTION_DEFS = activeInterventionDefs();
+
+  function cellsWithinRadius(iv) {
+    var def = INTERVENTION_DEFS[iv.type];
+    return CELLS.filter(function (c) {
+      var d = Math.hypot(c.grid.col - iv.col, c.grid.row - iv.row);
+      return d <= def.radius_cells;
+    });
+  }
+
+  function humanBridgeCoveredCellIds(iv) {
+    var def = INTERVENTION_DEFS[iv.type];
+    if (def.daily_capacity_households == null) return null; // 容量制約なし
+    var within = cellsWithinRadius(iv).slice().sort(function (a, b) {
+      return b.elderly_single_households - a.elderly_single_households;
+    });
+    var covered = {};
+    var used = 0;
+    within.forEach(function (c) {
+      if (used >= def.daily_capacity_households) return;
+      covered[c.cell_id] = true;
+      used += c.elderly_single_households;
+    });
+    return covered;
+  }
+
+  function effectiveMinutesForCell(cell, fn, speedMPerMin, slopeOn, interventions) {
+    var base = cell.base_access_minutes[fn];
+    interventions.forEach(function (iv) {
+      var def = INTERVENTION_DEFS[iv.type];
+      if (def.affected_functions.indexOf(fn) === -1) return;
+      var dCells = Math.hypot(cell.grid.col - iv.col, cell.grid.row - iv.row);
+      if (dCells > def.radius_cells) return;
+      if (iv.type === "human_bridge") {
+        var covered = humanBridgeCoveredCellIds(iv);
+        if (covered && !covered[cell.cell_id]) return; // 容量超過は改善しない
+      }
+      var ivMinutes = (dCells * RESOLUTION_M) / REFERENCE_SPEED;
+      base = Math.min(base, ivMinutes);
+    });
+    var speedFactor = REFERENCE_SPEED / speedMPerMin;
+    var slopeFactor = slopeOn ? (1 + SLOPE_MODEL.max_uphill_factor * cell.slope_index) : 1.0;
+    return base * speedFactor * slopeFactor;
+  }
+
+  function classifyCell(cell, threshold, speedMPerMin, slopeOn, interventions) {
+    var missing = REQUIRED_FUNCTIONS.filter(function (fn) { return cell.data_quality[fn] === "unassessed"; });
+    if (missing.length > 0) {
+      return { classification: "unassessed", unmet: missing, effective: null };
+    }
+    var effective = {};
+    REQUIRED_FUNCTIONS.forEach(function (fn) {
+      effective[fn] = effectiveMinutesForCell(cell, fn, speedMPerMin, slopeOn, interventions);
+    });
+    var unmet = REQUIRED_FUNCTIONS.filter(function (fn) { return effective[fn] > threshold; });
+    var classification;
+    if (cell.elderly_single_households < MIN_POPULATION_THRESHOLD) {
+      classification = "low_population";
+    } else if (unmet.length === 0) {
+      classification = "sufficient";
+    } else if (unmet.length === 1) {
+      classification = "partial_deficit_low";
+    } else if (cell.elderly_single_households >= PRIORITY_HOUSEHOLDS_THRESHOLD) {
+      classification = "priority_deficit";
+    } else {
+      classification = "partial_deficit_high";
+    }
+    return { classification: classification, unmet: unmet, effective: effective };
+  }
+
+  function classifyAll(threshold, speedMPerMin, slopeOn, interventions) {
+    var out = {};
+    CELLS.forEach(function (c) { out[c.cell_id] = classifyCell(c, threshold, speedMPerMin, slopeOn, interventions); });
+    return out;
+  }
+
+  function countByClass(classified) {
+    var counts = { sufficient: 0, partial_deficit_low: 0, partial_deficit_high: 0, priority_deficit: 0, unassessed: 0, low_population: 0 };
+    Object.keys(classified).forEach(function (id) { counts[classified[id].classification]++; });
+    return counts;
+  }
+
+  // ---- 描画: コントロールバー ----------------------------------------------
+  var speedSelect = document.getElementById("speedProfile");
+  INFRA_DATA.walking_profiles.forEach(function (p) {
+    var opt = document.createElement("option");
+    opt.value = p.speed_m_per_min;
+    opt.textContent = p.label + "（" + p.speed_m_per_min + "m/min）";
+    speedSelect.appendChild(opt);
+  });
+  speedSelect.value = REFERENCE_SPEED;
+
+  document.getElementById("resolutionLabel").textContent = RESOLUTION_M + "m メッシュ";
+  document.getElementById("popThresholdText").textContent =
+    "対象人口が高齢単身世帯 " + MIN_POPULATION_THRESHOLD + " 世帯未満のセルは薄灰表示";
+  document.getElementById("priorityThresholdText").textContent =
+    "2機能以上不足 かつ 高齢単身世帯 " + PRIORITY_HOUSEHOLDS_THRESHOLD + " 世帯以上を赤表示";
+  document.getElementById("slopeModelText").textContent =
+    "勾配モデル " + SLOPE_MODEL.id + "（補正ONで最大+" + Math.round(SLOPE_MODEL.max_uphill_factor * 100) + "%、実測標高ではない）";
+
+  document.querySelectorAll("button.opt[data-threshold]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      state.threshold = parseInt(btn.getAttribute("data-threshold"), 10);
+      render();
+    });
+  });
+  speedSelect.addEventListener("change", function () {
+    document.getElementById("customSpeed").value = "";
+    state.speedMPerMin = parseFloat(speedSelect.value);
+    render();
+  });
+  document.getElementById("customSpeed").addEventListener("input", function (e) {
+    var v = parseFloat(e.target.value);
+    if (!isNaN(v) && v > 0) {
+      state.speedMPerMin = v;
+      render();
+    }
+  });
+  document.getElementById("slopeToggle").addEventListener("change", function (e) {
+    state.slopeOn = e.target.checked;
+    render();
+  });
+
+  // ---- 介入ツールバー -------------------------------------------------------
+  var ivButtonsEl = document.getElementById("ivButtons");
+  INFRA_DATA.intervention_types.forEach(function (def) {
+    var btn = document.createElement("button");
+    btn.className = "opt";
+    btn.textContent = def.label;
+    btn.title = def.description;
+    btn.addEventListener("click", function () {
+      state.placementMode = (state.placementMode === def.type) ? null : def.type;
+      renderPlacementHint();
+    });
+    btn.dataset.ivType = def.type;
+    ivButtonsEl.appendChild(btn);
+  });
+
+  function renderPlacementHint() {
+    var hint = document.getElementById("placementHint");
+    hint.classList.toggle("active", !!state.placementMode);
+    if (state.placementMode) {
+      var def = INTERVENTION_DEFS[state.placementMode];
+      hint.textContent = def.label + " を配置するセルをクリックしてください";
+    }
+    ivButtonsEl.querySelectorAll("button").forEach(function (b) {
+      b.classList.toggle("active", b.dataset.ivType === state.placementMode);
+    });
+  }
+
+  function renderIvChips() {
+    var wrap = document.getElementById("ivChips");
+    wrap.innerHTML = "";
+    state.interventions.forEach(function (iv, idx) {
+      var def = INTERVENTION_DEFS[iv.type];
+      var chip = document.createElement("span");
+      chip.className = "iv-chip";
+      chip.textContent = def.label + " @(" + iv.col + "," + iv.row + ") ";
+      var rm = document.createElement("button");
+      rm.textContent = "×";
+      rm.addEventListener("click", function () {
+        state.interventions.splice(idx, 1);
+        render();
+      });
+      chip.appendChild(rm);
+      wrap.appendChild(chip);
+    });
+  }
+
+  // ---- 地図描画 -------------------------------------------------------------
+  var svg = document.getElementById("grid");
+  var cellsLayer = document.getElementById("cellsLayer");
+  var ivLayer = document.getElementById("interventionsLayer");
+  var MARGIN = 40;
+  var CELL_SIZE = Math.min((640 - MARGIN * 2) / COLS, (500 - MARGIN * 2) / ROWS);
+
+  function cellXY(col, row) {
+    return { x: MARGIN + col * CELL_SIZE, y: MARGIN + row * CELL_SIZE };
+  }
+
+  function classColor(classification) {
+    return CLASS_COLOR[classification] || "#ffffff";
+  }
+
+  function renderMap(classified) {
+    cellsLayer.innerHTML = "";
+    CELLS.forEach(function (cell) {
+      var xy = cellXY(cell.grid.col, cell.grid.row);
+      var rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+      rect.setAttribute("x", xy.x);
+      rect.setAttribute("y", xy.y);
+      rect.setAttribute("width", CELL_SIZE - 2);
+      rect.setAttribute("height", CELL_SIZE - 2);
+      rect.setAttribute("rx", 4);
+      var info = classified[cell.cell_id];
+      rect.setAttribute("class", "cell-rect" + (info.classification === "unassessed" ? " unassessed" : "") + (cell.cell_id === state.selectedCellId ? " selected" : ""));
+      if (info.classification !== "unassessed") {
+        rect.setAttribute("fill", classColor(info.classification));
+      }
+      rect.addEventListener("click", function () { onCellClick(cell); });
+      var titleEl = document.createElementNS("http://www.w3.org/2000/svg", "title");
+      titleEl.textContent = cell.cell_id + " / " + info.classification;
+      rect.appendChild(titleEl);
+      cellsLayer.appendChild(rect);
+    });
+
+    ivLayer.innerHTML = "";
+    state.interventions.forEach(function (iv) {
+      var xy = cellXY(iv.col, iv.row);
+      var cx = xy.x + CELL_SIZE / 2, cy = xy.y + CELL_SIZE / 2;
+      var marker = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      marker.setAttribute("cx", cx);
+      marker.setAttribute("cy", cy);
+      marker.setAttribute("r", 6);
+      marker.setAttribute("fill", "#111827");
+      marker.setAttribute("stroke", "#fff");
+      marker.setAttribute("stroke-width", "2");
+      marker.setAttribute("class", "intervention-marker");
+      ivLayer.appendChild(marker);
+    });
+  }
+
+  function onCellClick(cell) {
+    if (state.placementMode) {
+      var type = state.placementMode;
+      state.interventions = state.interventions.filter(function (iv) { return iv.type !== type; });
+      state.interventions.push({ type: type, col: cell.grid.col, row: cell.grid.row });
+      state.placementMode = null;
+      renderPlacementHint();
+    }
+    state.selectedCellId = cell.cell_id;
+    render();
+  }
+
+  // ---- セル詳細パネル --------------------------------------------------------
+  function renderCellDetail(classified) {
+    var el = document.getElementById("cellDetail");
+    if (!state.selectedCellId) {
+      el.innerHTML = '<p class="detail-empty">地図上のセルをクリックすると詳細が表示されます。</p>';
+      renderRoleGenerateArea(null, null);
+      return;
+    }
+    var cell = CELLS.filter(function (c) { return c.cell_id === state.selectedCellId; })[0];
+    var info = classified[cell.cell_id];
+
+    var html = "";
+    html += "<p><strong>" + cell.cell_id + "</strong>（列" + cell.grid.col + " 行" + cell.grid.row + "）</p>";
+    html += "<table class='detail-table'>";
+    html += "<tr><th>対象世帯（高齢単身・合成）</th><td>" + cell.elderly_single_households + " 世帯</td></tr>";
+    html += "<tr><th>参考人口（合成）</th><td>" + cell.elderly_population + " 人</td></tr>";
+    html += "<tr><th>分類</th><td>" + info.classification + "</td></tr>";
+    html += "</table>";
+
+    html += "<table class='detail-table'><thead><tr><th>機能</th><th>実効時間</th><th>状態</th></tr></thead><tbody>";
+    REQUIRED_FUNCTIONS.forEach(function (fn) {
+      var quality = cell.data_quality[fn];
+      var row = "<tr><td>" + FUNCTION_LABELS[fn] + "</td>";
+      if (quality === "unassessed") {
+        row += "<td>—</td><td><span class='tag unassessed'>未評価</span></td>";
+      } else {
+        var minutes = info.effective ? info.effective[fn].toFixed(1) : "—";
+        var isUnmet = info.unmet && info.unmet.indexOf(fn) !== -1;
+        row += "<td>" + minutes + " 分</td><td><span class='tag " + (isUnmet ? "unmet" : "ok") + "'>" + (isUnmet ? "閾値外" : "閾値内") + "</span></td>";
+      }
+      row += "</tr>";
+      html += row;
+    });
+    html += "<tr><td>" + FUNCTION_LABELS.food + "</td><td>—</td><td><span class='tag unassessed'>未評価（全都データ未確認）</span></td></tr>";
+    html += "</tbody></table>";
+
+    html += "<p style='color:var(--sub);font-size:11px'>出典: 合成デモデータ（data/demo/cells.json）。実データではありません。歩行速度=" +
+      state.speedMPerMin + "m/min、勾配補正=" + (state.slopeOn ? "ON" : "OFF") + "、閾値=" + state.threshold + "分。</p>";
+
+    el.innerHTML = html;
+    renderRoleGenerateArea(cell, info);
+  }
+
+  // ---- Before/After サマリ -----------------------------------------------
+  function renderScenarioSummary(classifiedBefore, classifiedAfter) {
+    var box = document.getElementById("scenarioSummary");
+    if (state.interventions.length === 0) {
+      box.style.display = "none";
+      return;
+    }
+    box.style.display = "block";
+    var before = countByClass(classifiedBefore);
+    var after = countByClass(classifiedAfter);
+    document.getElementById("beforeBlue").textContent = before.sufficient;
+    document.getElementById("beforeYellow").textContent = before.partial_deficit_low;
+    document.getElementById("beforeOrange").textContent = before.partial_deficit_high;
+    document.getElementById("beforeRed").textContent = before.priority_deficit;
+    document.getElementById("afterBlue").textContent = after.sufficient;
+    document.getElementById("afterYellow").textContent = after.partial_deficit_low;
+    document.getElementById("afterOrange").textContent = after.partial_deficit_high;
+    document.getElementById("afterRed").textContent = after.priority_deficit;
+
+    var improvedHouseholds = 0;
+    var improvedCells = 0;
+    CELLS.forEach(function (c) {
+      var b = classifiedBefore[c.cell_id], a = classifiedAfter[c.cell_id];
+      var wasDeficit = (b.classification === "partial_deficit_low" || b.classification === "partial_deficit_high" || b.classification === "priority_deficit");
+      if (wasDeficit && a.classification === "sufficient") {
+        improvedHouseholds += c.elderly_single_households;
+        improvedCells++;
+      }
+    });
+    document.getElementById("scenarioHouseholds").textContent =
+      "改善世帯数（合成値）: " + improvedHouseholds + " 世帯（" + improvedCells + " セルが閾値内へ移行）";
+
+    var assumptionsText = state.interventions.map(function (iv) {
+      var def = INTERVENTION_DEFS[iv.type];
+      var cap = def.daily_capacity_households != null ? "、日次容量" + def.daily_capacity_households + "世帯" : "（容量制約なし）";
+      return def.label + ": 半径" + def.radius_cells + "セル" + cap;
+    }).join(" / ");
+    document.getElementById("scenarioAssumptions").textContent = "前提: " + assumptionsText +
+      "。歩行速度=" + state.speedMPerMin + "m/min、勾配補正=" + (state.slopeOn ? "ON" : "OFF") + "、閾値=" + state.threshold + "分。";
+  }
+
+  // ---- 地域役割カード -------------------------------------------------------
+  function renderRoleGenerateArea(cell, info) {
+    var area = document.getElementById("roleGenerateArea");
+    if (!cell || !info || info.classification === "unassessed" || !info.unmet || info.unmet.length === 0) {
+      area.innerHTML = '<p class="detail-empty">不足（黄・橙・赤）セルを選択すると、地域役割カードの下書きを生成できます。</p>';
+      return;
+    }
+    var options = info.unmet.map(function (fn) {
+      return '<option value="' + fn + '">' + FUNCTION_LABELS[fn] + '不足から生成</option>';
+    }).join("");
+    area.innerHTML =
+      '<label style="font-size:11px;color:var(--sub)">対象とする不足機能</label>' +
+      '<select id="roleFnSelect">' + options + '</select>' +
+      '<div style="margin-top:6px"><button class="primary" id="generateRoleBtn">地域役割カードを下書き生成</button></div>';
+    document.getElementById("generateRoleBtn").addEventListener("click", function () {
+      var fn = document.getElementById("roleFnSelect").value;
+      generateRoleCard(cell, fn);
+    });
+  }
+
+  function generateRoleCard(cell, fn) {
+    var problemType = PROBLEM_TYPE_BY_FUNCTION[fn];
+    var template = ROLES_DATA.templates.filter(function (t) { return t.problem_type === problemType; })[0];
+    if (!template) return;
+    state.roleCounter++;
+    var card = {
+      role_id: "ROLE-" + String(state.roleCounter).padStart(4, "0"),
+      source_cell_id: cell.cell_id,
+      problem_type: template.problem_type,
+      title: template.title,
+      schedule: JSON.parse(JSON.stringify(template.schedule)),
+      task_units: template.task_units.slice(),
+      functional_requirements: JSON.parse(JSON.stringify(template.functional_requirements)),
+      supervision: template.supervision,
+      compensation_required: template.compensation_required,
+      route_candidates: template.route_candidates.slice(),
+      legal_status: "human_review_required",
+      status: "draft" // AIはこの値を書き換えない。承認は常に人間。
+    };
+    state.roleCards.unshift(card);
+    renderRoleCards();
+  }
+
+  function renderRoleCards() {
+    var wrap = document.getElementById("roleCards");
+    wrap.innerHTML = "";
+    state.roleCards.forEach(function (card, idx) {
+      var box = document.createElement("div");
+      box.className = "role-card";
+      box.innerHTML =
+        '<span class="status-badge">status: ' + card.status + '</span> ' +
+        '<strong>' + card.role_id + '</strong>（' + card.source_cell_id + ' / ' + card.problem_type + '）' +
+        '<label>タイトル</label><input type="text" data-idx="' + idx + '" data-field="title" value="' + escapeHtml(card.title) + '" />' +
+        '<label>作業単位（1行1項目）</label><textarea data-idx="' + idx + '" data-field="task_units">' + escapeHtml(card.task_units.join("\n")) + '</textarea>' +
+        '<label>最短稼働(分) / 頻度</label>' +
+        '<div style="display:flex;gap:6px"><input type="text" style="width:60px" data-idx="' + idx + '" data-field="min_minutes" value="' + card.schedule.min_minutes + '" />' +
+        '<input type="text" data-idx="' + idx + '" data-field="frequency" value="' + escapeHtml(card.schedule.frequency) + '" /></div>' +
+        '<label>監督</label><select data-idx="' + idx + '" data-field="supervision">' +
+          ["required_initially", "required_ongoing", "not_required"].map(function (v) {
+            return '<option value="' + v + '"' + (v === card.supervision ? " selected" : "") + '>' + SUPERVISION_LABELS[v] + '</option>';
+          }).join("") +
+        '</select>' +
+        '<label><input type="checkbox" data-idx="' + idx + '" data-field="compensation_required" ' + (card.compensation_required ? "checked" : "") + ' /> 報酬要否（要）</label>' +
+        '<label>制度候補（複数可）</label><div class="route-checks">' +
+          ["senior_employment", "silver_human_resources", "disability_employment", "welfare_work", "community_participation", "commercial_service_provider"].map(function (code) {
+            var checked = card.route_candidates.indexOf(code) !== -1 ? "checked" : "";
+            return '<label><input type="checkbox" data-idx="' + idx + '" data-route="' + code + '" ' + checked + ' />' + ROUTE_LABELS[code] + '</label>';
+          }).join("") +
+        '</div>' +
+        '<div class="approve-row">' +
+          '<button class="secondary" disabled title="D0/R0では未実装。承認は必ず人間のコーディネーターが行い、AIはapprovedを設定できません">承認（人間のみ・未実装）</button>' +
+        '</div>' +
+        '<pre class="card-json">' + escapeHtml(JSON.stringify(card, null, 2)) + '</pre>';
+      wrap.appendChild(box);
+    });
+
+    wrap.querySelectorAll("input[data-field], textarea[data-field], select[data-field]").forEach(function (input) {
+      input.addEventListener("change", function () {
+        var idx = parseInt(input.dataset.idx, 10);
+        var field = input.dataset.field;
+        var card = state.roleCards[idx];
+        if (field === "task_units") {
+          card.task_units = input.value.split("\n").map(function (s) { return s.trim(); }).filter(Boolean);
+        } else if (field === "min_minutes") {
+          card.schedule.min_minutes = parseInt(input.value, 10) || card.schedule.min_minutes;
+        } else if (field === "frequency") {
+          card.schedule.frequency = input.value;
+        } else if (field === "compensation_required") {
+          card.compensation_required = input.checked;
+        } else {
+          card[field] = input.value;
+        }
+        renderRoleCards();
+      });
+    });
+    wrap.querySelectorAll("input[data-route]").forEach(function (input) {
+      input.addEventListener("change", function () {
+        var idx = parseInt(input.dataset.idx, 10);
+        var code = input.dataset.route;
+        var card = state.roleCards[idx];
+        var pos = card.route_candidates.indexOf(code);
+        if (input.checked && pos === -1) card.route_candidates.push(code);
+        if (!input.checked && pos !== -1) card.route_candidates.splice(pos, 1);
+        renderRoleCards();
+      });
+    });
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  // ---- 全体レンダリング -------------------------------------------------------
+  function render() {
+    document.querySelectorAll("button.opt[data-threshold]").forEach(function (btn) {
+      btn.classList.toggle("active", parseInt(btn.getAttribute("data-threshold"), 10) === state.threshold);
+    });
+    var classifiedBefore = classifyAll(state.threshold, state.speedMPerMin, state.slopeOn, []);
+    var classifiedAfter = classifyAll(state.threshold, state.speedMPerMin, state.slopeOn, state.interventions);
+    renderMap(classifiedAfter);
+    renderCellDetail(classifiedAfter);
+    renderIvChips();
+    renderScenarioSummary(classifiedBefore, classifiedAfter);
+  }
+
+  renderPlacementHint();
+  render();
+})();
+</script>
+</body>
+</html>

@@ -36,7 +36,7 @@ flowchart TD
 | MQR-005 | `DONE` | 安全なデモモード | MQR-002 | `demo.html`から起動、電話不発信、警告表示、デモ経路あり | `test_demo_entry_exists`、経路テスト |
 | MQR-006 | `DONE` | 自動検証入口 | MQR-002〜005 | `make verify` 1コマンドで生成・構文・テストが成功 | 11テストPASS |
 | MQR-007 | `DONE` | エージェントハーネス | MQR-001 | 読書順序、不変条件、停止条件、完了定義を文書化 | `AGENTS.md`、`CLAUDE.md` |
-| MQR-008 | `HUMAN_REVIEW` | 実機デモ確認 | MQR-005〜006 | iOS Safari、Android Chrome、200%拡大で主要導線を確認 | 端末・OS・ブラウザ・結果を追記 |
+| MQR-008 | `HUMAN_REVIEW` | 実機デモ確認 | MQR-005〜006 | iOS Safari、Android Chrome、200%拡大で主要導線を確認 | `make verify`（11テストPASS）、デスクトップChromeでデモ一巡、375×667・200%相当幅（188px）で横スクロールなし。iOS／Android実機は未確認 |
 
 Phase 0のコードは起動可能。公開デモの完了判定にはMQR-008が必要。
 

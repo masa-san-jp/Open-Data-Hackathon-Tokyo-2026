@@ -1,0 +1,1205 @@
+{
+  "demo": true,
+  "cells": [
+    {
+      "cell_id": "DEMO-0000",
+      "demo": true,
+      "grid": {
+        "col": 0,
+        "row": 0
+      },
+      "analysis_resolution_m": 250,
+      "elderly_population": 2,
+      "elderly_single_households": 1,
+      "data_quality": {
+        "pharmacy": "demo",
+        "clinic": "demo",
+        "welfare": "demo",
+        "mobility_node": "demo",
+        "food": "unassessed"
+      },
+      "base_access_minutes": {
+        "pharmacy": 4.4,
+        "clinic": 9.4,
+        "welfare": 19.0,
+        "mobility_node": 9.4
+      },
+      "slope_index": 0.0
+    },
+    {
+      "cell_id": "DEMO-0001",
+      "demo": true,
+      "grid": {
+        "col": 1,
+        "row": 0
+      },
+      "analysis_resolution_m": 250,
+      "elderly_population": 7,
+      "elderly_single_households": 4,
+      "data_quality": {
+        "pharmacy": "demo",
+        "clinic": "demo",
+        "welfare": "demo",
+        "mobility_node": "demo",
+        "food": "unassessed"
+      },
+      "base_access_minutes": {
+        "pharmacy": 3.1,
+        "clinic": 6.2,
+        "welfare": 15.9,
+        "mobility_node": 9.9
+      },
+      "slope_index": 0.0
+    },
+    {
+      "cell_id": "DEMO-0002",
+      "demo": true,
+      "grid": {
+        "col": 2,
+        "row": 0
+      },
+      "analysis_resolution_m": 250,
+      "elderly_population": 13,
+      "elderly_single_households": 7,
+      "data_quality": {
+        "pharmacy": "demo",
+        "clinic": "demo",
+        "welfare": "demo",
+        "mobility_node": "demo",
+        "food": "unassessed"
+      },
+      "base_access_minutes": {
+        "pharmacy": 4.4,
+        "clinic": 3.1,
+        "welfare": 12.9,
+        "mobility_node": 11.3
+      },
+      "slope_index": 0.0
+    },
+    {
+      "cell_id": "DEMO-0003",
+      "demo": true,
+      "grid": {
+        "col": 3,
+        "row": 0
+      },
+      "analysis_resolution_m": 250,
+      "elderly_population": 18,
+      "elderly_single_households": 10,
+      "data_quality": {
+        "pharmacy": "demo",
+        "clinic": "demo",
+        "welfare": "demo",
+        "mobility_node": "demo",
+        "food": "unassessed"
+      },
+      "base_access_minutes": {
+        "pharmacy": 7.0,
+        "clinic": 0.0,
+        "welfare": 9.9,
+        "mobility_node": 13.3
+      },
+      "slope_index": 0.0
+    },
+    {
+      "cell_id": "DEMO-0004",
+      "demo": true,
+      "grid": {
+        "col": 4,
+        "row": 0
+      },
+      "analysis_resolution_m": 250,
+      "elderly_population": 4,
+      "elderly_single_households": 2,
+      "data_quality": {
+        "pharmacy": "demo",
+        "clinic": "demo",
+        "welfare": "demo",
+        "mobility_node": "demo",
+        "food": "unassessed"
+      },
+      "base_access_minutes": {
+        "pharmacy": 9.9,
+        "clinic": 3.1,
+        "welfare": 7.0,
+        "mobility_node": 15.6
+      },
+      "slope_index": 0.0
+    },
+    {
+      "cell_id": "DEMO-0005",
+      "demo": true,
+      "grid": {
+        "col": 5,
+        "row": 0
+      },
+      "analysis_resolution_m": 250,
+      "elderly_population": 9,
+      "elderly_single_households": 5,
+      "data_quality": {
+        "pharmacy": "demo",
+        "clinic": "demo",
+        "welfare": "demo",
+        "mobility_node": "demo",
+        "food": "unassessed"
+      },
+      "base_access_minutes": {
+        "pharmacy": 12.9,
+        "clinic": 6.2,
+        "welfare": 4.4,
+        "mobility_node": 16.8
+      },
+      "slope_index": 0.0
+    },
+    {
+      "cell_id": "DEMO-0006",
+      "demo": true,
+      "grid": {
+        "col": 6,
+        "row": 0
+      },
+      "analysis_resolution_m": 250,
+      "elderly_population": 14,
+      "elderly_single_households": 8,
+      "data_quality": {
+        "pharmacy": "demo",
+        "clinic": "demo",
+        "welfare": "demo",
+        "mobility_node": "demo",
+        "food": "unassessed"
+      },
+      "base_access_minutes": {
+        "pharmacy": 12.5,
+        "clinic": 7.0,
+        "welfare": 3.1,
+        "mobility_node": 15.9
+      },
+      "slope_index": 0.0
+    },
+    {
+      "cell_id": "DEMO-0007",
+      "demo": true,
+      "grid": {
+        "col": 7,
+        "row": 0
+      },
+      "analysis_resolution_m": 250,
+      "elderly_population": 20,
+      "elderly_single_households": 11,
+      "data_quality": {
+        "pharmacy": "demo",
+        "clinic": "demo",
+        "welfare": "demo",
+        "mobility_node": "demo",
+        "food": "unassessed"
+      },
+      "base_access_minutes": {
+        "pharmacy": 12.9,
+        "clinic": 6.2,
+        "welfare": 4.4,
+        "mobility_node": 15.6
+      },
+      "slope_index": 0.0
+    },
+    {
+      "cell_id": "DEMO-0100",
+      "demo": true,
+      "grid": {
+        "col": 0,
+        "row": 1
+      },
+      "analysis_resolution_m": 250,
+      "elderly_population": 11,
+      "elderly_single_households": 6,
+      "data_quality": {
+        "pharmacy": "demo",
+        "clinic": "demo",
+        "welfare": "demo",
+        "mobility_node": "demo",
+        "food": "unassessed"
+      },
+      "base_access_minutes": {
+        "pharmacy": 3.1,
+        "clinic": 9.9,
+        "welfare": 18.8,
+        "mobility_node": 6.2
+      },
+      "slope_index": 0.2
+    },
+    {
+      "cell_id": "DEMO-0101",
+      "demo": true,
+      "grid": {
+        "col": 1,
+        "row": 1
+      },
+      "analysis_resolution_m": 250,
+      "elderly_population": 16,
+      "elderly_single_households": 9,
+      "data_quality": {
+        "pharmacy": "demo",
+        "clinic": "demo",
+        "welfare": "demo",
+        "mobility_node": "demo",
+        "food": "unassessed"
+      },
+      "base_access_minutes": {
+        "pharmacy": 0.0,
+        "clinic": 7.0,
+        "welfare": 15.6,
+        "mobility_node": 7.0
+      },
+      "slope_index": 0.2
+    },
+    {
+      "cell_id": "DEMO-0102",
+      "demo": true,
+      "grid": {
+        "col": 2,
+        "row": 1
+      },
+      "analysis_resolution_m": 250,
+      "elderly_population": 2,
+      "elderly_single_households": 1,
+      "data_quality": {
+        "pharmacy": "demo",
+        "clinic": "demo",
+        "welfare": "demo",
+        "mobility_node": "demo",
+        "food": "unassessed"
+      },
+      "base_access_minutes": {
+        "pharmacy": 3.1,
+        "clinic": 4.4,
+        "welfare": 12.5,
+        "mobility_node": 8.8
+      },
+      "slope_index": 0.2
+    },
+    {
+      "cell_id": "DEMO-0103",
+      "demo": true,
+      "grid": {
+        "col": 3,
+        "row": 1
+      },
+      "analysis_resolution_m": 250,
+      "elderly_population": 7,
+      "elderly_single_households": 4,
+      "data_quality": {
+        "pharmacy": "demo",
+        "clinic": "demo",
+        "welfare": "demo",
+        "mobility_node": "demo",
+        "food": "unassessed"
+      },
+      "base_access_minutes": {
+        "pharmacy": 6.2,
+        "clinic": 3.1,
+        "welfare": 9.4,
+        "mobility_node": 11.3
+      },
+      "slope_index": 0.2
+    },
+    {
+      "cell_id": "DEMO-0104",
+      "demo": true,
+      "grid": {
+        "col": 4,
+        "row": 1
+      },
+      "analysis_resolution_m": 250,
+      "elderly_population": 13,
+      "elderly_single_households": 7,
+      "data_quality": {
+        "pharmacy": "demo",
+        "clinic": "demo",
+        "welfare": "demo",
+        "mobility_node": "demo",
+        "food": "unassessed"
+      },
+      "base_access_minutes": {
+        "pharmacy": 9.4,
+        "clinic": 4.4,
+        "welfare": 6.2,
+        "mobility_node": 14.0
+      },
+      "slope_index": 0.2
+    },
+    {
+      "cell_id": "DEMO-0105",
+      "demo": true,
+      "grid": {
+        "col": 5,
+        "row": 1
+      },
+      "analysis_resolution_m": 250,
+      "elderly_population": 18,
+      "elderly_single_households": 10,
+      "data_quality": {
+        "pharmacy": "demo",
+        "clinic": "demo",
+        "welfare": "demo",
+        "mobility_node": "demo",
+        "food": "unassessed"
+      },
+      "base_access_minutes": {
+        "pharmacy": 9.9,
+        "clinic": 7.0,
+        "welfare": 3.1,
+        "mobility_node": 14.0
+      },
+      "slope_index": 0.2
+    },
+    {
+      "cell_id": "DEMO-0106",
+      "demo": true,
+      "grid": {
+        "col": 6,
+        "row": 1
+      },
+      "analysis_resolution_m": 250,
+      "elderly_population": 4,
+      "elderly_single_households": 2,
+      "data_quality": {
+        "pharmacy": "demo",
+        "clinic": "demo",
+        "welfare": "demo",
+        "mobility_node": "demo",
+        "food": "unassessed"
+      },
+      "base_access_minutes": {
+        "pharmacy": 9.4,
+        "clinic": 4.4,
+        "welfare": 0.0,
+        "mobility_node": 12.9
+      },
+      "slope_index": 0.2
+    },
+    {
+      "cell_id": "DEMO-0107",
+      "demo": true,
+      "grid": {
+        "col": 7,
+        "row": 1
+      },
+      "analysis_resolution_m": 250,
+      "elderly_population": 9,
+      "elderly_single_households": 5,
+      "data_quality": {
+        "pharmacy": "demo",
+        "clinic": "demo",
+        "welfare": "demo",
+        "mobility_node": "demo",
+        "food": "unassessed"
+      },
+      "base_access_minutes": {
+        "pharmacy": 9.9,
+        "clinic": 3.1,
+        "welfare": 3.1,
+        "mobility_node": 12.5
+      },
+      "slope_index": 0.2
+    },
+    {
+      "cell_id": "DEMO-0200",
+      "demo": true,
+      "grid": {
+        "col": 0,
+        "row": 2
+      },
+      "analysis_resolution_m": 250,
+      "elderly_population": 20,
+      "elderly_single_households": 11,
+      "data_quality": {
+        "pharmacy": "demo",
+        "clinic": "demo",
+        "welfare": "demo",
+        "mobility_node": "demo",
+        "food": "unassessed"
+      },
+      "base_access_minutes": {
+        "pharmacy": 4.4,
+        "clinic": 11.3,
+        "welfare": 19.0,
+        "mobility_node": 3.1
+      },
+      "slope_index": 0.4
+    },
+    {
+      "cell_id": "DEMO-0201",
+      "demo": true,
+      "grid": {
+        "col": 1,
+        "row": 2
+      },
+      "analysis_resolution_m": 250,
+      "elderly_population": 5,
+      "elderly_single_households": 3,
+      "data_quality": {
+        "pharmacy": "demo",
+        "clinic": "demo",
+        "welfare": "demo",
+        "mobility_node": "demo",
+        "food": "unassessed"
+      },
+      "base_access_minutes": {
+        "pharmacy": 3.1,
+        "clinic": 8.8,
+        "welfare": 15.9,
+        "mobility_node": 4.4
+      },
+      "slope_index": 0.4
+    },
+    {
+      "cell_id": "DEMO-0202",
+      "demo": true,
+      "grid": {
+        "col": 2,
+        "row": 2
+      },
+      "analysis_resolution_m": 250,
+      "elderly_population": 11,
+      "elderly_single_households": 6,
+      "data_quality": {
+        "pharmacy": "demo",
+        "clinic": "demo",
+        "welfare": "demo",
+        "mobility_node": "demo",
+        "food": "unassessed"
+      },
+      "base_access_minutes": {
+        "pharmacy": 4.4,
+        "clinic": 7.0,
+        "welfare": 12.9,
+        "mobility_node": 7.0
+      },
+      "slope_index": 0.4
+    },
+    {
+      "cell_id": "DEMO-0203",
+      "demo": true,
+      "grid": {
+        "col": 3,
+        "row": 2
+      },
+      "analysis_resolution_m": 250,
+      "elderly_population": 16,
+      "elderly_single_households": 9,
+      "data_quality": {
+        "pharmacy": "demo",
+        "clinic": "demo",
+        "welfare": "demo",
+        "mobility_node": "demo",
+        "food": "unassessed"
+      },
+      "base_access_minutes": {
+        "pharmacy": 7.0,
+        "clinic": 6.2,
+        "welfare": 9.9,
+        "mobility_node": 9.9
+      },
+      "slope_index": 0.4
+    },
+    {
+      "cell_id": "DEMO-0204",
+      "demo": true,
+      "grid": {
+        "col": 4,
+        "row": 2
+      },
+      "analysis_resolution_m": 250,
+      "elderly_population": 2,
+      "elderly_single_households": 1,
+      "data_quality": {
+        "pharmacy": "demo",
+        "clinic": "demo",
+        "welfare": "demo",
+        "mobility_node": "demo",
+        "food": "unassessed"
+      },
+      "base_access_minutes": {
+        "pharmacy": 8.8,
+        "clinic": 7.0,
+        "welfare": 7.0,
+        "mobility_node": 12.9
+      },
+      "slope_index": 0.4
+    },
+    {
+      "cell_id": "DEMO-0205",
+      "demo": true,
+      "grid": {
+        "col": 5,
+        "row": 2
+      },
+      "analysis_resolution_m": 250,
+      "elderly_population": 7,
+      "elderly_single_households": 4,
+      "data_quality": {
+        "pharmacy": "demo",
+        "clinic": "demo",
+        "welfare": "demo",
+        "mobility_node": "demo",
+        "food": "unassessed"
+      },
+      "base_access_minutes": {
+        "pharmacy": 7.0,
+        "clinic": 6.2,
+        "welfare": 4.4,
+        "mobility_node": 11.3
+      },
+      "slope_index": 0.4
+    },
+    {
+      "cell_id": "DEMO-0206",
+      "demo": true,
+      "grid": {
+        "col": 6,
+        "row": 2
+      },
+      "analysis_resolution_m": 250,
+      "elderly_population": 13,
+      "elderly_single_households": 7,
+      "data_quality": {
+        "pharmacy": "demo",
+        "clinic": "demo",
+        "welfare": "demo",
+        "mobility_node": "demo",
+        "food": "unassessed"
+      },
+      "base_access_minutes": {
+        "pharmacy": 6.2,
+        "clinic": 3.1,
+        "welfare": 3.1,
+        "mobility_node": 9.9
+      },
+      "slope_index": 0.4
+    },
+    {
+      "cell_id": "DEMO-0207",
+      "demo": true,
+      "grid": {
+        "col": 7,
+        "row": 2
+      },
+      "analysis_resolution_m": 250,
+      "elderly_population": 18,
+      "elderly_single_households": 10,
+      "data_quality": {
+        "pharmacy": "demo",
+        "clinic": "demo",
+        "welfare": "demo",
+        "mobility_node": "demo",
+        "food": "unassessed"
+      },
+      "base_access_minutes": {
+        "pharmacy": 7.0,
+        "clinic": 0.0,
+        "welfare": 4.4,
+        "mobility_node": 9.4
+      },
+      "slope_index": 0.4
+    },
+    {
+      "cell_id": "DEMO-0300",
+      "demo": true,
+      "grid": {
+        "col": 0,
+        "row": 3
+      },
+      "analysis_resolution_m": 250,
+      "elderly_population": 9,
+      "elderly_single_households": 5,
+      "data_quality": {
+        "pharmacy": "demo",
+        "clinic": "demo",
+        "welfare": "demo",
+        "mobility_node": "demo",
+        "food": "unassessed"
+      },
+      "base_access_minutes": {
+        "pharmacy": 7.0,
+        "clinic": 13.3,
+        "welfare": 19.8,
+        "mobility_node": 0.0
+      },
+      "slope_index": 0.6
+    },
+    {
+      "cell_id": "DEMO-0301",
+      "demo": true,
+      "grid": {
+        "col": 1,
+        "row": 3
+      },
+      "analysis_resolution_m": 250,
+      "elderly_population": 14,
+      "elderly_single_households": 8,
+      "data_quality": {
+        "pharmacy": "demo",
+        "clinic": "demo",
+        "welfare": "demo",
+        "mobility_node": "demo",
+        "food": "unassessed"
+      },
+      "base_access_minutes": {
+        "pharmacy": 6.2,
+        "clinic": 11.3,
+        "welfare": 16.8,
+        "mobility_node": 3.1
+      },
+      "slope_index": 0.6
+    },
+    {
+      "cell_id": "DEMO-0302",
+      "demo": true,
+      "grid": {
+        "col": 2,
+        "row": 3
+      },
+      "analysis_resolution_m": 250,
+      "elderly_population": 20,
+      "elderly_single_households": 11,
+      "data_quality": {
+        "pharmacy": "demo",
+        "clinic": "demo",
+        "welfare": "demo",
+        "mobility_node": "demo",
+        "food": "unassessed"
+      },
+      "base_access_minutes": {
+        "pharmacy": 7.0,
+        "clinic": 9.9,
+        "welfare": 14.0,
+        "mobility_node": 6.2
+      },
+      "slope_index": 0.6
+    },
+    {
+      "cell_id": "DEMO-0303",
+      "demo": true,
+      "grid": {
+        "col": 3,
+        "row": 3
+      },
+      "analysis_resolution_m": 250,
+      "elderly_population": 5,
+      "elderly_single_households": 3,
+      "data_quality": {
+        "pharmacy": "demo",
+        "clinic": "demo",
+        "welfare": "demo",
+        "mobility_node": "demo",
+        "food": "unassessed"
+      },
+      "base_access_minutes": {
+        "pharmacy": 8.8,
+        "clinic": 9.4,
+        "welfare": 11.3,
+        "mobility_node": 9.4
+      },
+      "slope_index": 0.6
+    },
+    {
+      "cell_id": "DEMO-0304",
+      "demo": true,
+      "grid": {
+        "col": 4,
+        "row": 3
+      },
+      "analysis_resolution_m": 250,
+      "elderly_population": 11,
+      "elderly_single_households": 6,
+      "data_quality": {
+        "pharmacy": "demo",
+        "clinic": "demo",
+        "welfare": "demo",
+        "mobility_node": "demo",
+        "food": "unassessed"
+      },
+      "base_access_minutes": {
+        "pharmacy": 7.0,
+        "clinic": 9.9,
+        "welfare": 8.8,
+        "mobility_node": 11.3
+      },
+      "slope_index": 0.6
+    },
+    {
+      "cell_id": "DEMO-0305",
+      "demo": true,
+      "grid": {
+        "col": 5,
+        "row": 3
+      },
+      "analysis_resolution_m": 250,
+      "elderly_population": 16,
+      "elderly_single_households": 9,
+      "data_quality": {
+        "pharmacy": "demo",
+        "clinic": "demo",
+        "welfare": "demo",
+        "mobility_node": "demo",
+        "food": "unassessed"
+      },
+      "base_access_minutes": {
+        "pharmacy": 4.4,
+        "clinic": 7.0,
+        "welfare": 7.0,
+        "mobility_node": 8.8
+      },
+      "slope_index": 0.6
+    },
+    {
+      "cell_id": "DEMO-0306",
+      "demo": true,
+      "grid": {
+        "col": 6,
+        "row": 3
+      },
+      "analysis_resolution_m": 250,
+      "elderly_population": 2,
+      "elderly_single_households": 1,
+      "data_quality": {
+        "pharmacy": "demo",
+        "clinic": "demo",
+        "welfare": "demo",
+        "mobility_node": "demo",
+        "food": "unassessed"
+      },
+      "base_access_minutes": {
+        "pharmacy": 3.1,
+        "clinic": 4.4,
+        "welfare": 6.2,
+        "mobility_node": 7.0
+      },
+      "slope_index": 0.6
+    },
+    {
+      "cell_id": "DEMO-0307",
+      "demo": true,
+      "grid": {
+        "col": 7,
+        "row": 3
+      },
+      "analysis_resolution_m": 250,
+      "elderly_population": 7,
+      "elderly_single_households": 4,
+      "data_quality": {
+        "pharmacy": "demo",
+        "clinic": "demo",
+        "welfare": "demo",
+        "mobility_node": "demo",
+        "food": "unassessed"
+      },
+      "base_access_minutes": {
+        "pharmacy": 4.4,
+        "clinic": 3.1,
+        "welfare": 7.0,
+        "mobility_node": 6.2
+      },
+      "slope_index": 0.6
+    },
+    {
+      "cell_id": "DEMO-0400",
+      "demo": true,
+      "grid": {
+        "col": 0,
+        "row": 4
+      },
+      "analysis_resolution_m": 250,
+      "elderly_population": 18,
+      "elderly_single_households": 10,
+      "data_quality": {
+        "pharmacy": "demo",
+        "clinic": "demo",
+        "welfare": "demo",
+        "mobility_node": "demo",
+        "food": "unassessed"
+      },
+      "base_access_minutes": {
+        "pharmacy": 9.9,
+        "clinic": 15.6,
+        "welfare": 21.0,
+        "mobility_node": 3.1
+      },
+      "slope_index": 0.8
+    },
+    {
+      "cell_id": "DEMO-0401",
+      "demo": true,
+      "grid": {
+        "col": 1,
+        "row": 4
+      },
+      "analysis_resolution_m": 250,
+      "elderly_population": 4,
+      "elderly_single_households": 2,
+      "data_quality": {
+        "pharmacy": "demo",
+        "clinic": "demo",
+        "welfare": "demo",
+        "mobility_node": "demo",
+        "food": "unassessed"
+      },
+      "base_access_minutes": {
+        "pharmacy": 9.4,
+        "clinic": 14.0,
+        "welfare": 18.2,
+        "mobility_node": 4.4
+      },
+      "slope_index": 0.8
+    },
+    {
+      "cell_id": "DEMO-0402",
+      "demo": true,
+      "grid": {
+        "col": 2,
+        "row": 4
+      },
+      "analysis_resolution_m": 250,
+      "elderly_population": 9,
+      "elderly_single_households": 5,
+      "data_quality": {
+        "pharmacy": "demo",
+        "clinic": "demo",
+        "welfare": "demo",
+        "mobility_node": "demo",
+        "food": "unassessed"
+      },
+      "base_access_minutes": {
+        "pharmacy": 9.9,
+        "clinic": 12.9,
+        "welfare": 15.6,
+        "mobility_node": 7.0
+      },
+      "slope_index": 0.8
+    },
+    {
+      "cell_id": "DEMO-0403",
+      "demo": true,
+      "grid": {
+        "col": 3,
+        "row": 4
+      },
+      "analysis_resolution_m": 250,
+      "elderly_population": 14,
+      "elderly_single_households": 8,
+      "data_quality": {
+        "pharmacy": "demo",
+        "clinic": "demo",
+        "welfare": "demo",
+        "mobility_node": "demo",
+        "food": "unassessed"
+      },
+      "base_access_minutes": {
+        "pharmacy": 9.4,
+        "clinic": 12.5,
+        "welfare": 13.3,
+        "mobility_node": 9.9
+      },
+      "slope_index": 0.8
+    },
+    {
+      "cell_id": "DEMO-0404",
+      "demo": true,
+      "grid": {
+        "col": 4,
+        "row": 4
+      },
+      "analysis_resolution_m": 250,
+      "elderly_population": 20,
+      "elderly_single_households": 11,
+      "data_quality": {
+        "pharmacy": "demo",
+        "clinic": "demo",
+        "welfare": "demo",
+        "mobility_node": "demo",
+        "food": "unassessed"
+      },
+      "base_access_minutes": {
+        "pharmacy": 6.2,
+        "clinic": 11.3,
+        "welfare": 11.3,
+        "mobility_node": 9.9
+      },
+      "slope_index": 0.8
+    },
+    {
+      "cell_id": "DEMO-0405",
+      "demo": true,
+      "grid": {
+        "col": 5,
+        "row": 4
+      },
+      "analysis_resolution_m": 250,
+      "elderly_population": 5,
+      "elderly_single_households": 3,
+      "data_quality": {
+        "pharmacy": "demo",
+        "clinic": "demo",
+        "welfare": "demo",
+        "mobility_node": "demo",
+        "food": "unassessed"
+      },
+      "base_access_minutes": {
+        "pharmacy": 3.1,
+        "clinic": 8.8,
+        "welfare": 9.9,
+        "mobility_node": 7.0
+      },
+      "slope_index": 0.8
+    },
+    {
+      "cell_id": "DEMO-0406",
+      "demo": true,
+      "grid": {
+        "col": 6,
+        "row": 4
+      },
+      "analysis_resolution_m": 250,
+      "elderly_population": 11,
+      "elderly_single_households": 6,
+      "data_quality": {
+        "pharmacy": "demo",
+        "clinic": "demo",
+        "welfare": "unassessed",
+        "mobility_node": "demo",
+        "food": "unassessed"
+      },
+      "base_access_minutes": {
+        "pharmacy": 0.0,
+        "clinic": 7.0,
+        "welfare": 9.4,
+        "mobility_node": 4.4
+      },
+      "slope_index": 0.8
+    },
+    {
+      "cell_id": "DEMO-0407",
+      "demo": true,
+      "grid": {
+        "col": 7,
+        "row": 4
+      },
+      "analysis_resolution_m": 250,
+      "elderly_population": 16,
+      "elderly_single_households": 9,
+      "data_quality": {
+        "pharmacy": "demo",
+        "clinic": "demo",
+        "welfare": "unassessed",
+        "mobility_node": "demo",
+        "food": "unassessed"
+      },
+      "base_access_minutes": {
+        "pharmacy": 3.1,
+        "clinic": 6.2,
+        "welfare": 9.9,
+        "mobility_node": 3.1
+      },
+      "slope_index": 0.8
+    },
+    {
+      "cell_id": "DEMO-0500",
+      "demo": true,
+      "grid": {
+        "col": 0,
+        "row": 5
+      },
+      "analysis_resolution_m": 250,
+      "elderly_population": 7,
+      "elderly_single_households": 4,
+      "data_quality": {
+        "pharmacy": "demo",
+        "clinic": "demo",
+        "welfare": "demo",
+        "mobility_node": "demo",
+        "food": "unassessed"
+      },
+      "base_access_minutes": {
+        "pharmacy": 12.9,
+        "clinic": 18.2,
+        "welfare": 22.5,
+        "mobility_node": 6.2
+      },
+      "slope_index": 1.0
+    },
+    {
+      "cell_id": "DEMO-0501",
+      "demo": true,
+      "grid": {
+        "col": 1,
+        "row": 5
+      },
+      "analysis_resolution_m": 250,
+      "elderly_population": 13,
+      "elderly_single_households": 7,
+      "data_quality": {
+        "pharmacy": "demo",
+        "clinic": "demo",
+        "welfare": "demo",
+        "mobility_node": "demo",
+        "food": "unassessed"
+      },
+      "base_access_minutes": {
+        "pharmacy": 12.5,
+        "clinic": 16.8,
+        "welfare": 20.0,
+        "mobility_node": 7.0
+      },
+      "slope_index": 1.0
+    },
+    {
+      "cell_id": "DEMO-0502",
+      "demo": true,
+      "grid": {
+        "col": 2,
+        "row": 5
+      },
+      "analysis_resolution_m": 250,
+      "elderly_population": 18,
+      "elderly_single_households": 10,
+      "data_quality": {
+        "pharmacy": "demo",
+        "clinic": "demo",
+        "welfare": "demo",
+        "mobility_node": "demo",
+        "food": "unassessed"
+      },
+      "base_access_minutes": {
+        "pharmacy": 12.9,
+        "clinic": 15.9,
+        "welfare": 17.7,
+        "mobility_node": 8.8
+      },
+      "slope_index": 1.0
+    },
+    {
+      "cell_id": "DEMO-0503",
+      "demo": true,
+      "grid": {
+        "col": 3,
+        "row": 5
+      },
+      "analysis_resolution_m": 250,
+      "elderly_population": 4,
+      "elderly_single_households": 2,
+      "data_quality": {
+        "pharmacy": "demo",
+        "clinic": "demo",
+        "welfare": "demo",
+        "mobility_node": "demo",
+        "food": "unassessed"
+      },
+      "base_access_minutes": {
+        "pharmacy": 9.9,
+        "clinic": 15.6,
+        "welfare": 15.6,
+        "mobility_node": 11.3
+      },
+      "slope_index": 1.0
+    },
+    {
+      "cell_id": "DEMO-0504",
+      "demo": true,
+      "grid": {
+        "col": 4,
+        "row": 5
+      },
+      "analysis_resolution_m": 250,
+      "elderly_population": 9,
+      "elderly_single_households": 5,
+      "data_quality": {
+        "pharmacy": "demo",
+        "clinic": "demo",
+        "welfare": "demo",
+        "mobility_node": "demo",
+        "food": "unassessed"
+      },
+      "base_access_minutes": {
+        "pharmacy": 7.0,
+        "clinic": 13.3,
+        "welfare": 14.0,
+        "mobility_node": 9.4
+      },
+      "slope_index": 1.0
+    },
+    {
+      "cell_id": "DEMO-0505",
+      "demo": true,
+      "grid": {
+        "col": 5,
+        "row": 5
+      },
+      "analysis_resolution_m": 250,
+      "elderly_population": 14,
+      "elderly_single_households": 8,
+      "data_quality": {
+        "pharmacy": "demo",
+        "clinic": "demo",
+        "welfare": "demo",
+        "mobility_node": "demo",
+        "food": "unassessed"
+      },
+      "base_access_minutes": {
+        "pharmacy": 4.4,
+        "clinic": 11.3,
+        "welfare": 12.9,
+        "mobility_node": 6.2
+      },
+      "slope_index": 1.0
+    },
+    {
+      "cell_id": "DEMO-0506",
+      "demo": true,
+      "grid": {
+        "col": 6,
+        "row": 5
+      },
+      "analysis_resolution_m": 250,
+      "elderly_population": 20,
+      "elderly_single_households": 11,
+      "data_quality": {
+        "pharmacy": "demo",
+        "clinic": "demo",
+        "welfare": "unassessed",
+        "mobility_node": "demo",
+        "food": "unassessed"
+      },
+      "base_access_minutes": {
+        "pharmacy": 3.1,
+        "clinic": 9.9,
+        "welfare": 12.5,
+        "mobility_node": 3.1
+      },
+      "slope_index": 1.0
+    },
+    {
+      "cell_id": "DEMO-0507",
+      "demo": true,
+      "grid": {
+        "col": 7,
+        "row": 5
+      },
+      "analysis_resolution_m": 250,
+      "elderly_population": 5,
+      "elderly_single_households": 3,
+      "data_quality": {
+        "pharmacy": "demo",
+        "clinic": "demo",
+        "welfare": "unassessed",
+        "mobility_node": "demo",
+        "food": "unassessed"
+      },
+      "base_access_minutes": {
+        "pharmacy": 4.4,
+        "clinic": 9.4,
+        "welfare": 12.9,
+        "mobility_node": 0.0
+      },
+      "slope_index": 1.0
+    }
+  ]
+}

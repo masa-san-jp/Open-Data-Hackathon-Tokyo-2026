@@ -255,8 +255,31 @@ flowchart LR
 ```bash
 git clone https://github.com/masa-san-jp/open-data-hackathon-tokyo-2026.git
 cd open-data-hackathon-tokyo-2026
-# TODO: 依存インストール・起動コマンド
+# Cloudflare CLI（Wrangler）が未導入の場合
+brew install cloudflare-wrangler
+
+# Cloudflare の認証状態を確認
+wrangler whoami
+
+# 公開前のローカル確認
+wrangler dev
+
+# Cloudflareへアップロードせず設定だけ検証
+wrangler deploy --dry-run
+
+# 公開（アプリ本体の差し替え後に実行）
+wrangler deploy
 ```
+
+### Cloudflare Workers の公開準備
+
+Cloudflare Workers の最小構成をリポジトリ直下に用意している。
+
+- `wrangler.jsonc`: ハッカソン用Cloudflareチームを対象にしたWorkers設定
+- `src/index.js`: Workerのエントリポイント
+- `public/`: 静的アセット（現在は公開準備ページ）
+
+`public/index.html` を完成した画面に差し替え、必要に応じて `src/index.js` をAPI処理へ拡張してから `wrangler deploy` を実行する。
 
 **必要な環境変数**（`.env.example` をコピーして設定。秘密情報はリポジトリにコミットしない）
 

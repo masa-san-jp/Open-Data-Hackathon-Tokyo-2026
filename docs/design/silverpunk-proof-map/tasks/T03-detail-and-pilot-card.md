@@ -1,8 +1,8 @@
 ---
 id: T03
 phase: 1
-status: ready
-owner: unassigned
+status: done
+owner: agent
 depends_on: [T02]
 files:
   - apps/silverpunk-proof-map/prototype/index.html
@@ -34,4 +34,12 @@ files:
 - 30日アクションがデータ状態を無視して断定していない
 - キーボード操作で地区選択と詳細開閉ができる
 - run log にブラウザで見た結果を追記する
+
+## 実施記録（2026-08-23）
+
+変更: `apps/silverpunk-proof-map/prototype/index.html` に地区詳細パネル（根拠タブ）と30日カードタブを追加。
+検査: `python3 scripts/verify.py --phase 1` 終了コード0。claude-in-chrome でブラウザ実機確認、コンソールエラーなし。
+観測: モデル地区Dの詳細を開き、指標・拠点・計算式・比較対象・未確認欠損項目・出典、および仮説・30日アクション・測定指標・中止条件・次の判断がすべて表示されることを確認。
+注意: 操作はすべてネイティブ`<button>`で実装しキーボード操作可能な構造にしたが、本セッションの自動化ツールでは合成Tabキー操作の反映を確認できなかった（ツール側の制約。詳細は `evidence/run-log.md` の T06 記録）。実ブラウザでの目視Tab確認は今後の課題。
+残課題: T06 で60秒デモ手順とQA証跡をまとめる。
 

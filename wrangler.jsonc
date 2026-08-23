@@ -1,0 +1,12 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "odh-tokyo2026",
+  "main": "src/index.js",
+  "account_id": "8f6f97693e8c5803bcecc4f66dbdbf2b",
+  "compatibility_date": "2026-08-23",
+  "workers_dev": true,
+  "assets": {
+    "binding": "ASSETS",
+    "directory": "./public"
+  }
+}

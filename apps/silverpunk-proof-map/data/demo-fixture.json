@@ -1,0 +1,213 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-08-23T12:00:00+09:00",
+  "as_of": "2026-08-23",
+  "status": "demo",
+  "sources": [
+    {
+      "id": "src-ipss-population-2023",
+      "title": "日本の地域別将来推計人口（令和5年推計）東京都",
+      "url": "https://www.ipss.go.jp/pp-shicyoson/j/shicyoson23/3kekka/Municipalities/13.xlsx",
+      "retrieved_at": null,
+      "verification": "not_verified",
+      "note": "候補ソース。Phase 2 でファイルを開き、粒度・定義・取得日を確認してから verified にする"
+    },
+    {
+      "id": "src-tokyo-catalog-cooling-shelter",
+      "title": "東京都オープンデータカタログ クーリングシェルター一覧（候補）",
+      "url": "https://catalog.data.metro.tokyo.lg.jp/",
+      "retrieved_at": null,
+      "verification": "not_verified",
+      "note": "カタログの検索結果候補。個別データセットの特定と取得は未実施"
+    },
+    {
+      "id": "src-tokyo-regional-disaster-plan",
+      "title": "東京都地域防災計画（候補）",
+      "url": "https://www.bousai.metro.tokyo.lg.jp/",
+      "retrieved_at": null,
+      "verification": "not_verified",
+      "note": "避難所・避難場所データの候補ソース。個別データセットの特定は未実施"
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "heat_disaster",
+      "label": "猛暑・災害",
+      "description": "暑熱と災害時に、高齢者・要配慮者が休憩・給水・医療介護・避難の拠点へ到達できるかを、地区単位の公開データで比較する",
+      "score_version": "demo-0.1",
+      "required_inputs": ["aged_share", "hazard_exposure", "support_points"],
+      "caution": "経路の安全を保証しない。緊急時は自治体・気象庁等の公式情報を確認する"
+    }
+  ],
+  "districts": [
+    {
+      "id": "model-district-a",
+      "name": "モデル地区A（東部・住宅密集想定）",
+      "level": "model",
+      "note": "実在の区市町村ではない。設計仕様書の指標定義を満たす例示レコード",
+      "metrics": {
+        "population": {"value": 68000, "unit": "人", "year": 2025, "status": "illustrative"},
+        "aged_share": {"value": 34.2, "unit": "%", "year": 2025, "status": "illustrative"},
+        "daytime_workers": {"value": 41000, "unit": "人", "year": 2025, "status": "illustrative"},
+        "elderly_workers": {"value": 9200, "unit": "人", "year": 2025, "status": "illustrative"},
+        "supporter_ratio": {"value": 1.76, "unit": "人/人", "year": 2025, "status": "illustrative"},
+        "hazard_exposure": {"value": 62, "unit": "指数(0-100)", "year": 2025, "status": "illustrative"},
+        "support_points": {"value": 18, "unit": "件", "year": 2025, "status": "illustrative"}
+      },
+      "facilities": [
+        {"category": "heat_shelter", "label": "涼しく休める場所", "count": 6, "unit": "件", "status": "illustrative", "as_of": "2025", "note": "例示。公開カタログでの網羅性は未確認"},
+        {"category": "water_rest", "label": "給水・休憩拠点", "count": 5, "unit": "件", "status": "illustrative", "as_of": "2025"},
+        {"category": "medical_care", "label": "医療・介護の相談先", "count": 4, "unit": "件", "status": "not_verified", "as_of": null, "source_id": "src-tokyo-catalog-cooling-shelter"},
+        {"category": "evacuation", "label": "避難所・避難場所", "count": 3, "unit": "件", "status": "illustrative", "as_of": "2025"}
+      ],
+      "gaps": [
+        {"item": "バリアフリー経路情報", "status": "missing", "note": "公開データで見つからない"}
+      ],
+      "priority": {
+        "value": 0.35,
+        "unit": "score(0-1)",
+        "version": "demo-0.1",
+        "status": "illustrative",
+        "calculation": "score_v1 = 0.45×norm(aged_share) + 0.35×norm(hazard_exposure) + 0.20×norm(1/max(support_points,1))。入力はすべて illustrative（例示）。demo priority であり危険度・安全度の順位ではない"
+      },
+      "pilot": {
+        "hypothesis": "医療・介護の相談先情報が未確認のため、実際の到達可否が地図上の件数と一致しない可能性がある",
+        "actions_30d": [
+          "医療・介護カテゴリ4件を現地または電話で確認する",
+          "バリアフリー経路情報の公開元候補を探す",
+          "確認できた拠点数を地区カードに反映する"
+        ],
+        "measurement": "確認できた拠点数、未確認のまま残った拠点数",
+        "stop_conditions": ["協力先が見つからない", "3件以上が二重登録・廃止と判明する"],
+        "next_decision": "確認拠点数が7割を超えたら継続。超えなければ別地区へ切り替えを検討"
+      }
+    },
+    {
+      "id": "model-district-b",
+      "name": "モデル地区B（郊外・戸建て中心想定）",
+      "level": "model",
+      "note": "実在の区市町村ではない。設計仕様書の指標定義を満たす例示レコード",
+      "metrics": {
+        "population": {"value": 45000, "unit": "人", "year": 2025, "status": "illustrative"},
+        "aged_share": {"value": 29.8, "unit": "%", "year": 2025, "status": "illustrative"},
+        "daytime_workers": {"value": 22000, "unit": "人", "year": 2025, "status": "illustrative"},
+        "elderly_workers": {"value": 5100, "unit": "人", "year": 2025, "status": "illustrative"},
+        "supporter_ratio": {"value": 1.64, "unit": "人/人", "year": 2025, "status": "illustrative"},
+        "hazard_exposure": {"value": null, "unit": "指数(0-100)", "year": 2025, "status": "missing"},
+        "support_points": {"value": 11, "unit": "件", "year": 2025, "status": "illustrative"}
+      },
+      "facilities": [
+        {"category": "heat_shelter", "label": "涼しく休める場所", "count": 3, "unit": "件", "status": "illustrative", "as_of": "2025"},
+        {"category": "water_rest", "label": "給水・休憩拠点", "count": 2, "unit": "件", "status": "illustrative", "as_of": "2025"},
+        {"category": "medical_care", "label": "医療・介護の相談先", "count": 3, "unit": "件", "status": "illustrative", "as_of": "2025"},
+        {"category": "evacuation", "label": "避難所・避難場所", "count": null, "unit": "件", "status": "missing", "as_of": null, "note": "公開データで見つからない"}
+      ],
+      "gaps": [
+        {"item": "暑熱曝露指数", "status": "missing", "note": "公開データで見つからない。ヒートアイランド関連の候補カタログを次に探す"},
+        {"item": "避難所・避難場所件数", "status": "missing", "note": "公開データで見つからない"}
+      ],
+      "priority": {
+        "value": null,
+        "unit": "score(0-1)",
+        "version": "demo-0.1",
+        "status": "not_computable",
+        "calculation": "hazard_exposure が missing のため score_v1 を算出しない"
+      },
+      "pilot": {
+        "hypothesis": "暑熱曝露と避難場所の公開データが揃っておらず、優先度そのものを比較できない",
+        "actions_30d": [
+          "暑熱曝露の代替指標（緑被率・アスファルト率等）の候補データを探す",
+          "避難所・避難場所の一次情報を自治体サイトで確認する"
+        ],
+        "measurement": "測定方法を決める",
+        "stop_conditions": ["候補データが1件も見つからない"],
+        "next_decision": "2指標のどちらかが verified になったら priority 再計算を検討"
+      }
+    },
+    {
+      "id": "model-district-c",
+      "name": "モデル地区C（島しょ想定）",
+      "level": "model",
+      "note": "実在の区市町村ではない。設計仕様書の指標定義を満たす例示レコード",
+      "metrics": {
+        "population": {"value": 6200, "unit": "人", "year": 2025, "status": "illustrative"},
+        "aged_share": {"value": null, "unit": "%", "year": 2025, "status": "not_verified"},
+        "daytime_workers": {"value": null, "unit": "人", "year": 2025, "status": "not_applicable"},
+        "elderly_workers": {"value": null, "unit": "人", "year": 2025, "status": "not_applicable"},
+        "supporter_ratio": {"value": null, "unit": "人/人", "year": 2025, "status": "not_applicable", "note": "昼間就業者統計が島しょ部と本土で同一粒度でない"},
+        "hazard_exposure": {"value": 55, "unit": "指数(0-100)", "year": 2025, "status": "illustrative"},
+        "support_points": {"value": 4, "unit": "件", "year": 2025, "status": "illustrative"}
+      },
+      "facilities": [
+        {"category": "heat_shelter", "label": "涼しく休める場所", "count": 1, "unit": "件", "status": "illustrative", "as_of": "2025"},
+        {"category": "water_rest", "label": "給水・休憩拠点", "count": 1, "unit": "件", "status": "illustrative", "as_of": "2025"},
+        {"category": "medical_care", "label": "医療・介護の相談先", "count": 1, "unit": "件", "status": "illustrative", "as_of": "2025"},
+        {"category": "evacuation", "label": "避難所・避難場所", "count": 2, "unit": "件", "status": "illustrative", "as_of": "2025"}
+      ],
+      "gaps": [
+        {"item": "高齢化率", "status": "not_verified", "note": "候補URLはあるが本文未確認。src-ipss-population-2023 を開いて確認する"},
+        {"item": "他地区との就業者比較", "status": "not_comparable", "note": "島しょ部の統計粒度が本土の区市町村と一致しない"}
+      ],
+      "priority": {
+        "value": null,
+        "unit": "score(0-1)",
+        "version": "demo-0.1",
+        "status": "not_computable",
+        "calculation": "aged_share が not_verified のため score_v1 を算出しない"
+      },
+      "pilot": {
+        "hypothesis": "高齢化率が未確認のまま比較すると、拠点不足の深刻さを見誤る可能性がある",
+        "actions_30d": [
+          "src-ipss-population-2023 を開いて島しょ部の粒度・定義・取得日を確認する",
+          "支援拠点4件の現況を地域団体に確認する"
+        ],
+        "measurement": "測定方法を決める",
+        "stop_conditions": ["データが本土と同一粒度で存在しないと判明する"],
+        "next_decision": "aged_share が verified になったら priority を再評価する"
+      }
+    },
+    {
+      "id": "model-district-d",
+      "name": "モデル地区D（内陸・高齢化進行想定）",
+      "level": "model",
+      "note": "実在の区市町村ではない。設計仕様書の指標定義を満たす例示レコード",
+      "metrics": {
+        "population": {"value": 52000, "unit": "人", "year": 2025, "status": "illustrative"},
+        "aged_share": {"value": 41.5, "unit": "%", "year": 2025, "status": "illustrative"},
+        "daytime_workers": {"value": 24000, "unit": "人", "year": 2025, "status": "illustrative"},
+        "elderly_workers": {"value": 7300, "unit": "人", "year": 2025, "status": "illustrative"},
+        "supporter_ratio": {"value": null, "unit": "人/人", "year": 2025, "status": "missing"},
+        "hazard_exposure": {"value": 48, "unit": "指数(0-100)", "year": 2025, "status": "illustrative"},
+        "support_points": {"value": 9, "unit": "件", "year": 2025, "status": "illustrative"}
+      },
+      "facilities": [
+        {"category": "heat_shelter", "label": "涼しく休める場所", "count": 2, "unit": "件", "status": "illustrative", "as_of": "2025"},
+        {"category": "water_rest", "label": "給水・休憩拠点", "count": 2, "unit": "件", "status": "stale", "as_of": "2019", "note": "取得日が基準日から6年超えている。再取得が必要"},
+        {"category": "medical_care", "label": "医療・介護の相談先", "count": 3, "unit": "件", "status": "illustrative", "as_of": "2025"},
+        {"category": "evacuation", "label": "避難所・避難場所", "count": 2, "unit": "件", "status": "illustrative", "as_of": "2025"}
+      ],
+      "gaps": [
+        {"item": "昼間就業者と65歳以上人口の支え手比率", "status": "missing", "note": "公開データで見つからない"},
+        {"item": "給水・休憩拠点の最新件数", "status": "stale", "note": "2019年取得のまま。再取得が必要"}
+      ],
+      "priority": {
+        "value": 0.65,
+        "unit": "score(0-1)",
+        "version": "demo-0.1",
+        "status": "illustrative",
+        "calculation": "score_v1 = 0.45×norm(aged_share) + 0.35×norm(hazard_exposure) + 0.20×norm(1/max(support_points,1))。入力はすべて illustrative（例示）。demo priority であり危険度・安全度の順位ではない"
+      },
+      "pilot": {
+        "hypothesis": "高齢化率が高く支援拠点数が少ない一方、支え手比率が欠損しており担い手の実態が見えない",
+        "actions_30d": [
+          "給水・休憩拠点2件の現況を再確認する（2019年取得のため）",
+          "昼間就業者データの取得候補を探す",
+          "地域団体・自治会に担い手の有無を確認する"
+        ],
+        "measurement": "再確認できた拠点数、支え手比率の取得可否",
+        "stop_conditions": ["再取得したデータが著しく食い違う", "協力先の同意が得られない"],
+        "next_decision": "支え手比率が verified になったら priority の重み付けを見直す"
+      }
+    }
+  ]
+}

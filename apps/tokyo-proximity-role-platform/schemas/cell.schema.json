@@ -1,0 +1,70 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tokyo-proximity-role-platform/schemas/cell.schema.json",
+  "title": "Cell",
+  "description": "分析メッシュ1セルの状態。SPEC.md §3.4 に対応。D0では合成データのみを許容する（demo=true 必須）。",
+  "type": "object",
+  "required": [
+    "cell_id",
+    "demo",
+    "grid",
+    "analysis_resolution_m",
+    "elderly_population",
+    "elderly_single_households",
+    "data_quality",
+    "base_access_minutes",
+    "slope_index"
+  ],
+  "properties": {
+    "cell_id": {
+      "type": "string",
+      "pattern": "^DEMO-\\d{4}$",
+      "description": "実在メッシュコードと誤認されない合成ID（ADR-0006）"
+    },
+    "demo": {
+      "const": true,
+      "description": "デモデータであることの明示フラグ。実データ化までtrue固定。"
+    },
+    "grid": {
+      "type": "object",
+      "required": ["col", "row"],
+      "properties": {
+        "col": { "type": "integer", "minimum": 0 },
+        "row": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "analysis_resolution_m": { "const": 250 },
+    "elderly_population": { "type": "integer", "minimum": 0 },
+    "elderly_single_households": { "type": "integer", "minimum": 0 },
+    "data_quality": {
+      "type": "object",
+      "description": "機能ごとのデータ品質。'demo'=デモ品質で評価可, 'unassessed'=未評価（灰ハッチ対象）",
+      "required": ["food", "pharmacy", "clinic", "welfare", "mobility_node"],
+      "properties": {
+        "food": { "const": "unassessed" },
+        "pharmacy": { "enum": ["demo", "unassessed"] },
+        "clinic": { "enum": ["demo", "unassessed"] },
+        "welfare": { "enum": ["demo", "unassessed"] },
+        "mobility_node": { "enum": ["demo", "unassessed"] }
+      }
+    },
+    "base_access_minutes": {
+      "type": "object",
+      "description": "基準歩行速度80m/minでの合成到達時間（実道路経路ではない。ADR-0003）",
+      "required": ["pharmacy", "clinic", "welfare", "mobility_node"],
+      "properties": {
+        "pharmacy": { "type": "number", "minimum": 0 },
+        "clinic": { "type": "number", "minimum": 0 },
+        "welfare": { "type": "number", "minimum": 0 },
+        "mobility_node": { "type": "number", "minimum": 0 }
+      }
+    },
+    "slope_index": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "合成の上り強度指標（実測標高ではない。ADR-0003）"
+    }
+  },
+  "additionalProperties": true
+}

@@ -37,4 +37,5 @@
 | 設計仕様書 | 作成済み |
 | 実装計画 | 作成済み |
 | 自律実装用 `AGENT.md` | 作成済み |
-| アプリ実装 | 未着手 |
+| アプリ実装（Phase 1 最短経路 T00→T01→T02→T03→T06） | 完了。`apps/silverpunk-proof-map/` で `python3 scripts/verify.py` と `prototype/index.html` のデモが動く |
+| T04（出典・主張台帳）/ T05（データ再生成）/ T07（比較・優先度レイヤー拡張）/ T08（地図） | 未着手 |

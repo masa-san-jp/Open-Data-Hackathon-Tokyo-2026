@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tokyo-proximity-role-platform/schemas/source.schema.json",
+  "title": "DataSource",
+  "description": "data/catalog.yaml の1エントリ。SPEC.md §5.1 / IMPLEMENTATION.md M10 に対応。",
+  "type": "object",
+  "required": [
+    "id", "title", "provider", "source_url", "license", "retrieved_at",
+    "geography", "granularity", "coverage", "schema_status", "production_ready", "notes"
+  ],
+  "properties": {
+    "id": { "type": "string" },
+    "title": { "type": "string" },
+    "provider": { "type": "string" },
+    "source_url": { "type": "string", "format": "uri" },
+    "license": { "type": "string" },
+    "retrieved_at": { "type": "string", "format": "date" },
+    "geography": { "enum": ["point", "polygon", "district", "municipality", "prefecture"] },
+    "granularity": { "type": "string" },
+    "coverage": {
+      "type": "object",
+      "required": ["area", "status"],
+      "properties": {
+        "area": { "type": "string" },
+        "status": { "enum": ["unconfirmed", "partial", "single_municipality", "multi_municipality", "prefecture_wide"] }
+      }
+    },
+    "schema_status": { "enum": ["unverified", "verified", "partial"] },
+    "production_ready": {
+      "type": "boolean",
+      "description": "「存在確認済み」だけでtrueにしない（AGENTS.md §5.1）"
+    },
+    "notes": { "type": "string" },
+    "function_code": {
+      "description": "SPEC.md §3.2 の近隣生活機能コードとの対応（任意）",
+      "enum": ["food", "pharmacy", "clinic", "welfare", "toilet_rest", "mobility_node", "activity", null]
+    }
+  },
+  "additionalProperties": true
+}

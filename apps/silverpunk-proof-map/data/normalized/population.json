@@ -1,0 +1,569 @@
+{
+  "schema_version": "0.1.0",
+  "normalized_at": "2026-08-23T05:15:23Z",
+  "source_id": "src-ipss-population-2023",
+  "target_year": 2020,
+  "target_year_basis": "2020年は国勢調査による実績値（IPSS原本シートの表題に明記）",
+  "municipality_count": 62,
+  "municipalities": [
+    {
+      "code": 13101,
+      "name": "千代田区",
+      "year": 2020,
+      "population_total": 66680,
+      "population_aged_65_plus": 10903,
+      "aged_share_pct": 16.4,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13102,
+      "name": "中央区",
+      "year": 2020,
+      "population_total": 169179,
+      "population_aged_65_plus": 24707,
+      "aged_share_pct": 14.6,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13103,
+      "name": "港区",
+      "year": 2020,
+      "population_total": 260486,
+      "population_aged_65_plus": 43589,
+      "aged_share_pct": 16.7,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13104,
+      "name": "新宿区",
+      "year": 2020,
+      "population_total": 349385,
+      "population_aged_65_plus": 67872,
+      "aged_share_pct": 19.4,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13105,
+      "name": "文京区",
+      "year": 2020,
+      "population_total": 240069,
+      "population_aged_65_plus": 44824,
+      "aged_share_pct": 18.7,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13106,
+      "name": "台東区",
+      "year": 2020,
+      "population_total": 211444,
+      "population_aged_65_plus": 48419,
+      "aged_share_pct": 22.9,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13107,
+      "name": "墨田区",
+      "year": 2020,
+      "population_total": 272085,
+      "population_aged_65_plus": 60204,
+      "aged_share_pct": 22.1,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13108,
+      "name": "江東区",
+      "year": 2020,
+      "population_total": 524310,
+      "population_aged_65_plus": 111817,
+      "aged_share_pct": 21.3,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13109,
+      "name": "品川区",
+      "year": 2020,
+      "population_total": 422488,
+      "population_aged_65_plus": 83843,
+      "aged_share_pct": 19.8,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13110,
+      "name": "目黒区",
+      "year": 2020,
+      "population_total": 288088,
+      "population_aged_65_plus": 56301,
+      "aged_share_pct": 19.5,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13111,
+      "name": "大田区",
+      "year": 2020,
+      "population_total": 748081,
+      "population_aged_65_plus": 167457,
+      "aged_share_pct": 22.4,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13112,
+      "name": "世田谷区",
+      "year": 2020,
+      "population_total": 943664,
+      "population_aged_65_plus": 191693,
+      "aged_share_pct": 20.3,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13113,
+      "name": "渋谷区",
+      "year": 2020,
+      "population_total": 243883,
+      "population_aged_65_plus": 45324,
+      "aged_share_pct": 18.6,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13114,
+      "name": "中野区",
+      "year": 2020,
+      "population_total": 344880,
+      "population_aged_65_plus": 69384,
+      "aged_share_pct": 20.1,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13115,
+      "name": "杉並区",
+      "year": 2020,
+      "population_total": 591108,
+      "population_aged_65_plus": 124462,
+      "aged_share_pct": 21.1,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13116,
+      "name": "豊島区",
+      "year": 2020,
+      "population_total": 301599,
+      "population_aged_65_plus": 59221,
+      "aged_share_pct": 19.6,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13117,
+      "name": "北区",
+      "year": 2020,
+      "population_total": 355213,
+      "population_aged_65_plus": 87924,
+      "aged_share_pct": 24.8,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13118,
+      "name": "荒川区",
+      "year": 2020,
+      "population_total": 217475,
+      "population_aged_65_plus": 50556,
+      "aged_share_pct": 23.2,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13119,
+      "name": "板橋区",
+      "year": 2020,
+      "population_total": 584483,
+      "population_aged_65_plus": 136572,
+      "aged_share_pct": 23.4,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13120,
+      "name": "練馬区",
+      "year": 2020,
+      "population_total": 752608,
+      "population_aged_65_plus": 166409,
+      "aged_share_pct": 22.1,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13121,
+      "name": "足立区",
+      "year": 2020,
+      "population_total": 695043,
+      "population_aged_65_plus": 177488,
+      "aged_share_pct": 25.5,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13122,
+      "name": "葛飾区",
+      "year": 2020,
+      "population_total": 453093,
+      "population_aged_65_plus": 113553,
+      "aged_share_pct": 25.1,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13123,
+      "name": "江戸川区",
+      "year": 2020,
+      "population_total": 697932,
+      "population_aged_65_plus": 148715,
+      "aged_share_pct": 21.3,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13201,
+      "name": "八王子市",
+      "year": 2020,
+      "population_total": 579355,
+      "population_aged_65_plus": 156979,
+      "aged_share_pct": 27.1,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13202,
+      "name": "立川市",
+      "year": 2020,
+      "population_total": 183581,
+      "population_aged_65_plus": 45616,
+      "aged_share_pct": 24.8,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13203,
+      "name": "武蔵野市",
+      "year": 2020,
+      "population_total": 150149,
+      "population_aged_65_plus": 32834,
+      "aged_share_pct": 21.9,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13204,
+      "name": "三鷹市",
+      "year": 2020,
+      "population_total": 195391,
+      "population_aged_65_plus": 43201,
+      "aged_share_pct": 22.1,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13205,
+      "name": "青梅市",
+      "year": 2020,
+      "population_total": 133535,
+      "population_aged_65_plus": 42632,
+      "aged_share_pct": 31.9,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13206,
+      "name": "府中市",
+      "year": 2020,
+      "population_total": 262790,
+      "population_aged_65_plus": 58372,
+      "aged_share_pct": 22.2,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13207,
+      "name": "昭島市",
+      "year": 2020,
+      "population_total": 113949,
+      "population_aged_65_plus": 30239,
+      "aged_share_pct": 26.5,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13208,
+      "name": "調布市",
+      "year": 2020,
+      "population_total": 242614,
+      "population_aged_65_plus": 52816,
+      "aged_share_pct": 21.8,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13209,
+      "name": "町田市",
+      "year": 2020,
+      "population_total": 431079,
+      "population_aged_65_plus": 119059,
+      "aged_share_pct": 27.6,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13210,
+      "name": "小金井市",
+      "year": 2020,
+      "population_total": 126074,
+      "population_aged_65_plus": 26755,
+      "aged_share_pct": 21.2,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13211,
+      "name": "小平市",
+      "year": 2020,
+      "population_total": 198739,
+      "population_aged_65_plus": 46623,
+      "aged_share_pct": 23.5,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13212,
+      "name": "日野市",
+      "year": 2020,
+      "population_total": 190435,
+      "population_aged_65_plus": 47284,
+      "aged_share_pct": 24.8,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13213,
+      "name": "東村山市",
+      "year": 2020,
+      "population_total": 151815,
+      "population_aged_65_plus": 41542,
+      "aged_share_pct": 27.4,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13214,
+      "name": "国分寺市",
+      "year": 2020,
+      "population_total": 129242,
+      "population_aged_65_plus": 28108,
+      "aged_share_pct": 21.7,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13215,
+      "name": "国立市",
+      "year": 2020,
+      "population_total": 77130,
+      "population_aged_65_plus": 18197,
+      "aged_share_pct": 23.6,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13218,
+      "name": "福生市",
+      "year": 2020,
+      "population_total": 56414,
+      "population_aged_65_plus": 15217,
+      "aged_share_pct": 27.0,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13219,
+      "name": "狛江市",
+      "year": 2020,
+      "population_total": 84772,
+      "population_aged_65_plus": 20406,
+      "aged_share_pct": 24.1,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13220,
+      "name": "東大和市",
+      "year": 2020,
+      "population_total": 83901,
+      "population_aged_65_plus": 23018,
+      "aged_share_pct": 27.4,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13221,
+      "name": "清瀬市",
+      "year": 2020,
+      "population_total": 76208,
+      "population_aged_65_plus": 22103,
+      "aged_share_pct": 29.0,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13222,
+      "name": "東久留米市",
+      "year": 2020,
+      "population_total": 115271,
+      "population_aged_65_plus": 33194,
+      "aged_share_pct": 28.8,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13223,
+      "name": "武蔵村山市",
+      "year": 2020,
+      "population_total": 70829,
+      "population_aged_65_plus": 19039,
+      "aged_share_pct": 26.9,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13224,
+      "name": "多摩市",
+      "year": 2020,
+      "population_total": 146951,
+      "population_aged_65_plus": 42621,
+      "aged_share_pct": 29.0,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13225,
+      "name": "稲城市",
+      "year": 2020,
+      "population_total": 93151,
+      "population_aged_65_plus": 20490,
+      "aged_share_pct": 22.0,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13227,
+      "name": "羽村市",
+      "year": 2020,
+      "population_total": 54326,
+      "population_aged_65_plus": 14780,
+      "aged_share_pct": 27.2,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13228,
+      "name": "あきる野市",
+      "year": 2020,
+      "population_total": 79292,
+      "population_aged_65_plus": 24577,
+      "aged_share_pct": 31.0,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13229,
+      "name": "西東京市",
+      "year": 2020,
+      "population_total": 207388,
+      "population_aged_65_plus": 49642,
+      "aged_share_pct": 23.9,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13303,
+      "name": "瑞穂町",
+      "year": 2020,
+      "population_total": 31765,
+      "population_aged_65_plus": 9568,
+      "aged_share_pct": 30.1,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13305,
+      "name": "日の出町",
+      "year": 2020,
+      "population_total": 16958,
+      "population_aged_65_plus": 6569,
+      "aged_share_pct": 38.7,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13307,
+      "name": "檜原村",
+      "year": 2020,
+      "population_total": 2003,
+      "population_aged_65_plus": 1064,
+      "aged_share_pct": 53.1,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13308,
+      "name": "奥多摩町",
+      "year": 2020,
+      "population_total": 4750,
+      "population_aged_65_plus": 2412,
+      "aged_share_pct": 50.8,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13361,
+      "name": "大島町",
+      "year": 2020,
+      "population_total": 7102,
+      "population_aged_65_plus": 2713,
+      "aged_share_pct": 38.2,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13362,
+      "name": "利島村",
+      "year": 2020,
+      "population_total": 327,
+      "population_aged_65_plus": 80,
+      "aged_share_pct": 24.5,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13363,
+      "name": "新島村",
+      "year": 2020,
+      "population_total": 2441,
+      "population_aged_65_plus": 967,
+      "aged_share_pct": 39.6,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13364,
+      "name": "神津島村",
+      "year": 2020,
+      "population_total": 1855,
+      "population_aged_65_plus": 587,
+      "aged_share_pct": 31.6,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13381,
+      "name": "三宅村",
+      "year": 2020,
+      "population_total": 2273,
+      "population_aged_65_plus": 894,
+      "aged_share_pct": 39.3,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13382,
+      "name": "御蔵島村",
+      "year": 2020,
+      "population_total": 323,
+      "population_aged_65_plus": 58,
+      "aged_share_pct": 18.0,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13401,
+      "name": "八丈町",
+      "year": 2020,
+      "population_total": 7042,
+      "population_aged_65_plus": 2814,
+      "aged_share_pct": 40.0,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13402,
+      "name": "青ヶ島村",
+      "year": 2020,
+      "population_total": 169,
+      "population_aged_65_plus": 31,
+      "aged_share_pct": 18.3,
+      "source_id": "src-ipss-population-2023"
+    },
+    {
+      "code": 13421,
+      "name": "小笠原村",
+      "year": 2020,
+      "population_total": 2929,
+      "population_aged_65_plus": 413,
+      "aged_share_pct": 14.1,
+      "source_id": "src-ipss-population-2023"
+    }
+  ],
+  "excluded": []
+}

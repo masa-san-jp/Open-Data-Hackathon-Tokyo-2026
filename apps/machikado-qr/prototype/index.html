@@ -75,6 +75,22 @@ summary:focus-visible {
   margin-bottom: 12px;
 }
 
+@media (max-width: 360px) {
+  .toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .toolbar select {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .demo-badge {
+    align-self: flex-start;
+  }
+}
+
 .toolbar select {
   flex: 1;
   border: 2px solid var(--line);

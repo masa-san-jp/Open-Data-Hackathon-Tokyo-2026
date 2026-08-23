@@ -185,12 +185,39 @@ def check_output(data) -> None:
         "OpenStreetMap contributors",
         "オフラインフォールバック",
         "道路データは解析に使用していません",
+        "道路網・標高データ未接続",
     )
     missing = [text for text in required_disclosures if text not in html]
     if missing:
         fail("REAL-DISCLOSURE", f"未実装範囲の明示がない: {missing}")
     else:
         ok("REAL-DISCLOSURE", "実データ表示と未実装範囲の明示あり")
+    required_controls = (
+        "徒歩時間閾値",
+        'data-threshold="5"',
+        'data-threshold="10"',
+        'data-threshold="15"',
+        "歩行速度",
+        "成人目安（80m/min）",
+        'id="customSpeed"',
+        "m/min",
+        'id="slopeToggle"',
+        "勾配補正 ON",
+        "レイヤー構造",
+        'id="toggleBasemap"',
+        'id="toggleGrid"',
+        'id="toggleBoundary"',
+        'id="toggleClinic"',
+        'id="toggleWelfare"',
+        "徒歩到達圏: 未実装",
+        "計算条件（表示のみ）",
+        "updateConditionStatus",
+    )
+    missing_controls = [text for text in required_controls if text not in html]
+    if missing_controls:
+        fail("REAL-CONTROLS", f"徒歩条件またはレイヤー構造の実装が不足: {missing_controls}")
+    else:
+        ok("REAL-CONTROLS", "徒歩条件を表示専用として操作でき、背景・グリッド・境界・施設レイヤーを切り替え可能")
     if re.search(r"(?:src|href)\s*=\s*[\"'](?:https?:)?//", html, re.IGNORECASE):
         fail("REAL-OFFLINE", "HTMLに外部script/link依存がある")
     else:
