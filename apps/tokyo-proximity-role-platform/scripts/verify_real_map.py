@@ -207,8 +207,14 @@ def check_output(data) -> None:
         'id="toggleBasemap"',
         'id="toggleGrid"',
         'id="toggleBoundary"',
+        'id="toggleOrigins"',
         'id="toggleClinic"',
         'id="toggleWelfare"',
+        'id="originLayer"',
+        "起点",
+        "250mメッシュ",
+        "renderOriginLayer",
+        "selectOrigin",
         "徒歩到達圏: 未実装",
         "計算条件（表示のみ）",
         "updateConditionStatus",
@@ -217,7 +223,7 @@ def check_output(data) -> None:
     if missing_controls:
         fail("REAL-CONTROLS", f"徒歩条件またはレイヤー構造の実装が不足: {missing_controls}")
     else:
-        ok("REAL-CONTROLS", "徒歩条件を表示専用として操作でき、背景・グリッド・境界・施設レイヤーを切り替え可能")
+        ok("REAL-CONTROLS", "徒歩条件を表示専用として操作でき、背景・グリッド・境界・起点・施設レイヤーを切り替え可能")
     if re.search(r"(?:src|href)\s*=\s*[\"'](?:https?:)?//", html, re.IGNORECASE):
         fail("REAL-OFFLINE", "HTMLに外部script/link依存がある")
     else:

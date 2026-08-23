@@ -43,6 +43,8 @@
   .layer-group-label { margin: 8px 0 4px; color: #64748b; font-size: 11px; font-weight: 700; }
   .layer-toggle { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
   .map-status { margin: 0 0 8px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 4px; background: #fff; color: var(--sub); font-size: 11px; line-height: 1.45; }
+  .origin-cell { cursor: pointer; }
+  .origin-cell.selected { stroke: #7c3aed; stroke-width: 2; fill: #ede9fe; fill-opacity: 0.48; }
   .sources { font-size: 11px; color: var(--sub); line-height: 1.6; }
   .sources a { color: #1e3a8a; }
   section.map-panel { padding: 12px; }
@@ -100,6 +102,9 @@
     <div class="layer-toggle"><input type="checkbox" id="toggleGrid" checked /><label for="toggleGrid">座標グリッド</label></div>
     <div class="layer-group-label">行政区域</div>
     <div class="layer-toggle"><input type="checkbox" id="toggleBoundary" checked /><label for="toggleBoundary">青梅市行政区域</label></div>
+    <div class="layer-group-label">分析起点</div>
+    <div class="layer-toggle"><input type="checkbox" id="toggleOrigins" checked /><label for="toggleOrigins">250mメッシュ代表点（暫定）</label></div>
+    <div class="map-status" id="originStatus">起点: 250mメッシュの代表点を暫定表示中。セルをクリックして起点を選択できます。</div>
     <div class="layer-group-label">施設</div>
     <div class="layer-toggle"><input type="checkbox" id="toggleClinic" checked /><label for="toggleClinic">診療所・病院</label></div>
     <div class="layer-toggle"><input type="checkbox" id="toggleWelfare" checked /><label for="toggleWelfare">介護サービス事業所</label></div>
@@ -124,11 +129,12 @@
       <g id="tileLayer" clip-path="url(#mapClip)"></g>
       <g id="gridLayer"></g>
       <polygon id="boundaryPolygon" fill="var(--land)" stroke="#8a9a76" stroke-width="1.5" />
+      <g id="originLayer" clip-path="url(#mapClip)"></g>
       <g id="clinicLayer"></g>
       <g id="welfareLayer"></g>
       <g id="mapAnnotations" pointer-events="none"></g>
     </svg>
-    <p class="map-help" id="accessibilityStatus">徒歩到達圏: 未実装。道路網・標高データ未接続のため、上の条件は表示のみです。施設点の位置や色は徒歩条件で変化しません。</p>
+    <p class="map-help" id="accessibilityStatus">徒歩到達圏: 未実装。起点は250mメッシュ代表点（暫定）ですが、道路網・標高データ未接続のため条件は表示のみです。</p>
     <p class="map-help">© OpenStreetMap contributors（背景地図は表示専用）。青梅市行政区域と施設点は、下記の出典付き実データを描画しています。座標グリッド・北矢印・縮尺は実座標から算出しています。</p>
   </section>
 </main>
@@ -5283,6 +5289,7 @@
   var DATA = JSON.parse(document.getElementById("real-map-data").textContent);
   var PROJECTION = DATA.projection;
   var VIEW_W = 900, VIEW_H = 620, PAD = 30;
+  var originState = { selected: null };
 
   var xs = DATA.boundary_m.map(function (p) { return p[0]; });
   var ys = DATA.boundary_m.map(function (p) { return p[1]; });
@@ -5341,6 +5348,82 @@
 
   function firstTick(value, step) {
     return Math.ceil((value - 1e-9) / step) * step;
+  }
+
+  function pointInPolygonXY(x, y, polygon) {
+    var inside = false;
+    var previous = polygon[polygon.length - 1];
+    polygon.forEach(function (current) {
+      var crosses = (current[1] > y) !== (previous[1] > y);
+      if (crosses) {
+        var intersectionX = (previous[0] - current[0]) * (y - current[1]) /
+          (previous[1] - current[1]) + current[0];
+        if (x < intersectionX) inside = !inside;
+      }
+      previous = current;
+    });
+    return inside;
+  }
+
+  function renderOriginLayer() {
+    var layer = document.getElementById("originLayer");
+    layer.replaceChildren();
+    var size = 250;
+    var startX = Math.floor(minX / size) * size;
+    var startY = Math.floor(minY / size) * size;
+    var count = 0;
+    for (var x = startX; x <= maxX; x += size) {
+      for (var y = startY; y <= maxY; y += size) {
+        var centerX = x + size / 2;
+        var centerY = y + size / 2;
+        if (!pointInPolygonXY(centerX, centerY, DATA.boundary_m)) continue;
+        var col = Math.round((x - startX) / size);
+        var row = Math.round((y - startY) / size);
+        var id = "OME-250-" + String(row).padStart(2, "0") + String(col).padStart(2, "0");
+        var topLeft = toSvg(x, y + size);
+        var bottomRight = toSvg(x + size, y);
+        var rect = svgElement("rect", {
+          x: topLeft[0].toFixed(2), y: topLeft[1].toFixed(2),
+          width: (bottomRight[0] - topLeft[0]).toFixed(2),
+          height: (bottomRight[1] - topLeft[1]).toFixed(2),
+          fill: "#c4b5fd", "fill-opacity": "0.04",
+          stroke: "#7c3aed", "stroke-opacity": "0.16", "stroke-width": "0.6",
+          class: "origin-cell", "data-origin-id": id,
+        }, layer);
+        var lon = PROJECTION.lon0 + centerX / PROJECTION.meters_per_deg_lon;
+        var lat = PROJECTION.lat0 + centerY / PROJECTION.meters_per_deg_lat;
+        var title = svgElement("title", {}, rect);
+        title.textContent = id + "（暫定起点）";
+        (function (origin) {
+          rect.addEventListener("click", function (event) {
+            event.stopPropagation();
+            selectOrigin(origin);
+          });
+        }({ id: id, x: centerX, y: centerY, lon: lon, lat: lat }));
+        svgElement("circle", {
+          cx: toSvg(centerX, centerY)[0].toFixed(2), cy: toSvg(centerX, centerY)[1].toFixed(2),
+          r: "1.8", fill: "#7c3aed", "fill-opacity": "0.68", "pointer-events": "none",
+        }, layer);
+        count += 1;
+      }
+    }
+    var status = document.getElementById("originStatus");
+    if (originState.selected) {
+      status.textContent = "起点: " + originState.selected.id + "を選択中（250mメッシュ代表点・暫定）。徒歩計算は未接続です。";
+    } else {
+      status.textContent = "起点: 250mメッシュの代表点を" + count + "セル暫定表示中。セルをクリックして起点を選択できます。";
+    }
+  }
+
+  function selectOrigin(origin) {
+    originState.selected = origin;
+    document.querySelectorAll(".origin-cell").forEach(function (cell) {
+      cell.classList.toggle("selected", cell.getAttribute("data-origin-id") === origin.id);
+    });
+    document.getElementById("originStatus").textContent =
+      "起点: " + origin.id + "を選択中（250mメッシュ代表点・暫定）。" +
+      "緯度経度 " + origin.lat.toFixed(5) + ", " + origin.lon.toFixed(5) + "。徒歩計算は未接続です。";
+    updateConditionStatus();
   }
 
   function renderGrid() {
@@ -5482,6 +5565,7 @@
   }
 
   renderGrid();
+  renderOriginLayer();
   renderMapAnnotations();
 
   var clinicsAll = DATA.facilities.filter(function (f) { return f.function_code === "clinic"; });
@@ -5555,16 +5639,20 @@
   document.getElementById("toggleBoundary").addEventListener("change", function (e) {
     document.getElementById("boundaryPolygon").style.display = e.target.checked ? "" : "none";
   });
+  document.getElementById("toggleOrigins").addEventListener("change", function (e) {
+    document.getElementById("originLayer").style.display = e.target.checked ? "" : "none";
+  });
 
   var conditionState = { threshold: 10, speed: 80, slope: true };
 
   function updateConditionStatus() {
     var slopeText = conditionState.slope ? "勾配補正 ON" : "勾配補正 OFF";
     var summary = "徒歩" + conditionState.threshold + "分 / " + conditionState.speed + "m/min / " + slopeText;
+    var originText = originState.selected ? "起点 " + originState.selected.id : "起点未選択（250mメッシュ代表点・暫定）";
     document.getElementById("conditionStatus").textContent =
-      "計算条件（表示のみ）: " + summary + "。徒歩到達圏は未実装です。";
+      "計算条件（表示のみ）: " + summary + " / " + originText + "。徒歩到達圏は未実装です。";
     document.getElementById("accessibilityStatus").textContent =
-      "徒歩到達圏: 未実装。道路網・標高データ未接続のため、選択条件（" + summary + "）は表示のみです。施設点の位置や色は徒歩条件で変化しません。";
+      "徒歩到達圏: 未実装。" + originText + "。道路網・標高データ未接続のため、選択条件（" + summary + "）は表示のみです。施設点の位置や色は徒歩条件で変化しません。";
   }
 
   document.querySelectorAll("[data-threshold]").forEach(function (button) {

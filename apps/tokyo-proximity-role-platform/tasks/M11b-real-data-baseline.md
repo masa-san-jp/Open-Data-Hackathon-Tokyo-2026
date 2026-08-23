@@ -29,6 +29,7 @@ acceptance:
   - オンライン時は表示専用の背景地図、失敗時は実座標グリッドへフォールバックする
   - 徒歩5/10/15分・歩行速度・勾配補正を表示専用の条件として操作でき、計算未接続が明示される
   - 背景・座標グリッド・行政区域・施設のレイヤーを個別に表示切替できる
+  - 暫定250mメッシュの起点代表点を表示し、起点セルを選択できる
   - 同じ入力から決定論的に同じ生成物を得られる
   - 1366×768のスクリーンショットを保存できる
 human_gate: false
@@ -53,3 +54,13 @@ human_gate: false
 - verified: `make real-map`、ブラウザで条件変更・レイヤー切替・コンソールエラーなし、1366×768スクリーンショットを更新。
 - evidence: docs/assets/proximity-role-real-map.png
 - remaining: 道路網・標高データ接続後に、条件コントロールを実際の到達圏計算へ接続する。
+
+## Work log (origin layer)
+
+- agent: codex
+- started_at: 2026-08-23
+- completed_at: 2026-08-23
+- changed: 実データ地図へ暫定250mメッシュ代表点の起点レイヤーを追加し、起点セルクリック選択、選択座標表示、レイヤー切替を実装。
+- verified: `make real-map`、ブラウザで起点選択・起点レイヤー切替・徒歩条件表示更新を確認。
+- evidence: prototype/real-map.html、docs/assets/proximity-role-real-map.png
+- remaining: 正式な人口メッシュ・道路網・標高を採用後、暫定起点をM13の実分析メッシュと実道路計算へ置換する。
