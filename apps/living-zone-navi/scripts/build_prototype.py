@@ -4,13 +4,12 @@
   python3 scripts/build_prototype.py
 
 fetch() は file:// で失敗するのでデータは HTML に直接埋め込む。
-この段階（Phase 0）で作るのは design-spec §5 の 1（ヘッダ数字）・4（欠損パネル）・
-5（注記）のみ。SVG地図・ワースト表（§5-2,3）は T04、2100トグル（§5-6）は T05。
-reach/nearest は T03 まで全て unknown のため、reach に依存する数字は
-「算出前」と正直に出す（無い数字を作らない）。
+SVG地図・ワースト表を含むdesign-spec §5のPhase 1画面を作る。
+データはHTMLに直接埋め込むため、file://で開いても外部fetchは発生しない。
 """
 from __future__ import annotations
 
+import html
 import json
 import sys
 from pathlib import Path
@@ -25,6 +24,7 @@ KIND_LABELS = {
     "medical": "医療機関",
     "care": "介護・福祉施設",
     "barrier_free": "バリアフリー環境（段差・屋根等）",
+    "area_centroid": "町丁代表点",
 }
 
 REASON_LABELS = {
@@ -36,6 +36,172 @@ REASON_LABELS = {
     "extraction_failed": "取得・抽出に失敗",
     "under_review": "確認中",
 }
+
+MAP_WIDTH = 760
+MAP_HEIGHT = 520
+MAP_PADDING = 30
+REACH_COLORS = {
+    "near": "#18794e",
+    "far": "#a66a00",
+    "out": "#b42318",
+    "unknown": "#77736c",
+}
+REACH_LABELS = {
+    "near": "near（300m以内）",
+    "far": "far（300〜800m）",
+    "out": "out（800m超）",
+    "unknown": "unknown（判定不能）",
+}
+FACILITY_COLORS = {
+    "shelter": "#255c99",
+    "cool": "#0b7285",
+    "medical": "#8e3b46",
+    "care": "#6b4f9b",
+}
+FACILITY_SYMBOLS = {
+    "shelter": "■",
+    "cool": "●",
+    "medical": "◆",
+    "care": "▲",
+}
+
+
+def esc(value: object) -> str:
+    return html.escape(str(value), quote=True)
+
+
+def number(value: int | float) -> str:
+    return f"{value:,}"
+
+
+def distance_label(value: object) -> str:
+    if isinstance(value, (int, float)):
+        return f"{value:,.1f}m"
+    return "位置不明"
+
+
+def make_projection(payload: dict):
+    """座標の縦横比を保ったSVG投影関数を返す。"""
+    coordinates = [
+        (a["lat"], a["lon"])
+        for a in payload["areas"]
+        if a.get("lat") is not None and a.get("lon") is not None
+    ]
+    coordinates.extend(
+        (f["lat"], f["lon"])
+        for f in payload["facilities"]
+        if f.get("lat") is not None and f.get("lon") is not None
+    )
+    if not coordinates:
+        return lambda _lat, _lon: (MAP_WIDTH / 2, MAP_HEIGHT / 2)
+
+    min_lat = min(lat for lat, _lon in coordinates)
+    max_lat = max(lat for lat, _lon in coordinates)
+    min_lon = min(lon for _lat, lon in coordinates)
+    max_lon = max(lon for _lat, lon in coordinates)
+    lat_span = max(max_lat - min_lat, 0.000001)
+    lon_span = max(max_lon - min_lon, 0.000001)
+    usable_width = MAP_WIDTH - 2 * MAP_PADDING
+    usable_height = MAP_HEIGHT - 2 * MAP_PADDING
+    scale = min(usable_width / lon_span, usable_height / lat_span)
+    drawn_width = lon_span * scale
+    drawn_height = lat_span * scale
+    left = (MAP_WIDTH - drawn_width) / 2
+    top = (MAP_HEIGHT - drawn_height) / 2
+
+    def project(lat: float, lon: float) -> tuple[float, float]:
+        x = left + (lon - min_lon) * scale
+        y = top + (max_lat - lat) * scale
+        return x, y
+
+    return project
+
+
+def make_area_title(area: dict) -> str:
+    reach = area["reach"].get("cool", "unknown")
+    return (
+        f"{area['name']} / 75歳以上 {number(area['pop_75plus'])}人 / "
+        f"涼み処 {distance_label(area['nearest_m'].get('cool'))} "
+        f"{REACH_LABELS.get(reach, reach)} / "
+        f"避難所 {distance_label(area['nearest_m'].get('shelter'))}"
+    )
+
+
+def build_svg(payload: dict) -> str:
+    """町丁円と座標付き施設マーカーを含む自己完結SVGを作る。"""
+    project = make_projection(payload)
+    located_areas = [a for a in payload["areas"] if a.get("lat") is not None]
+    max_pop = max((a["pop_75plus"] for a in located_areas), default=1)
+    area_markup = []
+    for area in payload["areas"]:
+        if area.get("lat") is None or area.get("lon") is None:
+            continue
+        x, y = project(area["lat"], area["lon"])
+        reach = area["reach"].get("cool", "unknown")
+        radius = 3.5 + 14 * area["pop_75plus"] / max_pop
+        color = REACH_COLORS.get(reach, REACH_COLORS["unknown"])
+        area_markup.append(
+            f'<circle class="area-point" cx="{x:.2f}" cy="{y:.2f}" r="{radius:.2f}" '
+            f'fill="{color}" fill-opacity=".78" stroke="#fff" stroke-width="1">'
+            f"<title>{esc(make_area_title(area))}</title></circle>"
+        )
+
+    facility_markup = []
+    for facility in payload["facilities"]:
+        if facility.get("lat") is None or facility.get("lon") is None:
+            continue
+        x, y = project(facility["lat"], facility["lon"])
+        kind = facility["kind"]
+        color = FACILITY_COLORS.get(kind, "#444")
+        symbol = FACILITY_SYMBOLS.get(kind, "?")
+        if kind == "shelter":
+            shape = f'<rect x="{x - 3:.2f}" y="{y - 3:.2f}" width="6" height="6" />'
+        elif kind == "cool":
+            shape = f'<circle cx="{x:.2f}" cy="{y:.2f}" r="3.3" />'
+        elif kind == "medical":
+            shape = (f'<path d="M {x:.2f} {y - 4:.2f} L {x + 4:.2f} {y:.2f} '
+                     f'L {x:.2f} {y + 4:.2f} L {x - 4:.2f} {y:.2f} Z" />')
+        else:
+            shape = (f'<path d="M {x:.2f} {y - 4:.2f} L {x + 4:.2f} {y + 3:.2f} '
+                     f'L {x - 4:.2f} {y + 3:.2f} Z" />')
+        facility_markup.append(
+            f'<g class="facility-marker" fill="{color}" stroke="#fff" stroke-width=".8">'
+            f'{shape}<title>{esc(KIND_LABELS.get(kind, kind))}: {esc(facility["name"])} '
+            f'（記号 {esc(symbol)}）</title></g>'
+        )
+
+    return (
+        f'<svg class="map-svg" viewBox="0 0 {MAP_WIDTH} {MAP_HEIGHT}" '
+        'role="img" aria-labelledby="map-title map-desc">'
+        f'<title id="map-title">{esc(payload["meta"]["ward"])}の町丁別、涼み処reachと拠点分布</title>'
+        '<desc id="map-desc">円の大きさは75歳以上人口、色は涼み処への直線距離。'
+        '施設記号は座標があるものだけを表示。</desc>'
+        f'<rect class="map-background" x="0" y="0" width="{MAP_WIDTH}" height="{MAP_HEIGHT}" />'
+        + "".join(area_markup)
+        + "".join(facility_markup)
+        + "</svg>"
+    )
+
+
+def build_worst_rows(payload: dict) -> tuple[str, int, int, int]:
+    """涼み処reachがoutの町丁を75+人口順で最大10件返す。"""
+    areas = payload["areas"]
+    out_areas = sorted(
+        (a for a in areas if a["reach"].get("cool") == "out"),
+        key=lambda a: (-a["pop_75plus"], a["code"]),
+    )
+    unknown_areas = [a for a in areas if a["reach"].get("cool") == "unknown"]
+    out_population = sum(a["pop_75plus"] for a in out_areas)
+    unknown_population = sum(a["pop_75plus"] for a in unknown_areas)
+    rows = []
+    for rank, area in enumerate(out_areas[:10], 1):
+        rows.append(
+            f'<tr><td>{rank}</td><td>{esc(area["name"])}</td>'
+            f'<td>{number(area["pop_75plus"])}人</td>'
+            f'<td>{distance_label(area["nearest_m"].get("cool"))}</td>'
+            f'<td><span class="reach out">out</span></td></tr>'
+        )
+    return "".join(rows), out_population, unknown_population, len(unknown_areas)
 
 TEMPLATE = """<!doctype html>
 <html lang="ja">
@@ -65,6 +231,19 @@ TEMPLATE = """<!doctype html>
  th,td{padding:7px 12px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--line)}
  th:first-child,td:first-child{text-align:left}
  thead th{font-weight:600;font-size:.8rem;color:var(--mut)}
+ .map-shell{border:1px solid var(--line);border-radius:6px;background:var(--card);padding:10px}
+ .map-svg{display:block;width:100%;height:auto;min-height:280px}
+ .map-background{fill:color-mix(in srgb,var(--fg) 3%,var(--card));stroke:var(--line);stroke-width:1}
+ .legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:10px;font-size:.78rem;color:var(--mut)}
+ .legend span{display:inline-flex;align-items:center;gap:5px}
+ .swatch{width:11px;height:11px;border-radius:50%;display:inline-block;border:1px solid color-mix(in srgb,var(--fg) 30%,transparent)}
+ .swatch.near{background:#18794e}.swatch.far{background:#a66a00}.swatch.out{background:#b42318}.swatch.unknown{background:#77736c}
+ .marker-key{margin-top:5px;font-size:.76rem;color:var(--mut)}
+ .marker-key b{margin-right:4px}
+ .reach{display:inline-block;padding:1px 6px;border-radius:999px;font-size:.72rem;font-weight:700;line-height:1.5}
+ .reach.out{color:#fff;background:#b42318}.reach.near{color:#fff;background:#18794e}
+ .reach.far{color:#fff;background:#a66a00}.reach.unknown{color:#fff;background:#77736c}
+ .table-note{font-size:.8rem;color:var(--mut);margin:8px 0 0}
  .gaps{list-style:none;margin:0;padding:0}
  .gaps li{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--warn);
   border-radius:6px;padding:12px 16px;margin-bottom:8px}
@@ -88,6 +267,31 @@ TEMPLATE = """<!doctype html>
 届く／届かない／分からない の3値を主役にする。</p>
 
 <div class="stats" id="stats"></div>
+
+<section>
+ <h2>町丁の届きやすさ（涼み処）</h2>
+ <div class="map-shell">__MAP__</div>
+ <div class="legend" aria-label="reachの凡例">
+  <span><i class="swatch near"></i>near（300m以内）</span>
+  <span><i class="swatch far"></i>far（300〜800m）</span>
+  <span><i class="swatch out"></i>out（800m超）</span>
+  <span><i class="swatch unknown"></i>unknown（判定不能）</span>
+ </div>
+ <div class="marker-key"><b>施設記号:</b> ■ 避難所　● 涼み処　◆ 医療　▲ 介護・福祉</div>
+ <p class="callout">円の大きさは75歳以上人口に比例。色は涼み処への直線距離で、施設の記号は座標があるものだけを表示。</p>
+</section>
+
+<section>
+ <h2>涼み処が800mを超える町丁（75歳以上人口順）</h2>
+ <div class="scroll">
+ <table>
+  <thead><tr><th>順位</th><th>町丁</th><th>75歳以上</th><th>最近の涼み処</th><th>判定</th></tr></thead>
+  <tbody>__WORST_ROWS__</tbody>
+ </table>
+ </div>
+ <p class="table-note">対象: 涼み処のreachがout（800m超）の町丁。unknownは表から除外し、下に別掲。</p>
+ <p class="table-note">涼み処の判定不能: __UNKNOWN_COOL_AREAS__町丁 / __UNKNOWN_COOL_POP__人。</p>
+</section>
 
 <section>
  <h2>拠点の件数（位置不明を含む）</h2>
@@ -128,13 +332,16 @@ document.getElementById('ward-name').textContent = meta.ward;
 
 const pop65 = areas.reduce((a, x) => a + x.pop_65plus, 0);
 const pop75 = areas.reduce((a, x) => a + x.pop_75plus, 0);
-const unknownAreas = areas.filter(a => Object.values(a.reach).every(v => v === 'unknown')).length;
+const coolOut = areas.filter(a => a.reach.cool === 'out');
+const coolUnknown = areas.filter(a => a.reach.cool === 'unknown');
+const coolOutPop = coolOut.reduce((a, x) => a + x.pop_75plus, 0);
+const coolUnknownPop = coolUnknown.reduce((a, x) => a + x.pop_75plus, 0);
 
 const stats = [
   {label: '対象区', value: meta.ward, pending: false},
   {label: '65歳以上人口 / 75歳以上人口', value: nf(pop65) + '人 / ' + nf(pop75) + '人', pending: false},
-  {label: '800m以内に涼み処が無い高齢者', value: '算出前（T03の距離結合が未実施）', pending: true},
-  {label: 'データ欠損で判定不能な町丁', value: nf(unknownAreas) + ' / ' + nf(areas.length) + ' 町丁（reach未算出）', pending: true},
+  {label: '800m以内に涼み処が無い75歳以上', value: nf(coolOutPop) + '人', pending: false},
+  {label: '涼み処のデータ欠損で判定不能な75歳以上', value: nf(coolUnknownPop) + '人', pending: true},
 ];
 document.getElementById('stats').innerHTML = stats.map(s =>
   `<div class="stat"><div class="n${s.pending ? ' pending' : ''}">${s.value}</div>`
@@ -172,11 +379,16 @@ def main() -> int:
         print("✗ data/processed/dataset.json が無い。先に scripts/build_dataset.py", file=sys.stderr)
         return 1
     payload = json.loads(DATA.read_text(encoding="utf-8"))
+    worst_rows, _out_population, unknown_population, unknown_area_count = build_worst_rows(payload)
     html = (
         TEMPLATE
         .replace("__DATA__", json.dumps(payload, ensure_ascii=False, separators=(",", ":")))
         .replace("__KIND_LABELS__", json.dumps(KIND_LABELS, ensure_ascii=False))
         .replace("__REASON_LABELS__", json.dumps(REASON_LABELS, ensure_ascii=False))
+        .replace("__MAP__", build_svg(payload))
+        .replace("__WORST_ROWS__", worst_rows)
+        .replace("__UNKNOWN_COOL_AREAS__", number(unknown_area_count))
+        .replace("__UNKNOWN_COOL_POP__", number(unknown_population))
     )
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(html, encoding="utf-8")
