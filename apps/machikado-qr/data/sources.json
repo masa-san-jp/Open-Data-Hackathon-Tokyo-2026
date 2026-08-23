@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "sources": [
+    {
+      "id": "tokyo-return-home-support-stations-2025-03-31",
+      "role": "candidate_points",
+      "title": "都内災害時帰宅支援ステーション協力店舗一覧（令和7年3月31日）",
+      "provider": "東京都総務局",
+      "catalog_url": "https://catalog.data.metro.tokyo.lg.jp/dataset/t000003d2000001096",
+      "resource_url": "https://www.opendata.metro.tokyo.lg.jp/soumu/kitaku.shien.station_r7.3.31.csv",
+      "local_file": "data/raw_stations.xlsx",
+      "license_status": "public_release_before_recheck_required",
+      "runtime_status": "enabled_as_demo_candidates",
+      "note": "配布ファイル名の拡張子はCSVだが、取得物の実体はXLSX。候補地であり設置済み地点ではない。"
+    },
+    {
+      "id": "tokyowater-drinking-stations-2026",
+      "role": "nearby_destination",
+      "title": "Tokyowater Drinking Station 一覧",
+      "provider": "東京都水道局",
+      "catalog_url": "https://catalog.data.metro.tokyo.lg.jp/dataset/t000019d0000000003",
+      "resource_url": "https://www.opendata.metro.tokyo.lg.jp/suidou/R8/tokyowaterdrinkingstation_260227.csv",
+      "local_file": "data/raw_water.csv",
+      "license_status": "public_release_before_recheck_required",
+      "runtime_status": "enabled",
+      "note": "稼働停止欄が空で、座標品質ゲートを通過した地点だけを出力する。"
+    },
+    {
+      "id": "daredemo-tokyo-transport",
+      "role": "nearby_destination",
+      "title": "宿泊施設等の施設情報ポータルサイト『だれでも東京』交通",
+      "provider": "東京都デジタルサービス局",
+      "catalog_url": "https://catalog.data.metro.tokyo.lg.jp/dataset/t000029d0000000003/resource/55cea069-8119-4355-b401-07751745c4fc",
+      "resource_url": "https://www.opendata.metro.tokyo.lg.jp/digitalservice/130001_Daredemo_Tokyo_transport.csv",
+      "local_file": "data/raw_transport.csv",
+      "license_status": "public_release_before_recheck_required",
+      "runtime_status": "quarantined",
+      "note": "268行中110行が同一座標を共有するなど位置情報の不整合を確認。実地又は別一次情報で検証するまで画面には出さない。"
+    }
+  ]
+}

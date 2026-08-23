@@ -1,0 +1,38 @@
+name: machikado-qr
+
+on:
+  pull_request:
+    paths:
+      - "apps/machikado-qr/**"
+      - "docs/design/machikado-qr/**"
+      - ".github/workflows/machikado-qr.yml"
+  push:
+    branches: [main]
+    paths:
+      - "apps/machikado-qr/**"
+      - "docs/design/machikado-qr/**"
+      - ".github/workflows/machikado-qr.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/machikado-qr
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: apps/machikado-qr/requirements.txt
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Build and verify
+        run: make verify
+      - name: Check generated artifacts are committed
+        working-directory: .
+        run: git diff --exit-code -- apps/machikado-qr/data/points.json apps/machikado-qr/data/build-report.json apps/machikado-qr/prototype

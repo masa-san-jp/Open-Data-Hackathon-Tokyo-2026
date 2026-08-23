@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "input_sha256": {
+    "data/raw_stations.xlsx": "71a006a11da8767c251e409c66fa16f98d464d171f2e6fd835cff11849ce23c6",
+    "data/raw_water.csv": "26f61628e6872716cb2b23f7d202a1d315d9253b94e17fab562629ef52612e58",
+    "data/raw_transport.csv": "7d05ce21beca06a0c2d2f8dffce6e9de05cf19e168121523f69a1840f1d2cb25"
+  },
+  "candidate_points": {
+    "raw_rows_including_two_headers": 11003,
+    "candidate_points": 1242,
+    "municipalities": 48,
+    "empty_or_invalid_rows": 21,
+    "out_of_tokyo_box_rows": 9738,
+    "unknown_municipality_rows": 0
+  },
+  "destinations": {
+    "water": {
+      "raw_rows": 836,
+      "enabled": 827,
+      "municipality_unjudged": 13,
+      "municipality_mismatch": 9
+    },
+    "transport": {
+      "raw_rows": 268,
+      "largest_coordinate_cluster": 110,
+      "duplicate_coordinate_cluster": 118,
+      "municipality_mismatch": 106,
+      "quarantined": 43,
+      "municipality_unjudged": 4,
+      "invalid_coordinate": 1
+    }
+  },
+  "output": {
+    "candidate_points": 1242,
+    "destinations": 827,
+    "destination_kinds": {
+      "water": 827
+    }
+  }
+}
