@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "exports": {
-    "./types": "./src/types.ts"
+    "./types": "./src/types.ts",
+    "./calc": "./src/calc.ts"
   },
   "scripts": {
     "build": "tsc --noEmit",
