@@ -1,7 +1,7 @@
 # まちかどQR 実装タスク
 
 更新日: 2026-08-23  
-対象仕様: `docs/design/machikado-qr/20260823-machikado-qr-design-spec.md` v0.2
+対象仕様: `docs/design/20260823-machikado-qr-design-spec.md` v0.2
 
 ## 状態定義
 
