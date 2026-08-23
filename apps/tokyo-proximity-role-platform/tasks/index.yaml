@@ -68,7 +68,7 @@ tasks:
   - id: M11B
     title: 青梅市実データ位置マップの再現経路
     phase: m1
-    status: claimed
+    status: review
     owner: codex
     depends_on: [M11]
     file: tasks/M11b-real-data-baseline.md

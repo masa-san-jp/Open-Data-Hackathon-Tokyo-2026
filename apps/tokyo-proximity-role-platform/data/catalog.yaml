@@ -1,0 +1,116 @@
+# データレジストリ（SPEC.md §5.1）
+#
+# D0の合成デモデータは data/demo/ に隔離し、ここには登録しない。
+# 「存在確認済み」であっても production_ready: true にはしない（AGENTS.md §5.1）。
+#
+# 登録時の必須項目:
+# - id
+# - title
+# - provider
+# - source_url
+# - license
+# - retrieved_at
+# - geography
+# - granularity
+# - coverage: {area, status}
+# - schema_status
+# - production_ready
+# - notes
+#
+# M1対象地域: 青梅市（ADR-0007でaccepted）。
+# ただし production_ready は対象地域確定だけではtrueにせず、カバー率・道路・標高等を別途監査する。
+
+sources:
+  - id: ome_clinic_list_2025
+    title: 東京都青梅市における医療機関一覧
+    provider: 青梅市
+    source_url: https://www.opendata.metro.tokyo.lg.jp/ome/132055_hospital.xlsx
+    license: CC-BY-4.0
+    retrieved_at: "2026-08-23"
+    geography: point
+    granularity: facility
+    function_code: clinic
+    coverage:
+      area: 青梅市
+      status: single_municipality
+    schema_status: verified
+    production_ready: false
+    notes: >
+      138件（無床診療所121・病院14・有床診療所3）。緯度経度欠損0件、標準スキーマ（全国地方公共団体コード等）。
+      対象地域が青梅市単独に限定されており、東京都全域の生活機能としては使えない。ADR-0007で対象地域は
+      確定したが、全都カバー・道路経路・標高との結合は未監査のため production_ready は false のまま。
+      診療科目・薬局の区分は含まない。
+
+  - id: ome_welfare_care_service_2025
+    title: 東京都青梅市における介護サービス事業所一覧
+    provider: 青梅市
+    source_url: https://www.opendata.metro.tokyo.lg.jp/ome/132055_care_service.xlsx
+    license: CC-BY-4.0
+    retrieved_at: "2026-08-23"
+    geography: point
+    granularity: facility
+    function_code: welfare
+    coverage:
+      area: 青梅市
+      status: single_municipality
+    schema_status: verified
+    production_ready: false
+    notes: >
+      161件。clinicデータセットと同一の標準スキーマ（緯度経度列あり）。緯度経度の欠損率は個別確認未実施。
+      対象地域が青梅市単独に限定。
+
+  - id: ome_population_by_district_2025
+    title: 東京都青梅市における人口統計一覧
+    provider: 青梅市
+    source_url: https://www.opendata.metro.tokyo.lg.jp/ome/132055_population.xlsx
+    license: CC-BY-4.0
+    retrieved_at: "2026-08-23"
+    geography: district
+    granularity: sub-municipal district (e.g. 東青梅地区)
+    function_code: null
+    coverage:
+      area: 青梅市
+      status: single_municipality
+    schema_status: partial
+    production_ready: false
+    notes: >
+      地区別×5歳階級×性別の人口、世帯数（全世帯）を含む。ジオメトリ（点/メッシュ/境界ポリゴン）を
+      持たないため、250mメッシュへの按分には別途地区境界データが必要（未確認）。
+      「高齢単身世帯数」の直接データは含まない（世帯の年齢構成別内訳がない）。
+
+  - id: ome_pharmacy_GAP
+    title: 青梅市 薬局データ（未発見）
+    provider: 東京都保健医療局（薬局等台帳、HTML台帳のみ確認）
+    source_url: https://www.hokeniryo.metro.tokyo.lg.jp/kenkou/hokenjo_daicho/shokuhineigyokyokadaicho
+    license: unknown
+    retrieved_at: "2026-08-23"
+    geography: unknown
+    granularity: unknown
+    function_code: pharmacy
+    coverage:
+      area: 青梅市
+      status: unconfirmed
+    schema_status: unverified
+    production_ready: false
+    notes: >
+      ダウンロード可能なCSV/XLSXが見つからず、HTML台帳のみ。医療機関一覧にも薬局区分は含まれない。
+      別出典の確認またはスクレイピングの要否をオーナー判断待ち（needs-human）。
+
+  - id: ome_mobility_node_GAP
+    title: 青梅市 バス停・交通乗降点データ（未発見）
+    provider: unknown
+    source_url: ""
+    license: unknown
+    retrieved_at: "2026-08-23"
+    geography: unknown
+    granularity: unknown
+    function_code: mobility_node
+    coverage:
+      area: 青梅市
+      status: unconfirmed
+    schema_status: unverified
+    production_ready: false
+    notes: >
+      青梅市の公式オープンデータポータルにバス停一覧なし。都営バスGTFSは西多摩地域を
+      カバーしない可能性が高い（未確認）。西東京バス等の民間事業者データ、またはOpenStreetMap
+      （ODbL）を代替候補として検討する必要がある（未検証）。

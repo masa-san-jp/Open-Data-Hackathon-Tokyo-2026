@@ -1,0 +1,4582 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>青梅市 実データマップ（M1 途中経過）</title>
+<style>
+  :root {
+    --ink: #111827;
+    --sub: #4b5563;
+    --line: #d1d5db;
+    --panel-bg: #f9fafb;
+    --clinic: #2563eb;
+    --welfare: #ea580c;
+    --land: #eef4e6;
+    --sea: #e8f2f8;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Hiragino Sans", "Yu Gothic", "Noto Sans JP", sans-serif; color: var(--ink); background: #fff; }
+  .status-banner {
+    background: #1e3a8a; color: #fff; padding: 8px 12px; font-size: 13px; line-height: 1.5;
+  }
+  .status-banner strong { font-size: 14px; }
+  header.app-header { padding: 10px 16px 6px; border-bottom: 1px solid var(--line); }
+  header.app-header h1 { font-size: 18px; margin: 0 0 2px; }
+  header.app-header p.sub { margin: 0; color: var(--sub); font-size: 12px; }
+  main.layout { display: grid; grid-template-columns: 260px 1fr; min-height: 640px; }
+  aside.side-panel { border-right: 1px solid var(--line); padding: 12px; font-size: 12px; background: var(--panel-bg); }
+  aside.side-panel h2 { font-size: 13px; margin: 12px 0 6px; }
+  aside.side-panel h2:first-child { margin-top: 0; }
+  .legend-row { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; flex: none; border: 1px solid rgba(0,0,0,0.2); }
+  .layer-toggle { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+  .sources { font-size: 11px; color: var(--sub); line-height: 1.6; }
+  .sources a { color: #1e3a8a; }
+  section.map-panel { padding: 12px; }
+  svg#realMap { width: 100%; height: auto; max-width: 900px; display: block; border: 1px solid var(--line); border-radius: 6px; }
+  .facility-dot { cursor: pointer; }
+  .facility-detail { margin-top: 10px; font-size: 12px; border-top: 1px dashed var(--line); padding-top: 8px; min-height: 60px; }
+  footer.app-footer { padding: 10px 16px; border-top: 1px solid var(--line); font-size: 11px; color: var(--sub); }
+</style>
+</head>
+<body>
+
+<div class="status-banner">
+  <strong>REAL DATA（M1途中経過）— 青梅市の実在する医療機関・介護サービス事業所の位置を、実際の行政区域境界の上に表示しています。</strong><br/>
+  歩行時間・徒歩到達圏（アクセシビリティ計算）はまだ実装していません。道路網・標高データの正式採用は未確認です。人口・世帯データも未統合です。<strong>政策判断には使用しないでください。</strong>
+</div>
+
+<header class="app-header">
+  <h1>青梅市 実データマップ（M1 途中経過 — 施設位置のみ）</h1>
+  <p class="sub">D0（合成デモ）とは別系統。ここに表示しているのは実在の施設位置データです。出典は右側パネルを参照してください。</p>
+</header>
+
+<main class="layout">
+  <aside class="side-panel">
+    <h2>凡例</h2>
+    <div class="legend-row"><span class="dot" style="background:var(--clinic)"></span>診療所・病院（<span id="clinicCount"></span>件表示 / 全<span id="clinicTotal"></span>件）</div>
+    <div class="legend-row"><span class="dot" style="background:var(--welfare)"></span>介護サービス事業所（<span id="welfareCount"></span>件表示 / 全<span id="welfareTotal"></span>件）</div>
+
+    <h2>レイヤー表示</h2>
+    <div class="layer-toggle"><input type="checkbox" id="toggleClinic" checked /><label for="toggleClinic">診療所・病院</label></div>
+    <div class="layer-toggle"><input type="checkbox" id="toggleWelfare" checked /><label for="toggleWelfare">介護サービス事業所</label></div>
+
+    <h2>データ品質</h2>
+    <div class="sources" id="qualitySummary"></div>
+
+    <h2>選択した施設</h2>
+    <div class="facility-detail" id="facilityDetail">地図上の点をクリックすると詳細を表示します。</div>
+
+    <h2>出典・取得情報</h2>
+    <div class="sources" id="sourcesList"></div>
+  </aside>
+
+  <section class="map-panel">
+    <svg id="realMap" viewBox="0 0 900 620" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="0" width="900" height="620" fill="var(--sea)" />
+      <polygon id="boundaryPolygon" fill="var(--land)" stroke="#8a9a76" stroke-width="1.5" />
+      <g id="clinicLayer"></g>
+      <g id="welfareLayer"></g>
+    </svg>
+  </section>
+</main>
+
+<footer class="app-footer">
+  青梅市 実データマップ — apps/tokyo-proximity-role-platform M1途中経過。
+  境界データ: 国土交通省 国土数値情報（行政区域）。施設データ: 青梅市オープンデータ（CC-BY-4.0）。
+  詳細は data/normalized/ome/real_map.json および DECISIONS.md ADR-0007/0008 を参照してください。
+</footer>
+
+<script id="real-map-data" type="application/json">{
+  "demo": false,
+  "area": "青梅市",
+  "local_government_code": "13205",
+  "projection": {
+    "method": "equirectangular_local",
+    "note": "青梅市中心付近の緯度でcos補正した等距円筒図法。狭域のみ有効な簡易投影。",
+    "lon0": 139.23376315249754,
+    "lat0": 35.80270671164547,
+    "meters_per_deg_lat": 111320.0,
+    "meters_per_deg_lon": 90284.54801191528
+  },
+  "boundary_m": [
+    [
+      8721.7,
+      -1011.9
+    ],
+    [
+      8721.2,
+      -931.5
+    ],
+    [
+      8303.1,
+      -834.3
+    ],
+    [
+      8144.2,
+      -650.0
+    ],
+    [
+      7988.6,
+      -345.0
+    ],
+    [
+      7918.7,
+      -72.1
+    ],
+    [
+      7677.8,
+      559.4
+    ],
+    [
+      7635.9,
+      792.9
+    ],
+    [
+      7496.0,
+      975.5
+    ],
+    [
+      7492.6,
+      1111.2
+    ],
+    [
+      7336.7,
+      1287.1
+    ],
+    [
+      7337.1,
+      1569.8
+    ],
+    [
+      7469.6,
+      1853.7
+    ],
+    [
+      7439.1,
+      2333.4
+    ],
+    [
+      7327.4,
+      2509.0
+    ],
+    [
+      7015.9,
+      2512.7
+    ],
+    [
+      6592.1,
+      2262.3
+    ],
+    [
+      6214.2,
+      2376.0
+    ],
+    [
+      6223.1,
+      2594.5
+    ],
+    [
+      6087.2,
+      3012.8
+    ],
+    [
+      6137.3,
+      3203.4
+    ],
+    [
+      6085.7,
+      3590.4
+    ],
+    [
+      5647.4,
+      3610.4
+    ],
+    [
+      5583.3,
+      3466.4
+    ],
+    [
+      5294.3,
+      3817.8
+    ],
+    [
+      5159.5,
+      3924.1
+    ],
+    [
+      4730.3,
+      3807.0
+    ],
+    [
+      4640.5,
+      3708.0
+    ],
+    [
+      4434.9,
+      3836.3
+    ],
+    [
+      4341.1,
+      4098.0
+    ],
+    [
+      4174.2,
+      4074.6
+    ],
+    [
+      3442.4,
+      4116.8
+    ],
+    [
+      3112.8,
+      3955.8
+    ],
+    [
+      2699.5,
+      3864.2
+    ],
+    [
+      2414.3,
+      3706.4
+    ],
+    [
+      2260.9,
+      3847.8
+    ],
+    [
+      1669.6,
+      3956.6
+    ],
+    [
+      1177.9,
+      3805.6
+    ],
+    [
+      791.3,
+      3793.8
+    ],
+    [
+      649.9,
+      4168.7
+    ],
+    [
+      311.5,
+      4174.9
+    ],
+    [
+      172.6,
+      3966.2
+    ],
+    [
+      -110.9,
+      3777.0
+    ],
+    [
+      -279.9,
+      3788.8
+    ],
+    [
+      -543.4,
+      4045.3
+    ],
+    [
+      -832.1,
+      4207.0
+    ],
+    [
+      -1234.2,
+      4303.0
+    ],
+    [
+      -1302.8,
+      4432.1
+    ],
+    [
+      -1789.4,
+      4756.9
+    ],
+    [
+      -1906.2,
+      4887.5
+    ],
+    [
+      -2174.3,
+      4839.7
+    ],
+    [
+      -2374.1,
+      4866.2
+    ],
+    [
+      -2605.8,
+      4659.8
+    ],
+    [
+      -2614.7,
+      4488.6
+    ],
+    [
+      -2765.0,
+      4285.0
+    ],
+    [
+      -3110.5,
+      4289.9
+    ],
+    [
+      -3426.6,
+      4156.6
+    ],
+    [
+      -3730.7,
+      4181.7
+    ],
+    [
+      -4232.3,
+      4470.4
+    ],
+    [
+      -4478.6,
+      4462.2
+    ],
+    [
+      -4526.4,
+      4549.4
+    ],
+    [
+      -5097.9,
+      4885.5
+    ],
+    [
+      -5363.4,
+      5076.8
+    ],
+    [
+      -5667.0,
+      5114.4
+    ],
+    [
+      -5838.7,
+      5263.0
+    ],
+    [
+      -6102.9,
+      5261.1
+    ],
+    [
+      -6340.9,
+      5361.3
+    ],
+    [
+      -6427.1,
+      5214.7
+    ],
+    [
+      -6235.4,
+      4958.8
+    ],
+    [
+      -6080.2,
+      4660.1
+    ],
+    [
+      -6107.3,
+      4482.3
+    ],
+    [
+      -5658.8,
+      4149.3
+    ],
+    [
+      -5601.5,
+      4154.3
+    ],
+    [
+      -5275.0,
+      3713.6
+    ],
+    [
+      -5093.2,
+      3611.6
+    ],
+    [
+      -5133.8,
+      3378.7
+    ],
+    [
+      -4995.7,
+      3103.9
+    ],
+    [
+      -5283.5,
+      2685.2
+    ],
+    [
+      -5087.7,
+      1946.3
+    ],
+    [
+      -5376.8,
+      1126.6
+    ],
+    [
+      -5258.9,
+      460.3
+    ],
+    [
+      -5427.7,
+      455.0
+    ],
+    [
+      -5606.5,
+      265.8
+    ],
+    [
+      -5618.5,
+      94.2
+    ],
+    [
+      -5998.7,
+      -109.3
+    ],
+    [
+      -6224.9,
+      -123.2
+    ],
+    [
+      -6575.4,
+      -390.3
+    ],
+    [
+      -6816.9,
+      -492.1
+    ],
+    [
+      -6993.2,
+      -454.3
+    ],
+    [
+      -7143.4,
+      -557.9
+    ],
+    [
+      -7578.8,
+      -704.5
+    ],
+    [
+      -7677.3,
+      -917.5
+    ],
+    [
+      -7840.3,
+      -1077.1
+    ],
+    [
+      -7782.9,
+      -1232.6
+    ],
+    [
+      -7781.9,
+      -1524.4
+    ],
+    [
+      -7844.3,
+      -1964.1
+    ],
+    [
+      -7760.3,
+      -2302.3
+    ],
+    [
+      -8211.4,
+      -2410.9
+    ],
+    [
+      -8421.6,
+      -2639.6
+    ],
+    [
+      -8721.7,
+      -2746.0
+    ],
+    [
+      -8678.6,
+      -3370.2
+    ],
+    [
+      -8521.1,
+      -3412.3
+    ],
+    [
+      -8210.7,
+      -2934.6
+    ],
+    [
+      -8062.6,
+      -2867.0
+    ],
+    [
+      -7873.2,
+      -3050.5
+    ],
+    [
+      -7721.3,
+      -3051.9
+    ],
+    [
+      -7721.1,
+      -2763.1
+    ],
+    [
+      -7640.6,
+      -2657.3
+    ],
+    [
+      -7351.3,
+      -2978.5
+    ],
+    [
+      -7293.9,
+      -3179.8
+    ],
+    [
+      -7146.8,
+      -3280.8
+    ],
+    [
+      -6885.9,
+      -3247.1
+    ],
+    [
+      -6783.2,
+      -2759.9
+    ],
+    [
+      -6605.5,
+      -2843.6
+    ],
+    [
+      -6384.8,
+      -2723.1
+    ],
+    [
+      -6147.2,
+      -2576.2
+    ],
+    [
+      -6006.0,
+      -2403.4
+    ],
+    [
+      -5564.2,
+      -2281.9
+    ],
+    [
+      -5249.5,
+      -1986.4
+    ],
+    [
+      -4924.9,
+      -1845.0
+    ],
+    [
+      -4677.7,
+      -1678.2
+    ],
+    [
+      -4295.6,
+      -1661.2
+    ],
+    [
+      -4060.4,
+      -1517.4
+    ],
+    [
+      -3842.8,
+      -1561.6
+    ],
+    [
+      -3451.8,
+      -1767.1
+    ],
+    [
+      -3206.8,
+      -1811.3
+    ],
+    [
+      -3148.0,
+      -2032.2
+    ],
+    [
+      -2855.6,
+      -2251.7
+    ],
+    [
+      -2725.8,
+      -2510.2
+    ],
+    [
+      -2467.0,
+      -2701.9
+    ],
+    [
+      -2097.6,
+      -3287.2
+    ],
+    [
+      -1749.6,
+      -3187.6
+    ],
+    [
+      -1671.0,
+      -3280.6
+    ],
+    [
+      -1431.8,
+      -3314.9
+    ],
+    [
+      -1172.6,
+      -3196.0
+    ],
+    [
+      -1009.3,
+      -3368.6
+    ],
+    [
+      -891.1,
+      -3324.3
+    ],
+    [
+      -277.8,
+      -3641.4
+    ],
+    [
+      -182.8,
+      -3764.6
+    ],
+    [
+      -1.7,
+      -3794.8
+    ],
+    [
+      136.4,
+      -3710.8
+    ],
+    [
+      409.8,
+      -3834.7
+    ],
+    [
+      415.4,
+      -3974.9
+    ],
+    [
+      801.6,
+      -3996.3
+    ],
+    [
+      998.0,
+      -3930.1
+    ],
+    [
+      1535.3,
+      -4086.4
+    ],
+    [
+      1638.6,
+      -4255.1
+    ],
+    [
+      1913.6,
+      -4427.8
+    ],
+    [
+      2085.7,
+      -4675.3
+    ],
+    [
+      2506.6,
+      -4772.9
+    ],
+    [
+      2754.7,
+      -4692.7
+    ],
+    [
+      3018.0,
+      -4749.5
+    ],
+    [
+      3210.5,
+      -4628.3
+    ],
+    [
+      3651.5,
+      -4654.8
+    ],
+    [
+      3823.5,
+      -4573.9
+    ],
+    [
+      4872.1,
+      -4651.8
+    ],
+    [
+      4909.6,
+      -4797.1
+    ],
+    [
+      5085.5,
+      -4746.0
+    ],
+    [
+      5468.8,
+      -5270.5
+    ],
+    [
+      5668.0,
+      -5361.3
+    ],
+    [
+      5749.2,
+      -4745.1
+    ],
+    [
+      5668.5,
+      -4403.2
+    ],
+    [
+      5676.5,
+      -4054.7
+    ],
+    [
+      5547.5,
+      -3663.3
+    ],
+    [
+      5356.7,
+      -3414.2
+    ],
+    [
+      5269.9,
+      -3046.3
+    ],
+    [
+      5574.2,
+      -2788.7
+    ],
+    [
+      5837.0,
+      -2385.4
+    ],
+    [
+      6155.7,
+      -2539.4
+    ],
+    [
+      6279.8,
+      -2735.5
+    ],
+    [
+      6704.5,
+      -2835.6
+    ],
+    [
+      6809.6,
+      -3005.8
+    ],
+    [
+      7006.7,
+      -2888.2
+    ],
+    [
+      7088.9,
+      -3025.9
+    ],
+    [
+      7645.0,
+      -2704.6
+    ],
+    [
+      7882.7,
+      -2837.2
+    ],
+    [
+      8124.3,
+      -2522.7
+    ],
+    [
+      8157.8,
+      -2407.0
+    ],
+    [
+      7845.5,
+      -2153.4
+    ],
+    [
+      7856.8,
+      -1603.9
+    ],
+    [
+      7970.9,
+      -1438.8
+    ],
+    [
+      8351.4,
+      -1745.0
+    ],
+    [
+      8695.1,
+      -1346.3
+    ],
+    [
+      8551.7,
+      -1217.6
+    ],
+    [
+      8721.7,
+      -1011.9
+    ]
+  ],
+  "facilities": [
+    {
+      "name": "御岳山診療所",
+      "type": "無床診療所",
+      "address": "東京都青梅市御岳山95",
+      "lat": 35.785059,
+      "lon": 139.15199,
+      "function_code": "clinic",
+      "x_m": -7382.9,
+      "y_m": -1964.5,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "青梅腎クリニック",
+      "type": "無床診療所",
+      "address": "東京都青梅市河辺町5-1-4",
+      "lat": 35.465213,
+      "lon": 139.171337,
+      "function_code": "clinic",
+      "x_m": -5636.1,
+      "y_m": -37569.8,
+      "within_boundary": false,
+      "coordinate_status": "outside_boundary"
+    },
+    {
+      "name": "沢井診療所",
+      "type": "無床診療所",
+      "address": "東京都青梅市沢井2-850-3",
+      "lat": 35.805714,
+      "lon": 139.193049,
+      "function_code": "clinic",
+      "x_m": -3675.9,
+      "y_m": 334.8,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "ひろせ歯科クリニック",
+      "type": "無床診療所",
+      "address": "東京都青梅市柚木町1-265-1",
+      "lat": 35.798568,
+      "lon": 139.212954,
+      "function_code": "clinic",
+      "x_m": -1878.7,
+      "y_m": -460.7,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "二俣尾診療所",
+      "type": "無床診療所",
+      "address": "東京都青梅市二俣尾4-954-1",
+      "lat": 35.8025,
+      "lon": 139.21681,
+      "function_code": "clinic",
+      "x_m": -1530.6,
+      "y_m": -23.0,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "鈴木歯科医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市梅郷6-1226",
+      "lat": 35.79144,
+      "lon": 139.21874,
+      "function_code": "clinic",
+      "x_m": -1356.4,
+      "y_m": -1254.2,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "Ｓ . Ｈ . Ｉ .デンタルクリニック",
+      "type": "無床診療所",
+      "address": "東京都青梅市二俣尾3-845-2",
+      "lat": 35.801793,
+      "lon": 139.219425,
+      "function_code": "clinic",
+      "x_m": -1294.5,
+      "y_m": -101.7,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "梅郷歯科クリニック",
+      "type": "無床診療所",
+      "address": "東京都青梅市梅郷4-702-3",
+      "lat": 35.78824,
+      "lon": 139.22111,
+      "function_code": "clinic",
+      "x_m": -1142.4,
+      "y_m": -1610.4,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "梅郷診療所",
+      "type": "無床診療所",
+      "address": "東京都青梅市梅郷3-755-1",
+      "lat": 35.786731,
+      "lon": 139.225001,
+      "function_code": "clinic",
+      "x_m": -791.1,
+      "y_m": -1778.4,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "北小曾木歯科診療所",
+      "type": "無床診療所",
+      "address": "東京都青梅市成木8-410",
+      "lat": 35.82087,
+      "lon": 139.23266,
+      "function_code": "clinic",
+      "x_m": -99.6,
+      "y_m": 2021.9,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "青梅三慶病院",
+      "type": "病院",
+      "address": "東京都青梅市大柳町1412",
+      "lat": 35.784662,
+      "lon": 139.252101,
+      "function_code": "clinic",
+      "x_m": 1655.6,
+      "y_m": -2008.7,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "後藤眼科診療所",
+      "type": "有床診療所",
+      "address": "東京都青梅市森下町508",
+      "lat": 35.790278,
+      "lon": 139.252319,
+      "function_code": "clinic",
+      "x_m": 1675.3,
+      "y_m": -1383.6,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "武藤歯科医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市滝ノ上町1235",
+      "lat": 35.789042,
+      "lon": 139.254493,
+      "function_code": "clinic",
+      "x_m": 1871.6,
+      "y_m": -1521.2,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "青梅整形外科内科",
+      "type": "無床診療所",
+      "address": "東京都青梅市仲町291-1 1階",
+      "lat": 35.78984,
+      "lon": 139.25654,
+      "function_code": "clinic",
+      "x_m": 2056.4,
+      "y_m": -1432.3,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "青梅医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市仲町241",
+      "lat": 35.791226,
+      "lon": 139.25697,
+      "function_code": "clinic",
+      "x_m": 2095.2,
+      "y_m": -1278.0,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "成木長生病院",
+      "type": "病院",
+      "address": "東京都青梅市成木4-576",
+      "lat": 35.825055,
+      "lon": 139.257064,
+      "function_code": "clinic",
+      "x_m": 2103.7,
+      "y_m": 2487.8,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "大河原森本医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市仲町251",
+      "lat": 35.789981,
+      "lon": 139.257479,
+      "function_code": "clinic",
+      "x_m": 2141.2,
+      "y_m": -1416.6,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "青梅駅前耳鼻咽喉科",
+      "type": "無床診療所",
+      "address": "東京都青梅市本町120",
+      "lat": 35.78913,
+      "lon": 139.2579,
+      "function_code": "clinic",
+      "x_m": 2179.2,
+      "y_m": -1511.4,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "青梅駅前歯科",
+      "type": "無床診療所",
+      "address": "東京都青梅市本町131-14",
+      "lat": 35.789854,
+      "lon": 139.258111,
+      "function_code": "clinic",
+      "x_m": 2198.2,
+      "y_m": -1430.8,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "鈴木進歯科医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市本町130-24榎沢ビル1F",
+      "lat": 35.789271,
+      "lon": 139.258479,
+      "function_code": "clinic",
+      "x_m": 2231.5,
+      "y_m": -1495.7,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "あゆみ歯科",
+      "type": "無床診療所",
+      "address": "東京都青梅市本町130-19鈴木ビル2F",
+      "lat": 35.789686,
+      "lon": 139.258535,
+      "function_code": "clinic",
+      "x_m": 2236.5,
+      "y_m": -1449.5,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "笹本医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市住江町58",
+      "lat": 35.789399,
+      "lon": 139.259982,
+      "function_code": "clinic",
+      "x_m": 2367.2,
+      "y_m": -1481.4,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "進藤医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市千ヶ瀬町6-797-1",
+      "lat": 35.786394,
+      "lon": 139.260533,
+      "function_code": "clinic",
+      "x_m": 2416.9,
+      "y_m": -1815.9,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "鈴木慈光病院",
+      "type": "病院",
+      "address": "東京都青梅市長淵5-1086",
+      "lat": 35.770841,
+      "lon": 139.261778,
+      "function_code": "clinic",
+      "x_m": 2529.3,
+      "y_m": -3547.3,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "土田医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市根ヶ布2-1370-37",
+      "lat": 35.803648,
+      "lon": 139.261566,
+      "function_code": "clinic",
+      "x_m": 2510.2,
+      "y_m": 104.8,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "櫻岡歯科",
+      "type": "無床診療所",
+      "address": "東京都青梅市西分町2-62",
+      "lat": 35.78893,
+      "lon": 139.2621,
+      "function_code": "clinic",
+      "x_m": 2558.4,
+      "y_m": -1533.6,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "田中医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市西分町2-53",
+      "lat": 35.789615,
+      "lon": 139.262351,
+      "function_code": "clinic",
+      "x_m": 2581.0,
+      "y_m": -1457.4,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "山崎歯科医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市西分町2-85",
+      "lat": 35.788676,
+      "lon": 139.263433,
+      "function_code": "clinic",
+      "x_m": 2678.7,
+      "y_m": -1561.9,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "井上医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市長淵7-379",
+      "lat": 35.782682,
+      "lon": 139.263625,
+      "function_code": "clinic",
+      "x_m": 2696.1,
+      "y_m": -2229.2,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "片桐歯科医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市勝沼3-71",
+      "lat": 35.789571,
+      "lon": 139.268036,
+      "function_code": "clinic",
+      "x_m": 3094.3,
+      "y_m": -1462.3,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "多摩リハビリテーション病院",
+      "type": "病院",
+      "address": "東京都青梅市長淵9-1412-4",
+      "lat": 35.764884,
+      "lon": 139.268989,
+      "function_code": "clinic",
+      "x_m": 3180.3,
+      "y_m": -4210.4,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "青梅東部病院",
+      "type": "病院",
+      "address": "東京都青梅市黒沢1-619-9",
+      "lat": 35.810414,
+      "lon": 139.269064,
+      "function_code": "clinic",
+      "x_m": 3187.1,
+      "y_m": 858.0,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "やまだ歯科医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市千ヶ瀬町3-403-3ハシモトビル2F",
+      "lat": 35.785552,
+      "lon": 139.270319,
+      "function_code": "clinic",
+      "x_m": 3300.4,
+      "y_m": -1909.7,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "すぎた歯科医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市東青梅2-1-10",
+      "lat": 35.79161,
+      "lon": 139.27048,
+      "function_code": "clinic",
+      "x_m": 3315.0,
+      "y_m": -1235.3,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "東青梅歯科医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市東青梅1-2-5東青梅センタービル2F",
+      "lat": 35.790017,
+      "lon": 139.271403,
+      "function_code": "clinic",
+      "x_m": 3398.3,
+      "y_m": -1412.6,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "志村歯科医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市東青梅1-4-3",
+      "lat": 35.789728,
+      "lon": 139.271539,
+      "function_code": "clinic",
+      "x_m": 3410.6,
+      "y_m": -1444.8,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "下奥多摩医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市長淵4-376-1",
+      "lat": 35.78194,
+      "lon": 139.27214,
+      "function_code": "clinic",
+      "x_m": 3464.8,
+      "y_m": -2311.8,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "下奥多摩歯科医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市長淵4-376-1",
+      "lat": 35.781998,
+      "lon": 139.272161,
+      "function_code": "clinic",
+      "x_m": 3466.7,
+      "y_m": -2305.3,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "小林医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市東青梅2-10-2",
+      "lat": 35.791308,
+      "lon": 139.272523,
+      "function_code": "clinic",
+      "x_m": 3499.4,
+      "y_m": -1268.9,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "東青梅診療所",
+      "type": "無床診療所",
+      "address": "東京都青梅市東青梅1-7-5",
+      "lat": 35.788513,
+      "lon": 139.272549,
+      "function_code": "clinic",
+      "x_m": 3501.8,
+      "y_m": -1580.0,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "山中歯科医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市東青梅1-9-8",
+      "lat": 35.789549,
+      "lon": 139.272765,
+      "function_code": "clinic",
+      "x_m": 3521.3,
+      "y_m": -1464.7,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "青梅市休日夜間診療所",
+      "type": "無床診療所",
+      "address": "東京都青梅市東青梅1-167-1",
+      "lat": 35.78804,
+      "lon": 139.27303,
+      "function_code": "clinic",
+      "x_m": 3545.2,
+      "y_m": -1632.7,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "ハニーデンタルクリニック",
+      "type": "無床診療所",
+      "address": "東京都青梅市東青梅2-13-20",
+      "lat": 35.790183,
+      "lon": 139.273229,
+      "function_code": "clinic",
+      "x_m": 3563.2,
+      "y_m": -1394.1,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "野村医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市東青梅1-7-7清水ビル2F",
+      "lat": 35.78854,
+      "lon": 139.27362,
+      "function_code": "clinic",
+      "x_m": 3598.5,
+      "y_m": -1577.0,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "青梅プラザ歯科",
+      "type": "無床診療所",
+      "address": "東京都青梅市東青梅1-7-7清水建設工業所ビル1F",
+      "lat": 35.788184,
+      "lon": 139.273652,
+      "function_code": "clinic",
+      "x_m": 3601.3,
+      "y_m": -1616.7,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "池田歯科医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市東青梅2-20-26",
+      "lat": 35.791092,
+      "lon": 139.274385,
+      "function_code": "clinic",
+      "x_m": 3667.5,
+      "y_m": -1292.9,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "ひがし青梅腎クリニック",
+      "type": "無床診療所",
+      "address": "東京都青梅市東青梅2-19-10",
+      "lat": 35.79072,
+      "lon": 139.27495,
+      "function_code": "clinic",
+      "x_m": 3718.5,
+      "y_m": -1334.4,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "青梅成木台病院",
+      "type": "病院",
+      "address": "東京都青梅市成木1-447",
+      "lat": 35.835102,
+      "lon": 139.275617,
+      "function_code": "clinic",
+      "x_m": 3778.8,
+      "y_m": 3606.2,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "林レディースクリニック",
+      "type": "無床診療所",
+      "address": "東京都青梅市東青梅3-8-8",
+      "lat": 35.788763,
+      "lon": 139.276235,
+      "function_code": "clinic",
+      "x_m": 3834.6,
+      "y_m": -1552.2,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "はたの歯科医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市東青梅3-9-14",
+      "lat": 35.788232,
+      "lon": 139.276684,
+      "function_code": "clinic",
+      "x_m": 3875.1,
+      "y_m": -1611.3,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "デンタルクリニック関",
+      "type": "無床診療所",
+      "address": "東京都青梅市東青梅3-21-36",
+      "lat": 35.789956,
+      "lon": 139.277975,
+      "function_code": "clinic",
+      "x_m": 3991.6,
+      "y_m": -1419.4,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "小曽木歯科",
+      "type": "無床診療所",
+      "address": "東京都青梅市小曽木4-2244",
+      "lat": 35.82231,
+      "lon": 139.2791,
+      "function_code": "clinic",
+      "x_m": 4093.2,
+      "y_m": 2182.2,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "三田歯科医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市長淵1-57-1",
+      "lat": 35.77635,
+      "lon": 139.27947699999999,
+      "function_code": "clinic",
+      "x_m": 4127.3,
+      "y_m": -2934.0,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "高橋スマイル歯科",
+      "type": "無床診療所",
+      "address": "東京都青梅市東青梅5-16-24",
+      "lat": 35.789335,
+      "lon": 139.279415,
+      "function_code": "clinic",
+      "x_m": 4121.7,
+      "y_m": -1488.5,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "三田眼科",
+      "type": "無床診療所",
+      "address": "東京都青梅市長淵1-52",
+      "lat": 35.776379,
+      "lon": 139.27986,
+      "function_code": "clinic",
+      "x_m": 4161.8,
+      "y_m": -2930.8,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "中丸歯科クリニック",
+      "type": "無床診療所",
+      "address": "東京都青梅市長淵1-9",
+      "lat": 35.7752,
+      "lon": 139.2806,
+      "function_code": "clinic",
+      "x_m": 4228.6,
+      "y_m": -3062.0,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "青梅市立総合病院",
+      "type": "病院",
+      "address": "東京都青梅市東青梅4-16-5",
+      "lat": 35.782545999999996,
+      "lon": 139.281268,
+      "function_code": "clinic",
+      "x_m": 4289.0,
+      "y_m": -2244.3,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "東青梅整形外科医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市東青梅5-21-17",
+      "lat": 35.790878,
+      "lon": 139.281258,
+      "function_code": "clinic",
+      "x_m": 4288.1,
+      "y_m": -1316.8,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "小曾木診療所",
+      "type": "無床診療所",
+      "address": "東京都青梅市小曾木4-2787-3",
+      "lat": 35.822705,
+      "lon": 139.281336,
+      "function_code": "clinic",
+      "x_m": 4295.1,
+      "y_m": 2226.2,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "三井歯科医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市東青梅5-20-10",
+      "lat": 35.790761,
+      "lon": 139.281671,
+      "function_code": "clinic",
+      "x_m": 4325.3,
+      "y_m": -1329.8,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "長谷川歯科医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市東青梅5-9-24",
+      "lat": 35.787706,
+      "lon": 139.282289,
+      "function_code": "clinic",
+      "x_m": 4381.1,
+      "y_m": -1669.9,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "高野歯科クリニック",
+      "type": "無床診療所",
+      "address": "東京都青梅市河辺町5-5-12",
+      "lat": 35.783715,
+      "lon": 139.282956,
+      "function_code": "clinic",
+      "x_m": 4441.4,
+      "y_m": -2114.2,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "瀧川メンタルクリニック",
+      "type": "無床診療所",
+      "address": "東京都青梅市師岡町4-1-8",
+      "lat": 35.785602,
+      "lon": 139.282996,
+      "function_code": "clinic",
+      "x_m": 4445.0,
+      "y_m": -1904.1,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "こみ内科クリニック",
+      "type": "無床診療所",
+      "address": "東京都青梅市新町5-7-4MH河辺駅前ビル3階、4階",
+      "lat": 35.783828,
+      "lon": 139.284024,
+      "function_code": "clinic",
+      "x_m": 4537.8,
+      "y_m": -2101.6,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "河辺南口デンタルクリニック",
+      "type": "無床診療所",
+      "address": "東京都青梅市河辺町5-7-4-2F",
+      "lat": 35.783847,
+      "lon": 139.284077,
+      "function_code": "clinic",
+      "x_m": 4542.6,
+      "y_m": -2099.5,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "嶋崎歯科医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市師岡町4-5-33",
+      "lat": 35.7571,
+      "lon": 139.28413,
+      "function_code": "clinic",
+      "x_m": 4547.3,
+      "y_m": -5076.9,
+      "within_boundary": false,
+      "coordinate_status": "outside_boundary"
+    },
+    {
+      "name": "すずの木歯科クリニック",
+      "type": "無床診療所",
+      "address": "東京都青梅市河辺町5-10-10クレセント河辺1F-A",
+      "lat": 35.782794,
+      "lon": 139.284591,
+      "function_code": "clinic",
+      "x_m": 4589.0,
+      "y_m": -2216.7,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "師岡町歯科医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市師岡町3-16-4第3丸吉ビル1F",
+      "lat": 35.789128,
+      "lon": 139.284812,
+      "function_code": "clinic",
+      "x_m": 4608.9,
+      "y_m": -1511.6,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "丹生クリニック",
+      "type": "無床診療所",
+      "address": "東京都青梅市河辺町5-13-5シャルマン・ファミーユ東京1F",
+      "lat": 35.783822,
+      "lon": 139.284967,
+      "function_code": "clinic",
+      "x_m": 4622.9,
+      "y_m": -2102.2,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "近藤歯科医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市河辺町10-8-8三晴ビル1F",
+      "lat": 35.785559,
+      "lon": 139.285261,
+      "function_code": "clinic",
+      "x_m": 4649.5,
+      "y_m": -1908.9,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "濱松皮膚科",
+      "type": "無床診療所",
+      "address": "東京都青梅市師岡町3-14-19",
+      "lat": 35.790314,
+      "lon": 139.285621,
+      "function_code": "clinic",
+      "x_m": 4682.0,
+      "y_m": -1379.6,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "中島内科・循環器科クリニック",
+      "type": "無床診療所",
+      "address": "東京都青梅市師岡町3-19-13",
+      "lat": 35.790116,
+      "lon": 139.285816,
+      "function_code": "clinic",
+      "x_m": 4699.6,
+      "y_m": -1401.6,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "河辺駅前クリニック",
+      "type": "無床診療所",
+      "address": "東京都青梅市河辺町10-11-1スプリング河辺駅前メディカルビル102",
+      "lat": 35.78658,
+      "lon": 139.28607,
+      "function_code": "clinic",
+      "x_m": 4722.5,
+      "y_m": -1795.2,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "ＤｅｎＴｒｕｓｔ",
+      "type": "無床診療所",
+      "address": "東京都青梅市師岡町3-19-8ヴィレッジ青梅1階",
+      "lat": 35.78994,
+      "lon": 139.28623,
+      "function_code": "clinic",
+      "x_m": 4736.9,
+      "y_m": -1421.2,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "かごしま眼科クリニック",
+      "type": "無床診療所",
+      "address": "東京都青梅市河辺町10-12-14加藤ビル1F",
+      "lat": 35.786072,
+      "lon": 139.286511,
+      "function_code": "clinic",
+      "x_m": 4762.3,
+      "y_m": -1851.8,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "中野クリニック",
+      "type": "無床診療所",
+      "address": "東京都青梅市河辺町5-21-3ベリテビル301",
+      "lat": 35.782659,
+      "lon": 139.286635,
+      "function_code": "clinic",
+      "x_m": 4773.5,
+      "y_m": -2231.7,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "坂元医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市河辺町5-21-3ベリテビル1F",
+      "lat": 35.782621,
+      "lon": 139.286646,
+      "function_code": "clinic",
+      "x_m": 4774.5,
+      "y_m": -2235.9,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "ナルケンキッズクリニック",
+      "type": "無床診療所",
+      "address": "東京都青梅市河辺町4-20-4",
+      "lat": 35.781128,
+      "lon": 139.286751,
+      "function_code": "clinic",
+      "x_m": 4784.0,
+      "y_m": -2402.1,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "山下歯科医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市河辺町10-12-37-2F",
+      "lat": 35.787606,
+      "lon": 139.28644,
+      "function_code": "clinic",
+      "x_m": 4755.9,
+      "y_m": -1681.0,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "河辺皮膚科メンタルクリニック",
+      "type": "無床診療所",
+      "address": "東京都青梅市河辺町10-13-1",
+      "lat": 35.786672,
+      "lon": 139.286958,
+      "function_code": "clinic",
+      "x_m": 4802.7,
+      "y_m": -1785.0,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "関口歯科医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市野上町4-1-4浜中ビル1F",
+      "lat": 35.787765,
+      "lon": 139.286954,
+      "function_code": "clinic",
+      "x_m": 4802.3,
+      "y_m": -1663.3,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "青梅慶友病院",
+      "type": "病院",
+      "address": "東京都青梅市大門1-681",
+      "lat": 35.798986,
+      "lon": 139.287104,
+      "function_code": "clinic",
+      "x_m": 4815.9,
+      "y_m": -414.2,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "荒巻医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市野上町4-3-6",
+      "lat": 35.787638,
+      "lon": 139.287528,
+      "function_code": "clinic",
+      "x_m": 4854.1,
+      "y_m": -1677.4,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "上田歯科医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市河辺町4-21-2",
+      "lat": 35.780295,
+      "lon": 139.287643,
+      "function_code": "clinic",
+      "x_m": 4864.5,
+      "y_m": -2494.9,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "北島歯科医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市河辺町10-5-15",
+      "lat": 35.78485,
+      "lon": 139.28771,
+      "function_code": "clinic",
+      "x_m": 4870.6,
+      "y_m": -1987.8,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "河辺歯科医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市河辺町5-25-2",
+      "lat": 35.780825,
+      "lon": 139.287882,
+      "function_code": "clinic",
+      "x_m": 4886.1,
+      "y_m": -2435.9,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "片平医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市河辺町10-16-20",
+      "lat": 35.785395,
+      "lon": 139.287941,
+      "function_code": "clinic",
+      "x_m": 4891.4,
+      "y_m": -1927.1,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "青梅かすみ台クリニック",
+      "type": "有床診療所",
+      "address": "東京都青梅市野上町3-2-7",
+      "lat": 35.788817,
+      "lon": 139.288483,
+      "function_code": "clinic",
+      "x_m": 4940.4,
+      "y_m": -1546.2,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "かすみ台歯科医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市野上町3-4-13コーポ栄1階",
+      "lat": 35.471343,
+      "lon": 139.173031,
+      "function_code": "clinic",
+      "x_m": -5483.2,
+      "y_m": -36887.4,
+      "within_boundary": false,
+      "coordinate_status": "outside_boundary"
+    },
+    {
+      "name": "しまざき歯科医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市谷野56-3",
+      "lat": 35.800897,
+      "lon": 139.288916,
+      "function_code": "clinic",
+      "x_m": 4979.4,
+      "y_m": -201.5,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "斎藤歯科医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市野上町4-14-13",
+      "lat": 35.78778,
+      "lon": 139.28994,
+      "function_code": "clinic",
+      "x_m": 5071.9,
+      "y_m": -1661.6,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "菊池歯科医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市河辺町7-1-14",
+      "lat": 35.782294,
+      "lon": 139.290262,
+      "function_code": "clinic",
+      "x_m": 5101.0,
+      "y_m": -2272.3,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "友田クリニック",
+      "type": "無床診療所",
+      "address": "東京都青梅市友田町3-136-1",
+      "lat": 35.77292,
+      "lon": 139.291028,
+      "function_code": "clinic",
+      "x_m": 5170.1,
+      "y_m": -3315.9,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "佐藤歯科医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市野上町2-21-3",
+      "lat": 35.79447,
+      "lon": 139.29125,
+      "function_code": "clinic",
+      "x_m": 5190.2,
+      "y_m": -916.9,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "本間歯科医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市河辺町9-9-2",
+      "lat": 35.785286,
+      "lon": 139.291717,
+      "function_code": "clinic",
+      "x_m": 5232.3,
+      "y_m": -1939.3,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "足立医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市野上町4-9-21",
+      "lat": 35.786596,
+      "lon": 139.292449,
+      "function_code": "clinic",
+      "x_m": 5298.4,
+      "y_m": -1793.4,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "吉野医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市河辺町8-7-7",
+      "lat": 35.784145,
+      "lon": 139.29247,
+      "function_code": "clinic",
+      "x_m": 5300.3,
+      "y_m": -2066.3,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "野中歯科医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市河辺町7-6-5",
+      "lat": 35.78302,
+      "lon": 139.29252,
+      "function_code": "clinic",
+      "x_m": 5304.8,
+      "y_m": -2191.5,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "橋本歯科医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市河辺町7-4-55",
+      "lat": 35.782245,
+      "lon": 139.292626,
+      "function_code": "clinic",
+      "x_m": 5314.4,
+      "y_m": -2277.8,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "武尾歯科医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市新町1-24-12",
+      "lat": 35.788273,
+      "lon": 139.293113,
+      "function_code": "clinic",
+      "x_m": 5358.4,
+      "y_m": -1606.8,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "長生病院",
+      "type": "病院",
+      "address": "東京都青梅市小曾木1-3438",
+      "lat": 35.82403,
+      "lon": 139.29308,
+      "function_code": "clinic",
+      "x_m": 5355.4,
+      "y_m": 2373.7,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "東京青梅病院",
+      "type": "病院",
+      "address": "東京都青梅市富岡3-1254",
+      "lat": 35.827254,
+      "lon": 139.29323,
+      "function_code": "clinic",
+      "x_m": 5368.9,
+      "y_m": 2732.6,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "博仁会診療所",
+      "type": "無床診療所",
+      "address": "東京都青梅市富岡1-318",
+      "lat": 35.83282,
+      "lon": 139.29343,
+      "function_code": "clinic",
+      "x_m": 5387.0,
+      "y_m": 3352.2,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "なごみクリニック",
+      "type": "無床診療所",
+      "address": "東京都青梅市河辺町8-13-19",
+      "lat": 35.785139,
+      "lon": 139.295141,
+      "function_code": "clinic",
+      "x_m": 5541.5,
+      "y_m": -1955.6,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "小作クリニック",
+      "type": "有床診療所",
+      "address": "東京都青梅市河辺町8-19-1",
+      "lat": 35.781291,
+      "lon": 139.297126,
+      "function_code": "clinic",
+      "x_m": 5720.7,
+      "y_m": -2384.0,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "ホームケアクリニック青梅",
+      "type": "無床診療所",
+      "address": "東京都青梅市新町3-66-3",
+      "lat": 35.78448,
+      "lon": 139.29954,
+      "function_code": "clinic",
+      "x_m": 5938.6,
+      "y_m": -2029.0,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "しんまち総合クリニック",
+      "type": "無床診療所",
+      "address": "東京都青梅市新町2-18-7",
+      "lat": 35.788077,
+      "lon": 139.29981,
+      "function_code": "clinic",
+      "x_m": 5963.0,
+      "y_m": -1628.6,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "かがみ歯科医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市新町3-67-5",
+      "lat": 35.784438,
+      "lon": 139.299965,
+      "function_code": "clinic",
+      "x_m": 5977.0,
+      "y_m": -2033.7,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "新町皮フ科",
+      "type": "無床診療所",
+      "address": "東京都青梅市新町2-16-2",
+      "lat": 35.78726,
+      "lon": 139.30029,
+      "function_code": "clinic",
+      "x_m": 6006.3,
+      "y_m": -1719.5,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "青梅耳鼻咽喉科",
+      "type": "無床診療所",
+      "address": "東京都青梅市新町2-16-2",
+      "lat": 35.78726,
+      "lon": 139.30029,
+      "function_code": "clinic",
+      "x_m": 6006.3,
+      "y_m": -1719.5,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "東原診療所",
+      "type": "無床診療所",
+      "address": "東京都青梅市今寺5-10-46",
+      "lat": 35.792704,
+      "lon": 139.301003,
+      "function_code": "clinic",
+      "x_m": 6070.7,
+      "y_m": -1113.5,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "新町クリニック",
+      "type": "無床診療所",
+      "address": "東京都青梅市新町3-53-5",
+      "lat": 35.782057,
+      "lon": 139.301394,
+      "function_code": "clinic",
+      "x_m": 6106.0,
+      "y_m": -2298.7,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "百瀬医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市藤橋2-10-2",
+      "lat": 35.801424,
+      "lon": 139.301307,
+      "function_code": "clinic",
+      "x_m": 6098.2,
+      "y_m": -142.8,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "千葉医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市新町2-32-1",
+      "lat": 35.79059,
+      "lon": 139.3017,
+      "function_code": "clinic",
+      "x_m": 6133.6,
+      "y_m": -1348.8,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "きくち耳鼻咽喉科クリニック",
+      "type": "無床診療所",
+      "address": "東京都青梅市今寺5-12-3",
+      "lat": 35.795202,
+      "lon": 139.302041,
+      "function_code": "clinic",
+      "x_m": 6164.4,
+      "y_m": -835.4,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "武藤歯科クリニック",
+      "type": "無床診療所",
+      "address": "東京都青梅市新町3-31-3",
+      "lat": 35.780909,
+      "lon": 139.302582,
+      "function_code": "clinic",
+      "x_m": 6213.3,
+      "y_m": -2426.5,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "百瀬歯科医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市藤橋2-560-44",
+      "lat": 35.798686000000004,
+      "lon": 139.302751,
+      "function_code": "clinic",
+      "x_m": 6228.5,
+      "y_m": -447.6,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "あさひ整形外科クリニック",
+      "type": "無床診療所",
+      "address": "東京都青梅市新町3-3-1宇源ビル2F",
+      "lat": 35.77812,
+      "lon": 139.302964,
+      "function_code": "clinic",
+      "x_m": 6247.8,
+      "y_m": -2737.0,
+      "within_boundary": false,
+      "coordinate_status": "outside_boundary"
+    },
+    {
+      "name": "みしま泌尿器科クリニック",
+      "type": "無床診療所",
+      "address": "東京都青梅市新町3-3-1宇源ビル2F",
+      "lat": 35.77812,
+      "lon": 139.302964,
+      "function_code": "clinic",
+      "x_m": 6247.8,
+      "y_m": -2737.0,
+      "within_boundary": false,
+      "coordinate_status": "outside_boundary"
+    },
+    {
+      "name": "皮膚科・アレルギー科メディカルクリニック",
+      "type": "無床診療所",
+      "address": "東京都青梅市新町3-3-1宇源ビル1F",
+      "lat": 35.77812,
+      "lon": 139.30302,
+      "function_code": "clinic",
+      "x_m": 6252.8,
+      "y_m": -2737.0,
+      "within_boundary": false,
+      "coordinate_status": "outside_boundary"
+    },
+    {
+      "name": "小沢歯科医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市新町3-70-9",
+      "lat": 35.783666,
+      "lon": 139.303416,
+      "function_code": "clinic",
+      "x_m": 6288.6,
+      "y_m": -2119.6,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "酒井医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市新町4-1-13",
+      "lat": 35.785202,
+      "lon": 139.303655,
+      "function_code": "clinic",
+      "x_m": 6310.2,
+      "y_m": -1948.6,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "アピス歯科医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市新町5-2-8小作アピスビル1室",
+      "lat": 35.7874,
+      "lon": 139.303813,
+      "function_code": "clinic",
+      "x_m": 6324.4,
+      "y_m": -1703.9,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "浜口ファミリー歯科医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市新町5-32-7ファミリービル1F",
+      "lat": 35.790891,
+      "lon": 139.303849,
+      "function_code": "clinic",
+      "x_m": 6327.7,
+      "y_m": -1315.3,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "荻野歯科三ツ原診療所",
+      "type": "無床診療所",
+      "address": "東京都青梅市藤橋3-9-7",
+      "lat": 35.798626,
+      "lon": 139.304758,
+      "function_code": "clinic",
+      "x_m": 6409.7,
+      "y_m": -454.3,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "藤橋内科クリニック",
+      "type": "無床診療所",
+      "address": "東京都青梅市藤橋3-10-24",
+      "lat": 35.79698,
+      "lon": 139.3048,
+      "function_code": "clinic",
+      "x_m": 6413.5,
+      "y_m": -637.5,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "高木病院",
+      "type": "病院",
+      "address": "東京都青梅市今寺5-18-19",
+      "lat": 35.793384,
+      "lon": 139.305656,
+      "function_code": "clinic",
+      "x_m": 6490.8,
+      "y_m": -1037.8,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "野本医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市新町5-11-2",
+      "lat": 35.78778,
+      "lon": 139.306262,
+      "function_code": "clinic",
+      "x_m": 6545.5,
+      "y_m": -1661.6,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "プラム歯科",
+      "type": "無床診療所",
+      "address": "東京都青梅市藤橋3-1-12",
+      "lat": 35.79351,
+      "lon": 139.30654,
+      "function_code": "clinic",
+      "x_m": 6570.6,
+      "y_m": -1023.8,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "ゆだクリニック",
+      "type": "無床診療所",
+      "address": "東京都青梅市新町6-5-1",
+      "lat": 35.7898,
+      "lon": 139.31024,
+      "function_code": "clinic",
+      "x_m": 6904.7,
+      "y_m": -1436.8,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "さくら歯科クリニック",
+      "type": "無床診療所",
+      "address": "東京都青梅市新町7-47-18",
+      "lat": 35.786883,
+      "lon": 139.310398,
+      "function_code": "clinic",
+      "x_m": 6918.9,
+      "y_m": -1761.5,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "東京海道病院",
+      "type": "病院",
+      "address": "東京都青梅市末広町1-4-5",
+      "lat": 35.778511,
+      "lon": 139.31324,
+      "function_code": "clinic",
+      "x_m": 7175.5,
+      "y_m": -2693.5,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "武蔵野台病院",
+      "type": "病院",
+      "address": "東京都青梅市今井1-2586",
+      "lat": 35.812971,
+      "lon": 139.313335,
+      "function_code": "clinic",
+      "x_m": 7184.1,
+      "y_m": 1142.6,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "青梅今井病院",
+      "type": "病院",
+      "address": "東京都青梅市今井1-2609-2",
+      "lat": 35.814824,
+      "lon": 139.314997,
+      "function_code": "clinic",
+      "x_m": 7334.2,
+      "y_m": 1348.9,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "みのりのもり歯科",
+      "type": "無床診療所",
+      "address": "東京都青梅市新町6-16-15ベイシア青梅インター店1F",
+      "lat": 35.79293,
+      "lon": 139.31666,
+      "function_code": "clinic",
+      "x_m": 7484.3,
+      "y_m": -1088.3,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "ラーレひまわり歯科",
+      "type": "無床診療所",
+      "address": "東京都青梅市新町9-2016-14",
+      "lat": 35.78151,
+      "lon": 139.317334,
+      "function_code": "clinic",
+      "x_m": 7545.2,
+      "y_m": -2359.6,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "青梅順心眼科クリニック",
+      "type": "無床診療所",
+      "address": "東京都青梅市新町9-4-4",
+      "lat": 35.788518,
+      "lon": 139.31805,
+      "function_code": "clinic",
+      "x_m": 7609.8,
+      "y_m": -1579.5,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "大堀医院",
+      "type": "無床診療所",
+      "address": "東京都青梅市今井5-2440-178",
+      "lat": 35.79288,
+      "lon": 139.32217,
+      "function_code": "clinic",
+      "x_m": 7981.8,
+      "y_m": -1093.9,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "あゆみえん",
+      "type": "特別養護老人ホーム",
+      "address": "東京都青梅市新町9-2153-3",
+      "lat": 35.780715,
+      "lon": 139.321096,
+      "function_code": "welfare",
+      "x_m": 7884.8,
+      "y_m": -2448.1,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "九十九園",
+      "type": "特別養護老人ホーム",
+      "address": "東京都青梅市成木1-634-7",
+      "lat": 35.83828,
+      "lon": 139.277435,
+      "function_code": "welfare",
+      "x_m": 3942.9,
+      "y_m": 3960.0,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "和楽ホーム",
+      "type": "特別養護老人ホーム",
+      "address": "東京都青梅市富岡1-318",
+      "lat": 35.83282,
+      "lon": 139.29337,
+      "function_code": "welfare",
+      "x_m": 5381.6,
+      "y_m": 3352.2,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "青梅愛弘園",
+      "type": "特別養護老人ホーム",
+      "address": "東京都青梅市小曽木4-2590",
+      "lat": 35.81942,
+      "lon": 139.28248,
+      "function_code": "welfare",
+      "x_m": 4398.4,
+      "y_m": 1860.5,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "第二青梅園",
+      "type": "特別養護老人ホーム",
+      "address": "東京都青梅市黒沢3-1966-1",
+      "lat": 35.794875,
+      "lon": 139.250487,
+      "function_code": "welfare",
+      "x_m": 1509.9,
+      "y_m": -871.8,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "青梅園",
+      "type": "特別養護老人ホーム",
+      "address": "東京都青梅市長淵6-464-1",
+      "lat": 35.781014,
+      "lon": 139.266368,
+      "function_code": "welfare",
+      "x_m": 2943.7,
+      "y_m": -2414.8,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "青梅白寿苑",
+      "type": "特別養護老人ホーム",
+      "address": "東京都青梅市黒沢1-693-11",
+      "lat": 35.810084,
+      "lon": 139.267115,
+      "function_code": "welfare",
+      "x_m": 3011.2,
+      "y_m": 821.2,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "塩船園",
+      "type": "特別養護老人ホーム",
+      "address": "東京都青梅市塩船257-1",
+      "lat": 35.802353,
+      "lon": 139.279041,
+      "function_code": "welfare",
+      "x_m": 4087.9,
+      "y_m": -39.4,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "やすらぎの家",
+      "type": "特別養護老人ホーム",
+      "address": "東京都青梅市吹上88",
+      "lat": 35.800211,
+      "lon": 139.279946,
+      "function_code": "welfare",
+      "x_m": 4169.6,
+      "y_m": -277.8,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "今井苑",
+      "type": "特別養護老人ホーム",
+      "address": "東京都青梅市今井2-1111-1",
+      "lat": 35.80449,
+      "lon": 139.311823,
+      "function_code": "welfare",
+      "x_m": 7047.6,
+      "y_m": 198.5,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "成蹊園",
+      "type": "特別養護老人ホーム",
+      "address": "東京都青梅市今井1-521-1",
+      "lat": 35.812407,
+      "lon": 139.315164,
+      "function_code": "welfare",
+      "x_m": 7349.2,
+      "y_m": 1079.8,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "青梅天使園",
+      "type": "特別養護老人ホーム",
+      "address": "東京都青梅市今井1-2609-1",
+      "lat": 35.81562,
+      "lon": 139.31513,
+      "function_code": "welfare",
+      "x_m": 7346.2,
+      "y_m": 1437.5,
+      "within_boundary": false,
+      "coordinate_status": "outside_boundary"
+    },
+    {
+      "name": "青梅療育院",
+      "type": "特別養護老人ホーム",
+      "address": "東京都青梅市今井3-12-6",
+      "lat": 35.798601,
+      "lon": 139.308842,
+      "function_code": "welfare",
+      "x_m": 6778.5,
+      "y_m": -457.0,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "大洋園",
+      "type": "特別養護老人ホーム",
+      "address": "東京都青梅市今井5-2440-141",
+      "lat": 35.793649,
+      "lon": 139.321821,
+      "function_code": "welfare",
+      "x_m": 7950.3,
+      "y_m": -1008.3,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "杜の園",
+      "type": "特別養護老人ホーム",
+      "address": "東京都青梅市今井2-1079",
+      "lat": 35.804134,
+      "lon": 139.308695,
+      "function_code": "welfare",
+      "x_m": 6765.2,
+      "y_m": 158.9,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "カントリービラ青梅",
+      "type": "特別養護老人ホーム",
+      "address": "東京都青梅市長淵1-930-3",
+      "lat": 35.775564,
+      "lon": 139.278946,
+      "function_code": "welfare",
+      "x_m": 4079.3,
+      "y_m": -3021.5,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "長渕園",
+      "type": "特別養護老人ホーム",
+      "address": "東京都青梅市長淵5-1421-14",
+      "lat": 35.768435,
+      "lon": 139.25851,
+      "function_code": "welfare",
+      "x_m": 2234.3,
+      "y_m": -3815.1,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "リバーパレス青梅",
+      "type": "特別養護老人ホーム",
+      "address": "東京都青梅市長淵4-377",
+      "lat": 35.78195,
+      "lon": 139.27187,
+      "function_code": "welfare",
+      "x_m": 3440.5,
+      "y_m": -2310.6,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "第二カントリービラ青梅",
+      "type": "特別養護老人ホーム",
+      "address": "東京都青梅市長淵1-939-1",
+      "lat": 35.775062,
+      "lon": 139.279397,
+      "function_code": "welfare",
+      "x_m": 4120.0,
+      "y_m": -3077.4,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "喜久松苑",
+      "type": "特別養護老人ホーム",
+      "address": "東京都青梅市柚木町2-462-1",
+      "lat": 35.803557,
+      "lon": 139.21236,
+      "function_code": "welfare",
+      "x_m": -1932.4,
+      "y_m": 94.7,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "第二喜久松苑",
+      "type": "特別養護老人ホーム",
+      "address": "東京都青梅市柚木町2-460-1",
+      "lat": 35.803478,
+      "lon": 139.211867,
+      "function_code": "welfare",
+      "x_m": -1976.9,
+      "y_m": 85.9,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "御岳園",
+      "type": "特別養護老人ホーム",
+      "address": "東京都青梅市御岳本町163-1",
+      "lat": 35.800479,
+      "lon": 139.177539,
+      "function_code": "welfare",
+      "x_m": -5076.2,
+      "y_m": -248.0,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "聖明園寿荘",
+      "type": "特別養護老人ホーム",
+      "address": "東京都青梅市根ヶ布2-724",
+      "lat": 35.80709,
+      "lon": 139.26537,
+      "function_code": "welfare",
+      "x_m": 2853.6,
+      "y_m": 487.9,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "聖明園富士見荘",
+      "type": "特別養護老人ホーム",
+      "address": "東京都青梅市根ケ布2-722-2",
+      "lat": 35.80599,
+      "lon": 139.26696,
+      "function_code": "welfare",
+      "x_m": 2997.2,
+      "y_m": 365.5,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "青梅すえひろ苑",
+      "type": "介護老人保健施設",
+      "address": "東京都青梅市末広町1-4-5",
+      "lat": 35.778323,
+      "lon": 139.313753,
+      "function_code": "welfare",
+      "x_m": 7221.8,
+      "y_m": -2714.4,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "メディケア梅の園",
+      "type": "介護老人保健施設",
+      "address": "東京都青梅市駒木町3-594-1",
+      "lat": 35.781431,
+      "lon": 139.251727,
+      "function_code": "welfare",
+      "x_m": 1621.9,
+      "y_m": -2368.4,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "西東京ケアセンター",
+      "type": "介護老人保健施設",
+      "address": "東京都青梅市友田町3-136-1",
+      "lat": 35.772852,
+      "lon": 139.29108,
+      "function_code": "welfare",
+      "x_m": 5174.8,
+      "y_m": -3323.4,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "青梅今井病院介護医療院",
+      "type": "介護医療院",
+      "address": "東京都青梅市今井1-2609-2",
+      "lat": 35.814835,
+      "lon": 139.314981,
+      "function_code": "welfare",
+      "x_m": 7332.7,
+      "y_m": 1350.1,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "ヨウコーフォレスト河辺",
+      "type": "特定入居者生活介護",
+      "address": "東京都青梅市河辺町8-2-1",
+      "lat": 35.783134,
+      "lon": 139.293125,
+      "function_code": "welfare",
+      "x_m": 5359.5,
+      "y_m": -2178.8,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "青梅ガーデンハウス",
+      "type": "特定入居者生活介護",
+      "address": "東京都青梅市塩船10",
+      "lat": 35.801241,
+      "lon": 139.28789,
+      "function_code": "welfare",
+      "x_m": 4886.8,
+      "y_m": -163.2,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "グループホームはぴねす若草",
+      "type": "認知症対応型共同生活介護事業所",
+      "address": "東京都青梅市河辺町6-20-2",
+      "lat": 35.77857,
+      "lon": 139.292292,
+      "function_code": "welfare",
+      "x_m": 5284.3,
+      "y_m": -2686.9,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "グループホームはぴねす新田山",
+      "type": "認知症対応型共同生活介護事業所",
+      "address": "東京都青梅市新町7-28-3",
+      "lat": 35.785586,
+      "lon": 139.315507,
+      "function_code": "welfare",
+      "x_m": 7380.2,
+      "y_m": -1905.9,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "グループホームひだまりの家",
+      "type": "認知症対応型共同生活介護事業所",
+      "address": "東京都青梅市滝ノ上町1225-3",
+      "lat": 35.78902,
+      "lon": 139.25362,
+      "function_code": "welfare",
+      "x_m": 1792.8,
+      "y_m": -1523.6,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "グループホーム ともだ",
+      "type": "認知症対応型共同生活介護事業所",
+      "address": "東京都青梅市友田町3-94-9",
+      "lat": 35.772659,
+      "lon": 139.288381,
+      "function_code": "welfare",
+      "x_m": 4931.1,
+      "y_m": -3344.9,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "地域ケアサポート館 福わ家・グループホーム",
+      "type": "認知症対応型共同生活介護事業所",
+      "address": "東京都青梅市藤橋2-614-6",
+      "lat": 35.79971,
+      "lon": 139.30155,
+      "function_code": "welfare",
+      "x_m": 6120.1,
+      "y_m": -333.6,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "グループホームみんなんち",
+      "type": "認知症対応型共同生活介護事業所",
+      "address": "東京都青梅市天ケ瀬町948-1",
+      "lat": 35.788614,
+      "lon": 139.2493,
+      "function_code": "welfare",
+      "x_m": 1402.7,
+      "y_m": -1568.8,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "グループホームみんなんち第２",
+      "type": "認知症対応型共同生活介護事業所",
+      "address": "東京都青梅市長淵8-71",
+      "lat": 35.77968,
+      "lon": 139.2607,
+      "function_code": "welfare",
+      "x_m": 2432.0,
+      "y_m": -2563.3,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "地域ケアサポート館 福わ家・小規模多機能ホーム",
+      "type": "小規模多機能型居宅介護",
+      "address": "東京都青梅市藤橋2-614-18",
+      "lat": 35.79974,
+      "lon": 139.6013,
+      "function_code": "welfare",
+      "x_m": 33182.9,
+      "y_m": -330.3,
+      "within_boundary": false,
+      "coordinate_status": "outside_boundary"
+    },
+    {
+      "name": "多機能ケアホームみんなんち",
+      "type": "小規模多機能型居宅介護",
+      "address": "東京都青梅市天ケ瀬町952",
+      "lat": 35.788127,
+      "lon": 139.246232,
+      "function_code": "welfare",
+      "x_m": 1125.7,
+      "y_m": -1623.0,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "青梅複合型ケアサービスセンター",
+      "type": "看護小規模多機能型居宅介護",
+      "address": "東京都青梅市友田町5-533-1",
+      "lat": 35.771648,
+      "lon": 139.284958,
+      "function_code": "welfare",
+      "x_m": 4622.1,
+      "y_m": -3457.5,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "ケアプラザ青梅",
+      "type": "居宅介護支援事業所",
+      "address": "東京都青梅市東青梅3-22-4東京武尊会館",
+      "lat": 35.78977,
+      "lon": 139.2785,
+      "function_code": "welfare",
+      "x_m": 4039.0,
+      "y_m": -1440.1,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "居宅介護支援事業所あゆみえん",
+      "type": "居宅介護支援事業所",
+      "address": "東京都青梅市新町9-2153-3",
+      "lat": 35.77971,
+      "lon": 139.32093,
+      "function_code": "welfare",
+      "x_m": 7869.8,
+      "y_m": -2560.0,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "すえひろ指定居宅介護支援事業所",
+      "type": "居宅介護支援事業所",
+      "address": "東京都青梅市末広町1-4-5",
+      "lat": 35.77819,
+      "lon": 139.31348,
+      "function_code": "welfare",
+      "x_m": 7197.2,
+      "y_m": -2729.2,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "博仁会ケアサポートセンターひまわり",
+      "type": "居宅介護支援事業所",
+      "address": "東京都青梅市富岡1-318",
+      "lat": 35.83295,
+      "lon": 139.29208,
+      "function_code": "welfare",
+      "x_m": 5265.1,
+      "y_m": 3366.7,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "第２カントリービラ青梅",
+      "type": "居宅介護支援事業所",
+      "address": "東京都青梅市長淵1-939-1",
+      "lat": 35.77505,
+      "lon": 139.27946,
+      "function_code": "welfare",
+      "x_m": 4125.7,
+      "y_m": -3078.7,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "大洋園居宅介護支援事業所",
+      "type": "居宅介護支援事業所",
+      "address": "東京都青梅市河辺町9-9-25",
+      "lat": 35.78511,
+      "lon": 139.29161,
+      "function_code": "welfare",
+      "x_m": 5222.7,
+      "y_m": -1958.9,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "アイケアーサービス青梅",
+      "type": "居宅介護支援事業所",
+      "address": "東京都青梅市東青梅1-7-8",
+      "lat": 35.78826,
+      "lon": 139.27394,
+      "function_code": "welfare",
+      "x_m": 3627.3,
+      "y_m": -1608.2,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "梅の園訪問看護居宅介護支援センター",
+      "type": "居宅介護支援事業所",
+      "address": "東京都青梅市長淵6-483-4ダイユーマンション1F",
+      "lat": 35.78119,
+      "lon": 139.26811,
+      "function_code": "welfare",
+      "x_m": 3101.0,
+      "y_m": -2395.2,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "喜久松苑居宅介護支援事業所",
+      "type": "居宅介護支援事業所",
+      "address": "東京都青梅市柚木町2-462-1",
+      "lat": 35.80351,
+      "lon": 139.21248,
+      "function_code": "welfare",
+      "x_m": -1921.5,
+      "y_m": 89.4,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "ここひろケアプラン",
+      "type": "居宅介護支援事業所",
+      "address": "東京都青梅市藤橋2-614-18",
+      "lat": 35.79974,
+      "lon": 139.30131,
+      "function_code": "welfare",
+      "x_m": 6098.4,
+      "y_m": -330.3,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "居宅介護支援事業所リバーパレス青梅",
+      "type": "居宅介護支援事業所",
+      "address": "東京都青梅市長淵4-377",
+      "lat": 35.78192,
+      "lon": 139.27186,
+      "function_code": "welfare",
+      "x_m": 3439.6,
+      "y_m": -2314.0,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "ケアサービス・ポッポ",
+      "type": "居宅介護支援事業所",
+      "address": "東京都青梅市勝沼1-28-14",
+      "lat": 35.78918,
+      "lon": 139.27107,
+      "function_code": "welfare",
+      "x_m": 3368.2,
+      "y_m": -1505.8,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "東青梅居宅介護支援事業所",
+      "type": "居宅介護支援事業所",
+      "address": "東京都青梅市東青梅1-5-28",
+      "lat": 35.7889,
+      "lon": 139.2713,
+      "function_code": "welfare",
+      "x_m": 3389.0,
+      "y_m": -1537.0,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "三慶居宅介護支援事業所",
+      "type": "居宅介護支援事業所",
+      "address": "東京都青梅市大柳町1412",
+      "lat": 35.78471,
+      "lon": 139.25219,
+      "function_code": "welfare",
+      "x_m": 1663.7,
+      "y_m": -2003.4,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "ケアサービス つくしんぼ",
+      "type": "居宅介護支援事業所",
+      "address": "東京都青梅市駒木町1-811-2",
+      "lat": 35.78087,
+      "lon": 139.25824,
+      "function_code": "welfare",
+      "x_m": 2209.9,
+      "y_m": -2430.9,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "ケアープラン新町",
+      "type": "居宅介護支援事業所",
+      "address": "東京都青梅市新町7-63-5エルベール新町二号館133",
+      "lat": 35.78867,
+      "lon": 139.31693,
+      "function_code": "welfare",
+      "x_m": 7508.7,
+      "y_m": -1562.6,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "大久野病院居宅介護支援事業所",
+      "type": "居宅介護支援事業所",
+      "address": "東京都青梅市千ヶ瀬町6-797-1",
+      "lat": 35.786410000000004,
+      "lon": 139.26052,
+      "function_code": "welfare",
+      "x_m": 2415.7,
+      "y_m": -1814.1,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "居宅介護支援事業所 西東京ケアセンター",
+      "type": "居宅介護支援事業所",
+      "address": "東京都青梅市友田町3-136-1",
+      "lat": 35.77269,
+      "lon": 139.29133,
+      "function_code": "welfare",
+      "x_m": 5197.4,
+      "y_m": -3341.5,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "滝ノ上居宅介護支援事業所",
+      "type": "居宅介護支援事業所",
+      "address": "東京都青梅市滝ノ上町1286-9",
+      "lat": 35.78918,
+      "lon": 139.25652,
+      "function_code": "welfare",
+      "x_m": 2054.6,
+      "y_m": -1505.8,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "居宅介護支援事業所 今井苑",
+      "type": "居宅介護支援事業所",
+      "address": "東京都青梅市今井2-1111-1",
+      "lat": 35.80451,
+      "lon": 139.31181,
+      "function_code": "welfare",
+      "x_m": 7046.4,
+      "y_m": 200.7,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "二俣尾幸廻堂",
+      "type": "居宅介護支援事業所",
+      "address": "東京都青梅市二俣尾4-1098",
+      "lat": 35.80343,
+      "lon": 139.21622,
+      "function_code": "welfare",
+      "x_m": -1583.9,
+      "y_m": 80.5,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "ライフサポートプラン 思いのまま",
+      "type": "居宅介護支援事業所",
+      "address": "東京都青梅市東青梅6-10-2ライオンズマンション東青梅第3-204",
+      "lat": 35.79347,
+      "lon": 139.2763,
+      "function_code": "welfare",
+      "x_m": 3840.4,
+      "y_m": -1028.2,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "ケアサービスこすも",
+      "type": "居宅介護支援事業所",
+      "address": "東京都青梅市畑中1-79-8",
+      "lat": 35.78254,
+      "lon": 139.24692,
+      "function_code": "welfare",
+      "x_m": 1187.9,
+      "y_m": -2245.0,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "合同会社 けい",
+      "type": "居宅介護支援事業所",
+      "address": "東京都青梅市野上町1-40-3ハイツ神森1棟105",
+      "lat": 35.79526,
+      "lon": 139.28502,
+      "function_code": "welfare",
+      "x_m": 4627.7,
+      "y_m": -829.0,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "ケアプラン あいね",
+      "type": "居宅介護支援事業所",
+      "address": "東京都青梅市根ヶ布1-734-13",
+      "lat": 35.79724,
+      "lon": 139.26555,
+      "function_code": "welfare",
+      "x_m": 2869.9,
+      "y_m": -608.6,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "LifeCareすけだち",
+      "type": "居宅介護支援事業所",
+      "address": "東京都青梅市新町4-29-3コトブキマンション201室",
+      "lat": 35.78452,
+      "lon": 139.30885,
+      "function_code": "welfare",
+      "x_m": 6779.2,
+      "y_m": -2024.5,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "アイケアーサービス青梅",
+      "type": "訪問介護",
+      "address": "東京都青梅市東青梅1-7-8",
+      "lat": 35.78826,
+      "lon": 139.27394,
+      "function_code": "welfare",
+      "x_m": 3627.3,
+      "y_m": -1608.2,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "訪問介護事業所あゆみえん",
+      "type": "訪問介護",
+      "address": "東京都青梅市新町9-2153-3",
+      "lat": 35.77986,
+      "lon": 139.32098,
+      "function_code": "welfare",
+      "x_m": 7874.3,
+      "y_m": -2543.3,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "医療法人社団 和風会 ファーストケア",
+      "type": "訪問介護",
+      "address": "東京都青梅市新町1-43-12",
+      "lat": 35.79094,
+      "lon": 139.29561,
+      "function_code": "welfare",
+      "x_m": 5583.8,
+      "y_m": -1309.9,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "ニチイケアセンター青梅",
+      "type": "訪問介護",
+      "address": "東京都青梅市河辺町10-11-4橋本ビル2階",
+      "lat": 35.78698,
+      "lon": 139.2863,
+      "function_code": "welfare",
+      "x_m": 4743.3,
+      "y_m": -1750.7,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "ここひろヘルパー",
+      "type": "訪問介護",
+      "address": "東京都青梅市藤橋2-614-18",
+      "lat": 35.79974,
+      "lon": 139.30131,
+      "function_code": "welfare",
+      "x_m": 6098.4,
+      "y_m": -330.3,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "訪問介護ステーション リバーパレス青梅",
+      "type": "訪問介護",
+      "address": "東京都青梅市長淵4-377",
+      "lat": 35.78023,
+      "lon": 139.27183,
+      "function_code": "welfare",
+      "x_m": 3436.8,
+      "y_m": -2502.1,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "大洋園ヘルパーステーション",
+      "type": "訪問介護",
+      "address": "東京都青梅市河辺町9-9-25",
+      "lat": 35.78511,
+      "lon": 139.29161,
+      "function_code": "welfare",
+      "x_m": 5222.7,
+      "y_m": -1958.9,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "あずみ苑グランデ青梅",
+      "type": "訪問介護",
+      "address": "東京都青梅市裏宿町647-1",
+      "lat": 35.79043,
+      "lon": 139.24553,
+      "function_code": "welfare",
+      "x_m": 1062.4,
+      "y_m": -1366.6,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "青い鳥",
+      "type": "訪問介護",
+      "address": "東京都青梅市長淵5-773",
+      "lat": 35.77755,
+      "lon": 139.26545,
+      "function_code": "welfare",
+      "x_m": 2860.8,
+      "y_m": -2800.4,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "ケアサポート 泉",
+      "type": "訪問介護",
+      "address": "東京都青梅市新町4-18-9内田マンション201",
+      "lat": 35.78636,
+      "lon": 139.30337,
+      "function_code": "welfare",
+      "x_m": 6284.4,
+      "y_m": -1819.7,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "ベストケア青梅",
+      "type": "訪問介護",
+      "address": "東京都青梅市今寺4-15-5",
+      "lat": 35.79623,
+      "lon": 139.30295,
+      "function_code": "welfare",
+      "x_m": 6246.5,
+      "y_m": -721.0,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "かがやきケア",
+      "type": "訪問介護",
+      "address": "東京都青梅市東青梅5-8-27ドエル・オータム201室",
+      "lat": 35.78707,
+      "lon": 139.28181,
+      "function_code": "welfare",
+      "x_m": 4337.9,
+      "y_m": -1740.7,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "ベストケア梅郷",
+      "type": "訪問介護",
+      "address": "東京都青梅市梅郷6-1410-2",
+      "lat": 35.79253,
+      "lon": 139.22269,
+      "function_code": "welfare",
+      "x_m": -999.7,
+      "y_m": -1132.9,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "MIHALCOケアセンター",
+      "type": "訪問介護",
+      "address": "東京都青梅市河辺町10-11-15メゾンなりき306室",
+      "lat": 35.78681,
+      "lon": 139.28571,
+      "function_code": "welfare",
+      "x_m": 4690.0,
+      "y_m": -1769.6,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "めぐみケアサービス",
+      "type": "訪問入浴介護",
+      "address": "東京都青梅市河辺町8-2-23マルダイビル201",
+      "lat": 35.78317,
+      "lon": 141.29292,
+      "function_code": "welfare",
+      "x_m": 185910.0,
+      "y_m": -2174.8,
+      "within_boundary": false,
+      "coordinate_status": "outside_boundary"
+    },
+    {
+      "name": "アサヒサンクリーン在宅介護センター青梅",
+      "type": "訪問入浴介護",
+      "address": "東京都青梅市河辺町9-1-1サンハイツ清峰1階105室",
+      "lat": 35.78345,
+      "lon": 139.28782,
+      "function_code": "welfare",
+      "x_m": 4880.5,
+      "y_m": -2143.7,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "アースサポート青梅",
+      "type": "訪問入浴介護",
+      "address": "東京都青梅市河辺町10-14-3",
+      "lat": 35.78643,
+      "lon": 139.28765,
+      "function_code": "welfare",
+      "x_m": 4865.1,
+      "y_m": -1811.9,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "岩尾会訪問看護ステーション",
+      "type": "訪問看護",
+      "address": "東京都青梅市末広町1-4-5",
+      "lat": 35.77822,
+      "lon": 139.31348,
+      "function_code": "welfare",
+      "x_m": 7197.2,
+      "y_m": -2725.9,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "梅の園訪問看護ステーション",
+      "type": "訪問看護",
+      "address": "東京都青梅市長淵6-483-4ダイユーマンション1F",
+      "lat": 35.78138,
+      "lon": 139.26825,
+      "function_code": "welfare",
+      "x_m": 3113.6,
+      "y_m": -2374.1,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "訪問看護ステーション ポッポ",
+      "type": "訪問看護",
+      "address": "東京都青梅市勝沼1-28-14",
+      "lat": 35.78918,
+      "lon": 139.27107,
+      "function_code": "welfare",
+      "x_m": 3368.2,
+      "y_m": -1505.8,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "三慶訪問看護ステーション",
+      "type": "訪問看護",
+      "address": "東京都青梅市大柳町1412",
+      "lat": 35.78471,
+      "lon": 139.25219,
+      "function_code": "welfare",
+      "x_m": 1663.7,
+      "y_m": -2003.4,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "ケアサポートカナイ訪問看護ステーション",
+      "type": "訪問看護",
+      "address": "東京都青梅市新町5-5-13メゾン幸和第2ビル2F202",
+      "lat": 35.78589,
+      "lon": 139.30926,
+      "function_code": "welfare",
+      "x_m": 6816.2,
+      "y_m": -1872.0,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "大久野病院訪問看護ステーション",
+      "type": "訪問看護",
+      "address": "東京都青梅市千ヶ瀬町6-797-1",
+      "lat": 35.786410000000004,
+      "lon": 139.26052,
+      "function_code": "welfare",
+      "x_m": 2415.7,
+      "y_m": -1814.1,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "みずほ訪問看護ステーション 友田営業所",
+      "type": "訪問看護",
+      "address": "東京都青梅市友田町3-136-1",
+      "lat": 35.7728,
+      "lon": 139.29118,
+      "function_code": "welfare",
+      "x_m": 5183.9,
+      "y_m": -3329.2,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "青梅複合型ケアサービスセンター 訪問看護ステーション友田",
+      "type": "訪問看護",
+      "address": "東京都青梅市友田町5-533-1",
+      "lat": 35.77148,
+      "lon": 139.28483,
+      "function_code": "welfare",
+      "x_m": 4610.5,
+      "y_m": -3476.2,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "訪問看護ステーション ファインデイズ青梅",
+      "type": "訪問看護",
+      "address": "東京都青梅市長淵5-1086",
+      "lat": 35.77086,
+      "lon": 139.26188,
+      "function_code": "welfare",
+      "x_m": 2538.5,
+      "y_m": -3545.2,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "訪問看護ステーション あん",
+      "type": "訪問看護",
+      "address": "東京都青梅市新町5-36-11シーグリーン102",
+      "lat": 35.79075,
+      "lon": 139.3057,
+      "function_code": "welfare",
+      "x_m": 6494.8,
+      "y_m": -1331.0,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "訪問看護ステーション あゆみえん",
+      "type": "訪問看護",
+      "address": "東京都青梅市新町9-2153-3",
+      "lat": 35.77986,
+      "lon": 139.32098,
+      "function_code": "welfare",
+      "x_m": 7874.3,
+      "y_m": -2543.3,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "訪問看護リハビリステーションアラウンド∞",
+      "type": "訪問看護",
+      "address": "東京都青梅市今寺4-23-5",
+      "lat": 35.79739,
+      "lon": 139.30041,
+      "function_code": "welfare",
+      "x_m": 6017.2,
+      "y_m": -591.9,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "たんぽぽ 訪問看護リハビリステーション",
+      "type": "訪問看護",
+      "address": "東京都青梅市大門3-4-3",
+      "lat": 35.79249,
+      "lon": 139.29779,
+      "function_code": "welfare",
+      "x_m": 5780.6,
+      "y_m": -1137.3,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "訪問看護ステーションおうち",
+      "type": "訪問看護",
+      "address": "東京都青梅市今井3-23-32",
+      "lat": 36.79863,
+      "lon": 139.30937,
+      "function_code": "welfare",
+      "x_m": 6826.1,
+      "y_m": 110866.2,
+      "within_boundary": false,
+      "coordinate_status": "outside_boundary"
+    },
+    {
+      "name": "在宅看護センター L－moon",
+      "type": "訪問看護",
+      "address": "東京都青梅市新町3-66-3",
+      "lat": 35.78442,
+      "lon": 139.29958,
+      "function_code": "welfare",
+      "x_m": 5942.2,
+      "y_m": -2035.7,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "武蔵野台病院",
+      "type": "訪問リハ",
+      "address": "東京都青梅市今井1-2586",
+      "lat": 35.813,
+      "lon": 139.31346,
+      "function_code": "welfare",
+      "x_m": 7195.4,
+      "y_m": 1145.8,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "青梅三慶病院",
+      "type": "訪問リハ",
+      "address": "東京都青梅市大柳町1412",
+      "lat": 35.78471,
+      "lon": 139.25219,
+      "function_code": "welfare",
+      "x_m": 1663.7,
+      "y_m": -2003.4,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "進藤医院訪問リハビリテーション",
+      "type": "訪問リハ",
+      "address": "東京都青梅市千ヶ瀬町6-797-1",
+      "lat": 35.786410000000004,
+      "lon": 139.26052,
+      "function_code": "welfare",
+      "x_m": 2415.7,
+      "y_m": -1814.1,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "高木病院",
+      "type": "訪問リハ",
+      "address": "東京都青梅市今寺5-18-19",
+      "lat": 35.79348,
+      "lon": 139.30561,
+      "function_code": "welfare",
+      "x_m": 6486.7,
+      "y_m": -1027.1,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "友田クリニック",
+      "type": "訪問リハ",
+      "address": "東京都青梅市友田町3-136-1",
+      "lat": 35.7728,
+      "lon": 139.29118,
+      "function_code": "welfare",
+      "x_m": 5183.9,
+      "y_m": -3329.2,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "博仁会デイサービスセンター さざなみ",
+      "type": "通所介護",
+      "address": "東京都青梅市富岡1-318",
+      "lat": 35.83291,
+      "lon": 139.29295,
+      "function_code": "welfare",
+      "x_m": 5343.7,
+      "y_m": 3362.2,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "大洋園デイサービスセンター",
+      "type": "通所介護",
+      "address": "東京都青梅市今井5-2440-141",
+      "lat": 35.7936,
+      "lon": 139.32224,
+      "function_code": "welfare",
+      "x_m": 7988.1,
+      "y_m": -1013.8,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "喜久松苑デイサービスセンター",
+      "type": "通所介護",
+      "address": "東京都青梅市柚木町2-462-1",
+      "lat": 35.80363,
+      "lon": 139.21251,
+      "function_code": "welfare",
+      "x_m": -1918.8,
+      "y_m": 102.8,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "滝ノ上デイサービスセンター",
+      "type": "通所介護",
+      "address": "東京都青梅市滝ノ上町1286-9",
+      "lat": 35.78918,
+      "lon": 139.25652,
+      "function_code": "welfare",
+      "x_m": 2054.6,
+      "y_m": -1505.8,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "デイサービスセンターパーク",
+      "type": "通所介護",
+      "address": "東京都青梅市新町1-43-12",
+      "lat": 35.79103,
+      "lon": 139.29563,
+      "function_code": "welfare",
+      "x_m": 5585.6,
+      "y_m": -1299.9,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "河辺デイサービスセンター",
+      "type": "通所介護",
+      "address": "東京都青梅市河辺町9-9-25",
+      "lat": 35.78511,
+      "lon": 139.29161,
+      "function_code": "welfare",
+      "x_m": 5222.7,
+      "y_m": -1958.9,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "ニチイケアセンター河辺",
+      "type": "通所介護",
+      "address": "東京都青梅市河辺町6-5-9",
+      "lat": 35.78084,
+      "lon": 139.29019,
+      "function_code": "welfare",
+      "x_m": 5094.5,
+      "y_m": -2434.2,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "デイサービスセンター まごころハウス",
+      "type": "通所介護",
+      "address": "東京都青梅市野上町4-2-16メゾン・セリゼ1階",
+      "lat": 35.78689,
+      "lon": 139.28825,
+      "function_code": "welfare",
+      "x_m": 4919.3,
+      "y_m": -1760.7,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "デイサービス ほほえみ",
+      "type": "通所介護",
+      "address": "東京都青梅市今寺3-418-5",
+      "lat": 35.79921,
+      "lon": 139.29811,
+      "function_code": "welfare",
+      "x_m": 5809.5,
+      "y_m": -389.3,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "青梅河辺温泉デイサービスセンター 湯梅の郷",
+      "type": "通所介護",
+      "address": "東京都青梅市河辺町10-8-1河辺タウンビルB1階",
+      "lat": 35.78535,
+      "lon": 139.28505,
+      "function_code": "welfare",
+      "x_m": 4630.4,
+      "y_m": -1932.1,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "ゆったりリゾートサロン青梅",
+      "type": "通所介護",
+      "address": "東京都青梅市新町4-29-3",
+      "lat": 35.78454,
+      "lon": 139.30887,
+      "function_code": "welfare",
+      "x_m": 6781.0,
+      "y_m": -2022.3,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "デイサービス 花・花",
+      "type": "通所介護",
+      "address": "東京都青梅市木野下2-227-1",
+      "lat": 35.60431,
+      "lon": 139.29225,
+      "function_code": "welfare",
+      "x_m": 5280.5,
+      "y_m": -22085.5,
+      "within_boundary": false,
+      "coordinate_status": "outside_boundary"
+    },
+    {
+      "name": "きたえるーむ 青梅",
+      "type": "通所介護",
+      "address": "東京都青梅市千ヶ瀬町6-793-3",
+      "lat": 35.78598,
+      "lon": 139.26014,
+      "function_code": "welfare",
+      "x_m": 2381.4,
+      "y_m": -1862.0,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "デイサービスセンター あゆみえん",
+      "type": "通所介護",
+      "address": "東京都青梅市新町9-2153-3",
+      "lat": 35.77986,
+      "lon": 139.32098,
+      "function_code": "welfare",
+      "x_m": 7874.3,
+      "y_m": -2543.3,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "デイサービスセンター エクラシア青梅",
+      "type": "通所介護",
+      "address": "東京都青梅市友田町3-1267-2",
+      "lat": 35.77338,
+      "lon": 139.29034,
+      "function_code": "welfare",
+      "x_m": 5108.0,
+      "y_m": -3264.6,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "青梅すえひろ苑",
+      "type": "通所リハ",
+      "address": "東京都青梅市末広町1-4-5",
+      "lat": 35.77822,
+      "lon": 139.31348,
+      "function_code": "welfare",
+      "x_m": 7197.2,
+      "y_m": -2725.9,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "メディケア梅の園",
+      "type": "通所リハ",
+      "address": "東京都青梅市駒木町3-594-1",
+      "lat": 35.78139,
+      "lon": 139.25175,
+      "function_code": "welfare",
+      "x_m": 1623.9,
+      "y_m": -2373.0,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "青梅三慶病院",
+      "type": "通所リハ",
+      "address": "東京都青梅市大柳町1412",
+      "lat": 35.78471,
+      "lon": 139.25219,
+      "function_code": "welfare",
+      "x_m": 1663.7,
+      "y_m": -2003.4,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "西東京ケアセンター",
+      "type": "通所リハ",
+      "address": "東京都青梅市友田町3-136-1",
+      "lat": 35.7728,
+      "lon": 139.29118,
+      "function_code": "welfare",
+      "x_m": 5183.9,
+      "y_m": -3329.2,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "アイケアーサービス青梅",
+      "type": "福祉用具貸与",
+      "address": "東京都青梅市東青梅1-7-8",
+      "lat": 35.78826,
+      "lon": 139.27394,
+      "function_code": "welfare",
+      "x_m": 3627.3,
+      "y_m": -1608.2,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "ここひろショップ",
+      "type": "福祉用具貸与",
+      "address": "東京都青梅市河辺町1-816-10",
+      "lat": 35.77815,
+      "lon": 139.28982,
+      "function_code": "welfare",
+      "x_m": 5061.1,
+      "y_m": -2733.7,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "青い鳥",
+      "type": "福祉用具貸与",
+      "address": "東京都青梅市長淵5-773",
+      "lat": 35.77755,
+      "lon": 139.26545,
+      "function_code": "welfare",
+      "x_m": 2860.8,
+      "y_m": -2800.4,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "デイサービスセンターたんぽぽ",
+      "type": "地域密着型通所介護",
+      "address": "東京都青梅市駒木町1-801",
+      "lat": 35.78098,
+      "lon": 139.25785,
+      "function_code": "welfare",
+      "x_m": 2174.7,
+      "y_m": -2418.6,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "ヤギさん家",
+      "type": "地域密着型通所介護",
+      "address": "東京都青梅市今井1-496-13",
+      "lat": 35.81183,
+      "lon": 139.31324,
+      "function_code": "welfare",
+      "x_m": 7175.5,
+      "y_m": 1015.6,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "デイサービスぬくもり",
+      "type": "地域密着型通所介護",
+      "address": "東京都青梅市長淵2-670-1",
+      "lat": 35.77704,
+      "lon": 139.27467,
+      "function_code": "welfare",
+      "x_m": 3693.3,
+      "y_m": -2857.2,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "トータル・ライフ・ヘア・サポート 華暖",
+      "type": "地域密着型通所介護",
+      "address": "東京都青梅市今寺4-23-5",
+      "lat": 35.79739,
+      "lon": 139.30041,
+      "function_code": "welfare",
+      "x_m": 6017.2,
+      "y_m": -591.9,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "東青梅デイサービスセンター",
+      "type": "地域密着型通所介護",
+      "address": "東京都青梅市東青梅1-5-28",
+      "lat": 35.7889,
+      "lon": 139.2713,
+      "function_code": "welfare",
+      "x_m": 3389.0,
+      "y_m": -1537.0,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "デイサービス のぞみ",
+      "type": "地域密着型通所介護",
+      "address": "東京都青梅市日向和田3-573-1",
+      "lat": 35.78367,
+      "lon": 139.23283,
+      "function_code": "welfare",
+      "x_m": -84.2,
+      "y_m": -2119.2,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "リハビリデイサービス 足軽",
+      "type": "地域密着型通所介護",
+      "address": "東京都青梅市河辺町5-14-4",
+      "lat": 35.78336,
+      "lon": 139.28578,
+      "function_code": "welfare",
+      "x_m": 4696.3,
+      "y_m": -2153.7,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "デイサービス さくら",
+      "type": "地域密着型通所介護",
+      "address": "東京都青梅市新町5-27-4グリーンヒルズ1階",
+      "lat": 35.78981,
+      "lon": 139.30942,
+      "function_code": "welfare",
+      "x_m": 6830.6,
+      "y_m": -1435.7,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "デイサービスセンター きぼうの里",
+      "type": "地域密着型通所介護",
+      "address": "東京都青梅市黒沢3-1829-1",
+      "lat": 35.80024,
+      "lon": 139.2547,
+      "function_code": "welfare",
+      "x_m": 1890.3,
+      "y_m": -274.6,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "デイサービスセンター ＣＬＵＢ ＲＩＶＥＲ",
+      "type": "地域密着型通所介護",
+      "address": "東京都青梅市長淵4-377",
+      "lat": 35.78194,
+      "lon": 139.27186,
+      "function_code": "welfare",
+      "x_m": 3439.6,
+      "y_m": -2311.8,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "二俣尾幸廻堂",
+      "type": "地域密着型通所介護",
+      "address": "東京都青梅市二俣尾4-1098",
+      "lat": 35.80357,
+      "lon": 139.21607,
+      "function_code": "welfare",
+      "x_m": -1597.4,
+      "y_m": 96.1,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "カラダラボとまりぎ青梅駅前",
+      "type": "地域密着型通所介護",
+      "address": "東京都青梅市本町198-11ファミネス青梅1F",
+      "lat": 35.79023,
+      "lon": 139.25964,
+      "function_code": "welfare",
+      "x_m": 2336.3,
+      "y_m": -1388.9,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "デイサービスセンターシエロ青梅",
+      "type": "地域密着型通所介護",
+      "address": "東京都青梅市野上町３-７-２８",
+      "lat": 35.78984,
+      "lon": 139.28692,
+      "function_code": "welfare",
+      "x_m": 4799.2,
+      "y_m": -1432.3,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "デイサービスセンター ほたる",
+      "type": "地域密着型通所介護",
+      "address": "東京都青梅市長淵4-258-5",
+      "lat": 35.77825,
+      "lon": 139.27259,
+      "function_code": "welfare",
+      "x_m": 3505.5,
+      "y_m": -2722.5,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "河辺デイサービスセンターわかくさ",
+      "type": "認知症対応型通所介護",
+      "address": "東京都青梅市河辺町9-9-25",
+      "lat": 35.78511,
+      "lon": 139.29161,
+      "function_code": "welfare",
+      "x_m": 5222.7,
+      "y_m": -1958.9,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "木野下デイサービスセンター",
+      "type": "認知症対応型通所介護",
+      "address": "東京都青梅市木野下1-418",
+      "lat": 35.80797,
+      "lon": 139.29823,
+      "function_code": "welfare",
+      "x_m": 5820.4,
+      "y_m": 585.9,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "東青梅デイサービスセンター すずらん",
+      "type": "認知症対応型通所介護",
+      "address": "東京都青梅市東青梅1-5-28",
+      "lat": 35.7889,
+      "lon": 139.2713,
+      "function_code": "welfare",
+      "x_m": 3389.0,
+      "y_m": -1537.0,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "デイサービスセンター リバーパレス青梅",
+      "type": "認知症対応型通所介護",
+      "address": "東京都青梅市長淵4-408-3",
+      "lat": 35.78116,
+      "lon": 139.27177,
+      "function_code": "welfare",
+      "x_m": 3431.4,
+      "y_m": -2398.6,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "ケアプラン純",
+      "type": "居宅介護支援事業所",
+      "address": "東京都青梅市黒沢2-1052-8コーポ黒沢東202",
+      "lat": 35.81323,
+      "lon": 139.25437,
+      "function_code": "welfare",
+      "x_m": 1860.5,
+      "y_m": 1171.5,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "ケアプラン アラウンドエイト",
+      "type": "居宅介護支援事業所",
+      "address": "東京都青梅市今寺4-23-57",
+      "lat": 35.79739,
+      "lon": 139.30041,
+      "function_code": "welfare",
+      "x_m": 6017.2,
+      "y_m": -591.9,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "長生病院",
+      "type": "介護療養型医療施設",
+      "address": "東京都青梅市小曾木1-3438",
+      "lat": 35.82355,
+      "lon": 139.29264,
+      "function_code": "welfare",
+      "x_m": 5315.7,
+      "y_m": 2320.3,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "訪問看護ステーションアラウンド∞",
+      "type": "訪問看護",
+      "address": "東京都青梅市今寺4-23-5",
+      "lat": 35.79745,
+      "lon": 139.30039,
+      "function_code": "welfare",
+      "x_m": 6015.4,
+      "y_m": -585.2,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "三慶病院",
+      "type": "介護療養型医療施設",
+      "address": "東京都青梅市大柳町1412",
+      "lat": 35.78472,
+      "lon": 139.25219,
+      "function_code": "welfare",
+      "x_m": 1663.7,
+      "y_m": -2002.3,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "みとも商会",
+      "type": "福祉用具貸与",
+      "address": "東京都青梅市野上町4-5-7スカイハイツいせひろ102室",
+      "lat": 35.78829,
+      "lon": 139.28837,
+      "function_code": "welfare",
+      "x_m": 4930.2,
+      "y_m": -1604.9,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "青い鳥",
+      "type": "特定福祉用具販売",
+      "address": "東京都青梅市長淵5-773",
+      "lat": 35.77754,
+      "lon": 139.26545,
+      "function_code": "welfare",
+      "x_m": 2860.8,
+      "y_m": -2801.6,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "アイケアーサービス青梅",
+      "type": "特定福祉用具販売",
+      "address": "東京都青梅市東青梅1-7-8",
+      "lat": 35.78826,
+      "lon": 139.27394,
+      "function_code": "welfare",
+      "x_m": 3627.3,
+      "y_m": -1608.2,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "ここひろショップ",
+      "type": "特定福祉用具販売",
+      "address": "東京都青梅市河辺町1-816-10",
+      "lat": 35.77815,
+      "lon": 139.28982,
+      "function_code": "welfare",
+      "x_m": 5061.1,
+      "y_m": -2733.7,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "みとも商会",
+      "type": "特定福祉用具販売",
+      "address": "東京都青梅市野上町4-5-7スカイハイツいせひろ102室",
+      "lat": 35.78507,
+      "lon": 139.29157,
+      "function_code": "welfare",
+      "x_m": 5219.1,
+      "y_m": -1963.3,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "ケアセンター 結人",
+      "type": "通所介護",
+      "address": "東京都青梅市東青梅3-5-12",
+      "lat": 35.7903,
+      "lon": 139.27548,
+      "function_code": "welfare",
+      "x_m": 3766.4,
+      "y_m": -1381.1,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "介護の相談室　クレセント",
+      "type": "居宅介護支援事業者",
+      "address": "東京都青梅市新町３丁目６６番地の３",
+      "lat": 35.78442,
+      "lon": 139.29958,
+      "function_code": "welfare",
+      "x_m": 5942.2,
+      "y_m": -2035.7,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "福さく",
+      "type": "訪問介護",
+      "address": "東京都青梅市大門３丁目１５番地の７　第２コーポ町田１０１",
+      "lat": 35.79292,
+      "lon": 139.29367,
+      "function_code": "welfare",
+      "x_m": 5408.7,
+      "y_m": -1089.5,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "指定訪問看護ステーション　ゆらり",
+      "type": "訪問看護",
+      "address": "東京都青梅市駒木町1-800　ゆらりホーム１０２号室",
+      "lat": 35.7808,
+      "lon": 139.25797,
+      "function_code": "welfare",
+      "x_m": 2185.5,
+      "y_m": -2438.7,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "ウェルケア訪問看護ステーション",
+      "type": "訪問看護",
+      "address": "東京都青梅市東青梅３丁目8番地の１５の４０１",
+      "lat": 35.78896,
+      "lon": 139.27615,
+      "function_code": "welfare",
+      "x_m": 3826.9,
+      "y_m": -1530.3,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "アイダ-ケア青梅",
+      "type": "訪問介護",
+      "address": "東京都青梅市新町３丁目16番地の１４",
+      "lat": 35.7802,
+      "lon": 139.30322,
+      "function_code": "welfare",
+      "x_m": 6270.9,
+      "y_m": -2505.4,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "かすがい訪問看護リハビリステーション",
+      "type": "訪問看護",
+      "address": "東京都青梅市東青梅３丁目12番地の７　１F",
+      "lat": 35.79038,
+      "lon": 139.27731,
+      "function_code": "welfare",
+      "x_m": 3931.6,
+      "y_m": -1372.2,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    },
+    {
+      "name": "カノーラ",
+      "type": "通所介護",
+      "address": "東京都青梅市今寺４－２３－５",
+      "lat": 35.79739,
+      "lon": 139.30041,
+      "function_code": "welfare",
+      "x_m": 6017.2,
+      "y_m": -591.9,
+      "within_boundary": true,
+      "coordinate_status": "inside_boundary"
+    }
+  ],
+  "data_quality_summary": {
+    "facility_total": 299,
+    "within_boundary": 288,
+    "outside_boundary": 11,
+    "outside_by_function": {
+      "clinic": 6,
+      "welfare": 5
+    },
+    "coordinate_rule": "施設の緯度経度を行政区域ポリゴンへpoint-in-polygon判定。境界外は地図表示から除外し、データ監査対象として残す。"
+  },
+  "sources": [
+    {
+      "id": "ome_boundary_n03_2021",
+      "title": "青梅市 行政区域境界（国土数値情報 加工版）",
+      "provider": "国土交通省 国土数値情報（smartnews-smri/japan-topography 加工）",
+      "source_url": "https://github.com/smartnews-smri/japan-topography",
+      "license": "国土数値情報利用規約（国土交通省クレジット表示が必要）。加工版はスマートニュース社クレジット不要、商用・非商用問わず無償利用可",
+      "retrieved_at": "2026-08-23",
+      "notes": "元データ取得はsmartnews-smri記載で2021-09-28（令和3年1月1日時点の行政区域）。境界線は1%に簡素化済み。"
+    },
+    {
+      "id": "ome_clinic_list_2025",
+      "title": "東京都青梅市における医療機関一覧",
+      "provider": "青梅市",
+      "source_url": "https://www.opendata.metro.tokyo.lg.jp/ome/132055_hospital.xlsx",
+      "license": "CC-BY-4.0",
+      "retrieved_at": "2026-08-23",
+      "notes": "138件。"
+    },
+    {
+      "id": "ome_welfare_care_service_2025",
+      "title": "東京都青梅市における介護サービス事業所一覧",
+      "provider": "青梅市",
+      "source_url": "https://www.opendata.metro.tokyo.lg.jp/ome/132055_care_service.xlsx",
+      "license": "CC-BY-4.0",
+      "retrieved_at": "2026-08-23",
+      "notes": "161件。"
+    }
+  ]
+}</script>
+
+<script>
+(function () {
+  "use strict";
+  var DATA = JSON.parse(document.getElementById("real-map-data").textContent);
+
+  var xs = DATA.boundary_m.map(function (p) { return p[0]; });
+  var ys = DATA.boundary_m.map(function (p) { return p[1]; });
+  var minX = Math.min.apply(null, xs), maxX = Math.max.apply(null, xs);
+  var minY = Math.min.apply(null, ys), maxY = Math.max.apply(null, ys);
+
+  var VIEW_W = 900, VIEW_H = 620, PAD = 30;
+  var scale = Math.min((VIEW_W - PAD * 2) / (maxX - minX), (VIEW_H - PAD * 2) / (maxY - minY));
+
+  function toSvg(x_m, y_m) {
+    // y_m は北が正なので、SVGでは上に行くほどyが小さくなるよう反転する
+    var sx = PAD + (x_m - minX) * scale;
+    var sy = PAD + (maxY - y_m) * scale;
+    return [sx, sy];
+  }
+
+  var boundaryPoints = DATA.boundary_m.map(function (p) {
+    var xy = toSvg(p[0], p[1]);
+    return xy[0].toFixed(1) + "," + xy[1].toFixed(1);
+  }).join(" ");
+  document.getElementById("boundaryPolygon").setAttribute("points", boundaryPoints);
+
+  var clinicsAll = DATA.facilities.filter(function (f) { return f.function_code === "clinic"; });
+  var welfareAll = DATA.facilities.filter(function (f) { return f.function_code === "welfare"; });
+  var clinics = clinicsAll.filter(function (f) { return f.within_boundary !== false; });
+  var welfare = welfareAll.filter(function (f) { return f.within_boundary !== false; });
+  document.getElementById("clinicCount").textContent = clinics.length;
+  document.getElementById("welfareCount").textContent = welfare.length;
+  document.getElementById("clinicTotal").textContent = clinicsAll.length;
+  document.getElementById("welfareTotal").textContent = welfareAll.length;
+
+  var quality = DATA.data_quality_summary || {};
+  document.getElementById("qualitySummary").textContent =
+    "境界内: " + (quality.within_boundary || 0) + "件。" +
+    " 境界外座標: " + (quality.outside_boundary || 0) + "件（地図上は非表示・要監査）。";
+
+  function renderLayer(layerId, facilities, color) {
+    var g = document.getElementById(layerId);
+    g.innerHTML = "";
+    facilities.forEach(function (f) {
+      var xy = toSvg(f.x_m, f.y_m);
+      var c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      c.setAttribute("cx", xy[0]);
+      c.setAttribute("cy", xy[1]);
+      c.setAttribute("r", 3.5);
+      c.setAttribute("fill", color);
+      c.setAttribute("fill-opacity", "0.85");
+      c.setAttribute("stroke", "#ffffff");
+      c.setAttribute("stroke-width", "0.7");
+      c.setAttribute("class", "facility-dot");
+      c.addEventListener("click", function () { showFacility(f); });
+      g.appendChild(c);
+    });
+  }
+
+  function showFacility(f) {
+    var el = document.getElementById("facilityDetail");
+    el.replaceChildren();
+    var name = document.createElement("strong");
+    name.textContent = f.name || "(名称不明)";
+    el.appendChild(name);
+    appendDetailLine(el, "種別: ", f.type || "-");
+    appendDetailLine(el, "住所: ", f.address || "-");
+    appendDetailLine(el, "緯度経度: ", f.lat.toFixed(5) + ", " + f.lon.toFixed(5));
+  }
+
+  function appendDetailLine(parent, label, value) {
+    parent.appendChild(document.createElement("br"));
+    parent.appendChild(document.createTextNode(label + value));
+  }
+
+  renderLayer("clinicLayer", clinics, getComputedStyle(document.documentElement).getPropertyValue("--clinic").trim());
+  renderLayer("welfareLayer", welfare, getComputedStyle(document.documentElement).getPropertyValue("--welfare").trim());
+
+  document.getElementById("toggleClinic").addEventListener("change", function (e) {
+    document.getElementById("clinicLayer").style.display = e.target.checked ? "" : "none";
+  });
+  document.getElementById("toggleWelfare").addEventListener("change", function (e) {
+    document.getElementById("welfareLayer").style.display = e.target.checked ? "" : "none";
+  });
+
+  var sourcesEl = document.getElementById("sourcesList");
+  DATA.sources.forEach(function (s) {
+    var p = document.createElement("p");
+    var title = document.createElement("strong");
+    title.textContent = s.title;
+    p.appendChild(title);
+    appendSourceLine(p, s.provider);
+    appendSourceLine(p, "出典URL: " + s.source_url);
+    appendSourceLine(p, "ライセンス: " + s.license);
+    appendSourceLine(p, "取得日: " + s.retrieved_at);
+    appendSourceLine(p, s.notes || "");
+    sourcesEl.appendChild(p);
+  });
+
+  function appendSourceLine(parent, value) {
+    parent.appendChild(document.createElement("br"));
+    parent.appendChild(document.createTextNode(value));
+  }
+})();
+</script>
+</body>
+</html>
