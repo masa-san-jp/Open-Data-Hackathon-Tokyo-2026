@@ -1,4 +1,4 @@
-status: todo
+status: doing
 phase: 1
 
 # T03 町丁位置の結合と reach 判定
