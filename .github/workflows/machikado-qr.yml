@@ -4,13 +4,13 @@ on:
   pull_request:
     paths:
       - "apps/machikado-qr/**"
-      - "docs/design/machikado-qr/**"
+      - "docs/design/20260823-machikado-qr-*"
       - ".github/workflows/machikado-qr.yml"
   push:
     branches: [main]
     paths:
       - "apps/machikado-qr/**"
-      - "docs/design/machikado-qr/**"
+      - "docs/design/20260823-machikado-qr-*"
       - ".github/workflows/machikado-qr.yml"
 
 permissions:
