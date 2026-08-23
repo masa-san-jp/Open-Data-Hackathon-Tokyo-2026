@@ -8,36 +8,43 @@
    {
     "id": "D1",
     "url": "https://www.opendata.metro.tokyo.lg.jp/soumu/130001_evacuation_center.csv",
-    "fetched_at": "2026-08-23T05:03:07.288231+00:00",
+    "fetched_at": "2026-08-23T05:51:19.943839+00:00",
     "sha256": "dc6cc97a78d613ae4beab1dfbbd56280a3652d67f5f49ba31c39a5579d22483d",
     "status": "ok"
    },
    {
     "id": "D2",
     "url": "https://www.opendata.metro.tokyo.lg.jp/koto/131083_202_cooling_shelter.csv",
-    "fetched_at": "2026-08-23T05:03:07.884913+00:00",
+    "fetched_at": "2026-08-23T05:51:20.330070+00:00",
     "sha256": "85f09e02642d5e456b27ed6dfd753d25af3ef20cdf573a11ec3be3fc06108e39",
     "status": "ok"
    },
    {
     "id": "D3",
     "url": "https://www.hokeniryo.metro.tokyo.lg.jp/documents/d/hokeniryo/kyotenbyoinlist",
-    "fetched_at": "2026-08-23T05:03:08.420473+00:00",
+    "fetched_at": "2026-08-23T05:51:20.543332+00:00",
     "sha256": "b68e3c6fc3d1792a16a2e0b26f0d288a4f5a375324984777b75084b1d7b1fbd9",
     "status": "ok"
    },
    {
     "id": "D4",
     "url": "https://www.opendata.metro.tokyo.lg.jp/koto/131083_009_care_service.csv",
-    "fetched_at": "2026-08-23T05:03:10.072657+00:00",
+    "fetched_at": "2026-08-23T05:51:20.620027+00:00",
     "sha256": "69cf5c74c904fbfcc0a6e81c4c21f647fbd1461e09294e6771f61d76111e7246",
     "status": "ok"
    },
    {
     "id": "D5",
     "url": "https://www.opendata.metro.tokyo.lg.jp/koto/131083_204_population_detail_chouchoubetu_202401.csv",
-    "fetched_at": "2026-08-23T05:03:35.741148+00:00",
+    "fetched_at": "2026-08-23T05:51:20.968211+00:00",
     "sha256": "f6bf931c4d3e03e04679186fa65d23e385ba249b1a44f669d78eae6882b8bd82",
+    "status": "ok"
+   },
+   {
+    "id": "D6",
+    "url": "https://nlftp.mlit.go.jp/isj/dls/data/19.0b/13000-19.0b.zip",
+    "fetched_at": "2026-08-23T05:51:21.155964+00:00",
+    "sha256": "37b1dbc7a059d8517e1def20a243a5aa8e371fda5ece56767a9f858caed9c2ed",
     "status": "ok"
    }
   ],
@@ -49,6 +56,14 @@
   },
   "missing_location_counts": {
    "medical": 4
+  },
+  "centroid_join": {
+   "matched": 158,
+   "total": 159,
+   "rate": 0.9937106918238994,
+   "unmatched": [
+    "潮見３丁目"
+   ]
   }
  },
  "facilities": [
@@ -4020,17 +4035,19 @@
    "pop_total": 1707,
    "pop_65plus": 135,
    "pop_75plus": 68,
+   "lat": 35.681633,
+   "lon": 139.792861,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 323.6,
+    "cool": 446.0,
     "medical": null,
-    "care": null
+    "care": 345.5
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "far",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -4039,17 +4056,19 @@
    "pop_total": 1222,
    "pop_65plus": 268,
    "pop_75plus": 154,
+   "lat": 35.681383,
+   "lon": 139.795877,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 49.8,
+    "cool": 259.6,
     "medical": null,
-    "care": null
+    "care": 159.7
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -4058,17 +4077,19 @@
    "pop_total": 1105,
    "pop_65plus": 250,
    "pop_75plus": 149,
+   "lat": 35.680971,
+   "lon": 139.79797,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 144.9,
+    "cool": 229.9,
     "medical": null,
-    "care": null
+    "care": 241.4
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -4077,17 +4098,19 @@
    "pop_total": 1074,
    "pop_65plus": 134,
    "pop_75plus": 84,
+   "lat": 35.684872,
+   "lon": 139.794419,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 250.0,
+    "cool": 141.2,
     "medical": null,
-    "care": null
+    "care": 259.1
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -4096,17 +4119,19 @@
    "pop_total": 1224,
    "pop_65plus": 285,
    "pop_75plus": 174,
+   "lat": 35.684826,
+   "lon": 139.797281,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 213.7,
+    "cool": 186.7,
     "medical": null,
-    "care": null
+    "care": 0.5
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -4115,17 +4140,19 @@
    "pop_total": 2023,
    "pop_65plus": 322,
    "pop_75plus": 178,
+   "lat": 35.68845,
+   "lon": 139.792593,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 299.8,
+    "cool": 293.1,
     "medical": null,
-    "care": null
+    "care": 81.5
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -4134,17 +4161,19 @@
    "pop_total": 2595,
    "pop_65plus": 300,
    "pop_75plus": 161,
+   "lat": 35.688374,
+   "lon": 139.794576,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 170.9,
+    "cool": 255.0,
     "medical": null,
-    "care": null
+    "care": 100.1
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -4153,17 +4182,19 @@
    "pop_total": 1538,
    "pop_65plus": 247,
    "pop_75plus": 138,
+   "lat": 35.687895,
+   "lon": 139.795945,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 113.8,
+    "cool": 254.4,
     "medical": null,
-    "care": null
+    "care": 233.4
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -4172,17 +4203,19 @@
    "pop_total": 1521,
    "pop_65plus": 272,
    "pop_75plus": 154,
+   "lat": 35.687516,
+   "lon": 139.797427,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 194.4,
+    "cool": 114.8,
     "medical": null,
-    "care": null
+    "care": 144.6
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -4191,17 +4224,19 @@
    "pop_total": 1883,
    "pop_65plus": 359,
    "pop_75plus": 179,
+   "lat": 35.688004,
+   "lon": 139.799196,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 217.4,
+    "cool": 119.1,
     "medical": null,
-    "care": null
+    "care": 24.2
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -4210,17 +4245,19 @@
    "pop_total": 3632,
    "pop_65plus": 738,
    "pop_75plus": 373,
+   "lat": 35.686279,
+   "lon": 139.801949,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 99.4,
+    "cool": 123.3,
     "medical": null,
-    "care": null
+    "care": 167.5
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -4229,17 +4266,19 @@
    "pop_total": 2549,
    "pop_65plus": 543,
    "pop_75plus": 294,
+   "lat": 35.686267,
+   "lon": 139.804854,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 148.5,
+    "cool": 270.1,
     "medical": null,
-    "care": null
+    "care": 429.9
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -4248,17 +4287,19 @@
    "pop_total": 1495,
    "pop_65plus": 315,
    "pop_75plus": 168,
+   "lat": 35.685656,
+   "lon": 139.807929,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 103.7,
+    "cool": 475.8,
     "medical": null,
-    "care": null
+    "care": 373.1
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -4267,17 +4308,19 @@
    "pop_total": 1319,
    "pop_65plus": 255,
    "pop_75plus": 150,
+   "lat": 35.678264,
+   "lon": 139.799487,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 77.5,
+    "cool": 266.7,
     "medical": null,
-    "care": null
+    "care": 284.7
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -4286,17 +4329,19 @@
    "pop_total": 2972,
    "pop_65plus": 418,
    "pop_75plus": 216,
+   "lat": 35.67761,
+   "lon": 139.802589,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 241.0,
+    "cool": 248.2,
     "medical": null,
-    "care": null
+    "care": 269.5
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -4305,17 +4350,19 @@
    "pop_total": 2469,
    "pop_65plus": 269,
    "pop_75plus": 141,
+   "lat": 35.677645,
+   "lon": 139.805666,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 97.7,
+    "cool": 97.8,
     "medical": null,
-    "care": null
+    "care": 489.6
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -4324,17 +4371,19 @@
    "pop_total": 766,
    "pop_65plus": 128,
    "pop_75plus": 93,
+   "lat": 35.677817,
+   "lon": 139.808738,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 310.4,
+    "cool": 225.7,
     "medical": null,
-    "care": null
+    "care": 612.8
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "far",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -4343,17 +4392,19 @@
    "pop_total": 571,
    "pop_65plus": 140,
    "pop_75plus": 78,
+   "lat": 35.679836,
+   "lon": 139.800106,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 201.2,
+    "cool": 159.6,
     "medical": null,
-    "care": null
+    "care": 444.9
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -4362,17 +4413,19 @@
    "pop_total": 1054,
    "pop_65plus": 255,
    "pop_75plus": 151,
+   "lat": 35.679983,
+   "lon": 139.80239,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 311.5,
+    "cool": 207.2,
     "medical": null,
-    "care": null
+    "care": 489.1
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "far",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -4381,17 +4434,19 @@
    "pop_total": 1751,
    "pop_65plus": 443,
    "pop_75plus": 256,
+   "lat": 35.680087,
+   "lon": 139.805166,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 138.3,
+    "cool": 261.4,
     "medical": null,
-    "care": null
+    "care": 629.9
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -4400,17 +4455,19 @@
    "pop_total": 2003,
    "pop_65plus": 284,
    "pop_75plus": 156,
+   "lat": 35.68033,
+   "lon": 139.808486,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 214.3,
+    "cool": 75.1,
     "medical": null,
-    "care": null
+    "care": 527.2
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -4419,17 +4476,19 @@
    "pop_total": 1519,
    "pop_65plus": 461,
    "pop_75plus": 279,
+   "lat": 35.682347,
+   "lon": 139.799841,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 82.0,
+    "cool": 147.1,
     "medical": null,
-    "care": null
+    "care": 311.1
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -4438,17 +4497,19 @@
    "pop_total": 2642,
    "pop_65plus": 453,
    "pop_75plus": 230,
+   "lat": 35.682553,
+   "lon": 139.802297,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 177.7,
+    "cool": 211.2,
     "medical": null,
-    "care": null
+    "care": 464.6
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -4457,17 +4518,19 @@
    "pop_total": 3035,
    "pop_65plus": 544,
    "pop_75plus": 295,
+   "lat": 35.682633,
+   "lon": 139.805071,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 228.7,
+    "cool": 385.9,
     "medical": null,
-    "care": null
+    "care": 609.0
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -4476,17 +4539,19 @@
    "pop_total": 4190,
    "pop_65plus": 883,
    "pop_75plus": 498,
+   "lat": 35.682886,
+   "lon": 139.808205,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 56.8,
+    "cool": 347.5,
     "medical": null,
-    "care": null
+    "care": 492.7
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -4495,17 +4560,19 @@
    "pop_total": 1627,
    "pop_65plus": 281,
    "pop_75plus": 163,
+   "lat": 35.684902,
+   "lon": 139.799545,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 127.5,
+    "cool": 77.6,
     "medical": null,
-    "care": null
+    "care": 166.3
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -4514,17 +4581,19 @@
    "pop_total": 1698,
    "pop_65plus": 159,
    "pop_75plus": 83,
+   "lat": 35.677077,
+   "lon": 139.790208,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 558.0,
+    "cool": 634.4,
     "medical": null,
-    "care": null
+    "care": 520.8
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "far",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -4533,17 +4602,19 @@
    "pop_total": 1339,
    "pop_65plus": 39,
    "pop_75plus": 20,
+   "lat": 35.679283,
+   "lon": 139.791541,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 468.0,
+    "cool": 470.5,
     "medical": null,
-    "care": null
+    "care": 563.1
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "far",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -4552,17 +4623,19 @@
    "pop_total": 1314,
    "pop_65plus": 214,
    "pop_75plus": 119,
+   "lat": 35.674691,
+   "lon": 139.789097,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 426.0,
+    "cool": 533.7,
     "medical": null,
-    "care": null
+    "care": 594.7
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "far",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -4571,17 +4644,19 @@
    "pop_total": 2750,
    "pop_65plus": 438,
    "pop_75plus": 227,
+   "lat": 35.673549,
+   "lon": 139.791586,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 170.4,
+    "cool": 356.0,
     "medical": null,
-    "care": null
+    "care": 420.7
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -4590,17 +4665,19 @@
    "pop_total": 1382,
    "pop_65plus": 242,
    "pop_75plus": 146,
+   "lat": 35.675971,
+   "lon": 139.793388,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 306.6,
+    "cool": 466.5,
     "medical": null,
-    "care": null
+    "care": 209.3
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "far",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -4609,17 +4686,19 @@
    "pop_total": 1272,
    "pop_65plus": 268,
    "pop_75plus": 143,
+   "lat": 35.67823,
+   "lon": 139.794005,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 239.7,
+    "cool": 268.3,
     "medical": null,
-    "care": null
+    "care": 341.7
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -4628,17 +4707,19 @@
    "pop_total": 1721,
    "pop_65plus": 453,
    "pop_75plus": 285,
+   "lat": 35.676523,
+   "lon": 139.795626,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 107.6,
+    "cool": 310.0,
     "medical": null,
-    "care": null
+    "care": 119.4
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -4647,17 +4728,19 @@
    "pop_total": 2437,
    "pop_65plus": 440,
    "pop_75plus": 253,
+   "lat": 35.675651,
+   "lon": 139.797915,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 52.1,
+    "cool": 388.0,
     "medical": null,
-    "care": null
+    "care": 209.1
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -4666,17 +4749,19 @@
    "pop_total": 2894,
    "pop_65plus": 464,
    "pop_75plus": 231,
+   "lat": 35.674788,
+   "lon": 139.801416,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 201.0,
+    "cool": 361.2,
     "medical": null,
-    "care": null
+    "care": 43.4
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -4685,17 +4770,19 @@
    "pop_total": 1822,
    "pop_65plus": 279,
    "pop_75plus": 177,
+   "lat": 35.673228,
+   "lon": 139.794229,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 138.0,
+    "cool": 341.5,
     "medical": null,
-    "care": null
+    "care": 276.8
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -4704,17 +4791,19 @@
    "pop_total": 633,
    "pop_65plus": 97,
    "pop_75plus": 63,
+   "lat": 35.672524,
+   "lon": 139.795782,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 253.2,
+    "cool": 181.0,
     "medical": null,
-    "care": null
+    "care": 325.6
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -4723,17 +4812,19 @@
    "pop_total": 2088,
    "pop_65plus": 460,
    "pop_75plus": 274,
+   "lat": 35.671463,
+   "lon": 139.798098,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 193.6,
+    "cool": 43.0,
     "medical": null,
-    "care": null
+    "care": 226.3
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -4742,17 +4833,19 @@
    "pop_total": 1939,
    "pop_65plus": 361,
    "pop_75plus": 196,
+   "lat": 35.671002,
+   "lon": 139.801459,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 230.5,
+    "cool": 157.4,
     "medical": null,
-    "care": null
+    "care": 261.7
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -4761,17 +4854,19 @@
    "pop_total": 792,
    "pop_65plus": 176,
    "pop_75plus": 111,
+   "lat": 35.670547,
+   "lon": 139.793901,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 159.3,
+    "cool": 208.0,
     "medical": null,
-    "care": null
+    "care": 362.6
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -4780,17 +4875,19 @@
    "pop_total": 1107,
    "pop_65plus": 292,
    "pop_75plus": 189,
+   "lat": 35.670123,
+   "lon": 139.796002,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 144.6,
+    "cool": 204.7,
     "medical": null,
-    "care": null
+    "care": 169.1
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -4799,17 +4896,19 @@
    "pop_total": 1873,
    "pop_65plus": 499,
    "pop_75plus": 300,
+   "lat": 35.668816,
+   "lon": 139.799479,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 191.8,
+    "cool": 151.1,
     "medical": null,
-    "care": null
+    "care": 109.4
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -4818,17 +4917,19 @@
    "pop_total": 1464,
    "pop_65plus": 271,
    "pop_75plus": 124,
+   "lat": 35.668858,
+   "lon": 139.795062,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 42.9,
+    "cool": 353.0,
     "medical": null,
-    "care": null
+    "care": 246.0
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -4837,17 +4938,19 @@
    "pop_total": 2601,
    "pop_65plus": 436,
    "pop_75plus": 242,
+   "lat": 35.66704,
+   "lon": 139.798908,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 21.6,
+    "cool": 31.8,
     "medical": null,
-    "care": null
+    "care": 157.6
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -4856,17 +4959,19 @@
    "pop_total": 1415,
    "pop_65plus": 245,
    "pop_75plus": 120,
+   "lat": 35.666227,
+   "lon": 139.801354,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 169.7,
+    "cool": 207.0,
     "medical": null,
-    "care": null
+    "care": 360.3
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -4875,17 +4980,19 @@
    "pop_total": 1836,
    "pop_65plus": 540,
    "pop_75plus": 283,
+   "lat": 35.670718,
+   "lon": 139.790286,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 112.6,
+    "cool": 126.6,
     "medical": null,
-    "care": null
+    "care": 682.9
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -4894,17 +5001,19 @@
    "pop_total": 1860,
    "pop_65plus": 245,
    "pop_75plus": 140,
+   "lat": 35.666465,
+   "lon": 139.792464,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 221.2,
+    "cool": 438.5,
     "medical": null,
-    "care": null
+    "care": 576.3
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -4913,17 +5022,19 @@
    "pop_total": 3121,
    "pop_65plus": 752,
    "pop_75plus": 441,
+   "lat": 35.664328,
+   "lon": 139.798384,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 261.7,
+    "cool": 300.2,
     "medical": null,
-    "care": null
+    "care": 451.9
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -4932,17 +5043,19 @@
    "pop_total": 6293,
    "pop_65plus": 1475,
    "pop_75plus": 784,
+   "lat": 35.661278,
+   "lon": 139.800011,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 295.9,
+    "cool": 633.2,
     "medical": null,
-    "care": null
+    "care": 712.2
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -4951,17 +5064,19 @@
    "pop_total": 12713,
    "pop_65plus": 2020,
    "pop_75plus": 1033,
+   "lat": 35.662879,
+   "lon": 139.811664,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 212.7,
+    "cool": 671.6,
     "medical": null,
-    "care": null
+    "care": 594.1
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -4970,17 +5085,19 @@
    "pop_total": 4674,
    "pop_65plus": 1197,
    "pop_75plus": 627,
+   "lat": 35.656617,
+   "lon": 139.803432,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 94.0,
+    "cool": 620.0,
     "medical": null,
-    "care": null
+    "care": 531.7
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -4989,17 +5106,19 @@
    "pop_total": 2322,
    "pop_65plus": 437,
    "pop_75plus": 236,
+   "lat": 35.657715,
+   "lon": 139.807178,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 236.4,
+    "cool": 338.8,
     "medical": null,
-    "care": null
+    "care": 710.3
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -5008,17 +5127,19 @@
    "pop_total": 2477,
    "pop_65plus": 662,
    "pop_75plus": 367,
+   "lat": 35.658999,
+   "lon": 139.810602,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 62.1,
+    "cool": 288.4,
     "medical": null,
-    "care": null
+    "care": 435.9
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -5027,17 +5148,19 @@
    "pop_total": 4118,
    "pop_65plus": 1094,
    "pop_75plus": 691,
+   "lat": 35.661813,
+   "lon": 139.792044,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 320.1,
+    "cool": 864.2,
     "medical": null,
-    "care": null
+    "care": 137.2
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "far",
+    "cool": "out",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -5046,17 +5169,19 @@
    "pop_total": 3649,
    "pop_65plus": 526,
    "pop_75plus": 250,
+   "lat": 35.655271,
+   "lon": 139.792777,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 259.1,
+    "cool": 243.0,
     "medical": null,
-    "care": null
+    "care": 450.5
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -5065,17 +5190,19 @@
    "pop_total": 7903,
    "pop_65plus": 518,
    "pop_75plus": 203,
+   "lat": 35.658936,
+   "lon": 139.79692,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 95.4,
+    "cool": 542.2,
     "medical": null,
-    "care": null
+    "care": 428.9
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -5084,17 +5211,19 @@
    "pop_total": 11095,
    "pop_65plus": 1503,
    "pop_75plus": 773,
+   "lat": 35.653798,
+   "lon": 139.800664,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 152.5,
+    "cool": 499.3,
     "medical": null,
-    "care": null
+    "care": 274.3
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -5103,17 +5232,19 @@
    "pop_total": 8654,
    "pop_65plus": 914,
    "pop_75plus": 417,
+   "lat": 35.6511,
+   "lon": 139.796476,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 136.8,
+    "cool": 372.0,
     "medical": null,
-    "care": null
+    "care": 442.0
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -5122,17 +5253,19 @@
    "pop_total": 5172,
    "pop_65plus": 268,
    "pop_75plus": 105,
+   "lat": 35.646684,
+   "lon": 139.786093,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 948.5,
+    "cool": 341.2,
     "medical": null,
-    "care": null
+    "care": 1406.9
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "out",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "out"
    }
   },
   {
@@ -5141,17 +5274,19 @@
    "pop_total": 19751,
    "pop_65plus": 1724,
    "pop_75plus": 821,
+   "lat": 35.648418,
+   "lon": 139.801826,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 166.0,
+    "cool": 100.0,
     "medical": null,
-    "care": null
+    "care": 661.3
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -5160,17 +5295,19 @@
    "pop_total": 5689,
    "pop_65plus": 1188,
    "pop_75plus": 664,
+   "lat": 35.640503,
+   "lon": 139.802348,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 363.8,
+    "cool": 435.5,
     "medical": null,
-    "care": null
+    "care": 1010.0
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "far",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "out"
    }
   },
   {
@@ -5179,17 +5316,19 @@
    "pop_total": 10952,
    "pop_65plus": 622,
    "pop_75plus": 235,
+   "lat": 35.640906,
+   "lon": 139.789578,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 599.9,
+    "cool": 601.7,
     "medical": null,
-    "care": null
+    "care": 1729.1
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "far",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "out"
    }
   },
   {
@@ -5198,17 +5337,19 @@
    "pop_total": 2612,
    "pop_65plus": 113,
    "pop_75plus": 41,
+   "lat": 35.636322,
+   "lon": 139.789974,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 511.5,
+    "cool": 267.6,
     "medical": null,
-    "care": null
+    "care": 2144.5
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "far",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "out"
    }
   },
   {
@@ -5217,17 +5358,19 @@
    "pop_total": 0,
    "pop_65plus": 0,
    "pop_75plus": 0,
+   "lat": 35.629417,
+   "lon": 139.796671,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 1191.7,
+    "cool": 395.3,
     "medical": null,
-    "care": null
+    "care": 2326.7
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "out",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "out"
    }
   },
   {
@@ -5236,17 +5379,19 @@
    "pop_total": 3,
    "pop_65plus": 1,
    "pop_75plus": 0,
+   "lat": 35.620798,
+   "lon": 139.792118,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 1568.2,
+    "cool": 999.1,
     "medical": null,
-    "care": null
+    "care": 3366.2
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "out",
+    "cool": "out",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "out"
    }
   },
   {
@@ -5255,17 +5400,19 @@
    "pop_total": 8143,
    "pop_65plus": 2730,
    "pop_75plus": 1897,
+   "lat": 35.648179,
+   "lon": 139.809024,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 55.4,
+    "cool": 600.0,
     "medical": null,
-    "care": null
+    "care": 48.9
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -5274,17 +5421,19 @@
    "pop_total": 1790,
    "pop_65plus": 289,
    "pop_75plus": 129,
+   "lat": 35.650034,
+   "lon": 139.816497,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 504.1,
+    "cool": 192.6,
     "medical": null,
-    "care": null
+    "care": 715.5
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "far",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -5293,17 +5442,19 @@
    "pop_total": 33,
    "pop_65plus": 8,
    "pop_75plus": 5,
+   "lat": 35.64359,
+   "lon": 139.81579,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 521.0,
+    "cool": 538.8,
     "medical": null,
-    "care": null
+    "care": 760.9
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "far",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -5312,17 +5463,19 @@
    "pop_total": 2677,
    "pop_65plus": 699,
    "pop_75plus": 397,
+   "lat": 35.65574,
+   "lon": 139.811361,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 87.6,
+    "cool": 30.9,
     "medical": null,
-    "care": null
+    "care": 382.3
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -5331,17 +5484,19 @@
    "pop_total": 3483,
    "pop_65plus": 452,
    "pop_75plus": 192,
+   "lat": 35.658076,
+   "lon": 139.817748,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 357.8,
+    "cool": 585.9,
     "medical": null,
-    "care": null
+    "care": 255.0
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "far",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -5350,6 +5505,8 @@
    "pop_total": 0,
    "pop_65plus": 0,
    "pop_75plus": 0,
+   "lat": null,
+   "lon": null,
    "nearest_m": {
     "shelter": null,
     "cool": null,
@@ -5369,17 +5526,19 @@
    "pop_total": 0,
    "pop_65plus": 0,
    "pop_75plus": 0,
+   "lat": 35.625058,
+   "lon": 139.778725,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 1011.7,
+    "cool": 887.2,
     "medical": null,
-    "care": null
+    "care": 3727.8
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "out",
+    "cool": "out",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "out"
    }
   },
   {
@@ -5388,17 +5547,19 @@
    "pop_total": 997,
    "pop_65plus": 1,
    "pop_75plus": 0,
+   "lat": 35.618849,
+   "lon": 139.777172,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 1701.2,
+    "cool": 560.5,
     "medical": null,
-    "care": null
+    "care": 4318.2
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "out",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "out"
    }
   },
   {
@@ -5407,17 +5568,19 @@
    "pop_total": 0,
    "pop_65plus": 0,
    "pop_75plus": 0,
+   "lat": 35.608994,
+   "lon": 139.784844,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 2690.1,
+    "cool": 1559.2,
     "medical": null,
-    "care": null
+    "care": 4834.2
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "out",
+    "cool": "out",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "out"
    }
   },
   {
@@ -5426,17 +5589,19 @@
    "pop_total": 0,
    "pop_65plus": 0,
    "pop_75plus": 0,
+   "lat": 35.615344,
+   "lon": 139.785832,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 1990.9,
+    "cool": 1347.0,
     "medical": null,
-    "care": null
+    "care": 4171.3
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "out",
+    "cool": "out",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "out"
    }
   },
   {
@@ -5445,17 +5610,19 @@
    "pop_total": 0,
    "pop_65plus": 0,
    "pop_75plus": 0,
+   "lat": 35.597163,
+   "lon": 139.794155,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 4112.1,
+    "cool": 2461.3,
     "medical": null,
-    "care": null
+    "care": 5784.1
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "out",
+    "cool": "out",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "out"
    }
   },
   {
@@ -5464,17 +5631,19 @@
    "pop_total": 0,
    "pop_65plus": 0,
    "pop_75plus": 0,
+   "lat": 35.601705,
+   "lon": 139.799384,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 3772.1,
+    "cool": 1804.4,
     "medical": null,
-    "care": null
+    "care": 5193.9
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "out",
+    "cool": "out",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "out"
    }
   },
   {
@@ -5483,17 +5652,19 @@
    "pop_total": 0,
    "pop_65plus": 0,
    "pop_75plus": 0,
+   "lat": 35.607274,
+   "lon": 139.808565,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 3647.8,
+    "cool": 814.4,
     "medical": null,
-    "care": null
+    "care": 4500.2
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "out",
+    "cool": "out",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "out"
    }
   },
   {
@@ -5502,17 +5673,19 @@
    "pop_total": 2514,
    "pop_65plus": 666,
    "pop_75plus": 403,
+   "lat": 35.678286,
+   "lon": 139.81247,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 75.2,
+    "cool": 433.2,
     "medical": null,
-    "care": null
+    "care": 397.8
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -5521,17 +5694,19 @@
    "pop_total": 1882,
    "pop_65plus": 541,
    "pop_75plus": 313,
+   "lat": 35.677999,
+   "lon": 139.815824,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 212.1,
+    "cool": 403.0,
     "medical": null,
-    "care": null
+    "care": 271.1
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -5540,17 +5715,19 @@
    "pop_total": 2528,
    "pop_65plus": 706,
    "pop_75plus": 297,
+   "lat": 35.678053,
+   "lon": 139.818725,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 152.8,
+    "cool": 440.0,
     "medical": null,
-    "care": null
+    "care": 352.6
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -5559,17 +5736,19 @@
    "pop_total": 1477,
    "pop_65plus": 366,
    "pop_75plus": 197,
+   "lat": 35.681133,
+   "lon": 139.812106,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 37.5,
+    "cool": 398.2,
     "medical": null,
-    "care": null
+    "care": 210.0
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -5578,17 +5757,19 @@
    "pop_total": 1920,
    "pop_65plus": 452,
    "pop_75plus": 276,
+   "lat": 35.681155,
+   "lon": 139.815615,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 85.5,
+    "cool": 531.2,
     "medical": null,
-    "care": null
+    "care": 37.7
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -5597,17 +5778,19 @@
    "pop_total": 2013,
    "pop_65plus": 426,
    "pop_75plus": 236,
+   "lat": 35.681075,
+   "lon": 139.818882,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 211.2,
+    "cool": 358.7,
     "medical": null,
-    "care": null
+    "care": 117.6
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -5616,17 +5799,19 @@
    "pop_total": 4278,
    "pop_65plus": 425,
    "pop_75plus": 233,
+   "lat": 35.683189,
+   "lon": 139.811869,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 216.2,
+    "cool": 497.3,
     "medical": null,
-    "care": null
+    "care": 175.4
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -5635,17 +5820,19 @@
    "pop_total": 2676,
    "pop_65plus": 374,
    "pop_75plus": 190,
+   "lat": 35.683603,
+   "lon": 139.815501,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 268.7,
+    "cool": 431.6,
     "medical": null,
-    "care": null
+    "care": 101.2
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -5654,17 +5841,19 @@
    "pop_total": 2948,
    "pop_65plus": 675,
    "pop_75plus": 342,
+   "lat": 35.683345,
+   "lon": 139.81897,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 111.7,
+    "cool": 142.5,
     "medical": null,
-    "care": null
+    "care": 140.4
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -5673,17 +5862,19 @@
    "pop_total": 3305,
    "pop_65plus": 654,
    "pop_75plus": 317,
+   "lat": 35.685939,
+   "lon": 139.811695,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 176.2,
+    "cool": 204.4,
     "medical": null,
-    "care": null
+    "care": 38.1
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -5692,17 +5883,19 @@
    "pop_total": 2977,
    "pop_65plus": 849,
    "pop_75plus": 458,
+   "lat": 35.686117,
+   "lon": 139.817189,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 254.6,
+    "cool": 343.1,
     "medical": null,
-    "care": null
+    "care": 321.0
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -5711,17 +5904,19 @@
    "pop_total": 2623,
    "pop_65plus": 530,
    "pop_75plus": 310,
+   "lat": 35.688767,
+   "lon": 139.812698,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 57.8,
+    "cool": 127.8,
     "medical": null,
-    "care": null
+    "care": 85.9
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -5730,17 +5925,19 @@
    "pop_total": 2499,
    "pop_65plus": 612,
    "pop_75plus": 379,
+   "lat": 35.688971,
+   "lon": 139.816873,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 201.2,
+    "cool": 257.9,
     "medical": null,
-    "care": null
+    "care": 117.6
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -5749,17 +5946,19 @@
    "pop_total": 2575,
    "pop_65plus": 457,
    "pop_75plus": 274,
+   "lat": 35.691507,
+   "lon": 139.813446,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 30.7,
+    "cool": 438.7,
     "medical": null,
-    "care": null
+    "care": 61.3
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -5768,17 +5967,19 @@
    "pop_total": 1041,
    "pop_65plus": 225,
    "pop_75plus": 131,
+   "lat": 35.690896,
+   "lon": 139.817713,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 109.9,
+    "cool": 322.8,
     "medical": null,
-    "care": null
+    "care": 308.7
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -5787,17 +5988,19 @@
    "pop_total": 175,
    "pop_65plus": 14,
    "pop_75plus": 5,
+   "lat": 35.666717,
+   "lon": 139.803659,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 196.9,
+    "cool": 87.6,
     "medical": null,
-    "care": null
+    "care": 164.1
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -5806,17 +6009,19 @@
    "pop_total": 2056,
    "pop_65plus": 390,
    "pop_75plus": 197,
+   "lat": 35.67058,
+   "lon": 139.804051,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 328.0,
+    "cool": 314.8,
     "medical": null,
-    "care": null
+    "care": 347.3
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "far",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -5825,17 +6030,19 @@
    "pop_total": 4133,
    "pop_65plus": 655,
    "pop_75plus": 309,
+   "lat": 35.673999,
+   "lon": 139.804936,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 322.1,
+    "cool": 286.1,
     "medical": null,
-    "care": null
+    "care": 264.7
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "far",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -5844,17 +6051,19 @@
    "pop_total": 0,
    "pop_65plus": 0,
    "pop_75plus": 0,
+   "lat": 35.674272,
+   "lon": 139.808492,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 358.5,
+    "cool": 61.6,
     "medical": null,
-    "care": null
+    "care": 253.5
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "far",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -5863,17 +6072,19 @@
    "pop_total": 1854,
    "pop_65plus": 300,
    "pop_75plus": 172,
+   "lat": 35.670671,
+   "lon": 139.807544,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 249.9,
+    "cool": 172.6,
     "medical": null,
-    "care": null
+    "care": 223.0
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -5882,17 +6093,19 @@
    "pop_total": 3091,
    "pop_65plus": 337,
    "pop_75plus": 137,
+   "lat": 35.667252,
+   "lon": 139.806803,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 217.7,
+    "cool": 237.9,
     "medical": null,
-    "care": null
+    "care": 149.8
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -5901,17 +6114,19 @@
    "pop_total": 4957,
    "pop_65plus": 945,
    "pop_75plus": 544,
+   "lat": 35.666833,
+   "lon": 139.81094,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 253.5,
+    "cool": 371.5,
     "medical": null,
-    "care": null
+    "care": 150.3
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -5920,17 +6135,19 @@
    "pop_total": 6290,
    "pop_65plus": 1710,
    "pop_75plus": 996,
+   "lat": 35.66714,
+   "lon": 139.816591,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 49.4,
+    "cool": 27.8,
     "medical": null,
-    "care": null
+    "care": 461.9
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -5939,17 +6156,19 @@
    "pop_total": 3380,
    "pop_65plus": 846,
    "pop_75plus": 498,
+   "lat": 35.669582,
+   "lon": 139.812579,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 111.7,
+    "cool": 145.6,
     "medical": null,
-    "care": null
+    "care": 177.2
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -5958,17 +6177,19 @@
    "pop_total": 3818,
    "pop_65plus": 1364,
    "pop_75plus": 860,
+   "lat": 35.671936,
+   "lon": 139.817849,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 68.5,
+    "cool": 55.8,
     "medical": null,
-    "care": null
+    "care": 165.8
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -5977,17 +6198,19 @@
    "pop_total": 4514,
    "pop_65plus": 1017,
    "pop_75plus": 571,
+   "lat": 35.672329,
+   "lon": 139.812885,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 144.1,
+    "cool": 280.7,
     "medical": null,
-    "care": null
+    "care": 165.2
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -5996,17 +6219,19 @@
    "pop_total": 1977,
    "pop_65plus": 318,
    "pop_75plus": 156,
+   "lat": 35.674814,
+   "lon": 139.813219,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 72.8,
+    "cool": 213.1,
     "medical": null,
-    "care": null
+    "care": 197.4
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -6015,17 +6240,19 @@
    "pop_total": 1559,
    "pop_65plus": 240,
    "pop_75plus": 117,
+   "lat": 35.675312,
+   "lon": 139.818041,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 326.3,
+    "cool": 250.2,
     "medical": null,
-    "care": null
+    "care": 255.8
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "far",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -6034,17 +6261,19 @@
    "pop_total": 5723,
    "pop_65plus": 1129,
    "pop_75plus": 581,
+   "lat": 35.695595,
+   "lon": 139.822688,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 130.2,
+    "cool": 295.6,
     "medical": null,
-    "care": null
+    "care": 133.5
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -6053,17 +6282,19 @@
    "pop_total": 7358,
    "pop_65plus": 1576,
    "pop_75plus": 975,
+   "lat": 35.69942,
+   "lon": 139.822419,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 82.4,
+    "cool": 204.0,
     "medical": null,
-    "care": null
+    "care": 188.5
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -6072,17 +6303,19 @@
    "pop_total": 8145,
    "pop_65plus": 1721,
    "pop_75plus": 962,
+   "lat": 35.704637,
+   "lon": 139.822325,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 301.7,
+    "cool": 412.6,
     "medical": null,
-    "care": null
+    "care": 280.6
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "far",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -6091,17 +6324,19 @@
    "pop_total": 4618,
    "pop_65plus": 900,
    "pop_75plus": 457,
+   "lat": 35.702829,
+   "lon": 139.829153,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 217.4,
+    "cool": 370.4,
     "medical": null,
-    "care": null
+    "care": 228.8
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -6110,17 +6345,19 @@
    "pop_total": 5803,
    "pop_65plus": 1288,
    "pop_75plus": 663,
+   "lat": 35.699212,
+   "lon": 139.829033,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 112.5,
+    "cool": 372.6,
     "medical": null,
-    "care": null
+    "care": 283.0
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -6129,17 +6366,19 @@
    "pop_total": 8664,
    "pop_65plus": 1123,
    "pop_75plus": 563,
+   "lat": 35.695719,
+   "lon": 139.829343,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 80.3,
+    "cool": 293.9,
     "medical": null,
-    "care": null
+    "care": 251.5
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -6148,17 +6387,19 @@
    "pop_total": 10100,
    "pop_65plus": 2046,
    "pop_75plus": 1190,
+   "lat": 35.696879,
+   "lon": 139.836644,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 68.3,
+    "cool": 242.8,
     "medical": null,
-    "care": null
+    "care": 210.8
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -6167,17 +6408,19 @@
    "pop_total": 2479,
    "pop_65plus": 472,
    "pop_75plus": 240,
+   "lat": 35.700503,
+   "lon": 139.834839,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 157.2,
+    "cool": 160.3,
     "medical": null,
-    "care": null
+    "care": 295.2
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -6186,17 +6429,19 @@
    "pop_total": 10852,
    "pop_65plus": 2103,
    "pop_75plus": 1104,
+   "lat": 35.698131,
+   "lon": 139.842157,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 79.2,
+    "cool": 291.1,
     "medical": null,
-    "care": null
+    "care": 467.8
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -6205,17 +6450,19 @@
    "pop_total": 7645,
    "pop_65plus": 1555,
    "pop_75plus": 789,
+   "lat": 35.687179,
+   "lon": 139.823428,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 182.3,
+    "cool": 345.5,
     "medical": null,
-    "care": null
+    "care": 201.4
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -6224,17 +6471,19 @@
    "pop_total": 6462,
    "pop_65plus": 1295,
    "pop_75plus": 653,
+   "lat": 35.691697,
+   "lon": 139.822377,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 349.5,
+    "cool": 435.6,
     "medical": null,
-    "care": null
+    "care": 414.9
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "far",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -6243,17 +6492,19 @@
    "pop_total": 5841,
    "pop_65plus": 1165,
    "pop_75plus": 667,
+   "lat": 35.691658,
+   "lon": 139.828897,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 133.1,
+    "cool": 347.0,
     "medical": null,
-    "care": null
+    "care": 186.1
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -6262,17 +6513,19 @@
    "pop_total": 8095,
    "pop_65plus": 2122,
    "pop_75plus": 1327,
+   "lat": 35.687624,
+   "lon": 139.829499,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 91.0,
+    "cool": 288.2,
     "medical": null,
-    "care": null
+    "care": 233.0
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -6281,17 +6534,19 @@
    "pop_total": 6723,
    "pop_65plus": 2010,
    "pop_75plus": 1176,
+   "lat": 35.687986,
+   "lon": 139.835355,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 102.6,
+    "cool": 275.0,
     "medical": null,
-    "care": null
+    "care": 86.9
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -6300,17 +6555,19 @@
    "pop_total": 9769,
    "pop_65plus": 2708,
    "pop_75plus": 1672,
+   "lat": 35.691935,
+   "lon": 139.834633,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 83.5,
+    "cool": 178.1,
     "medical": null,
-    "care": null
+    "care": 145.2
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -6319,17 +6576,19 @@
    "pop_total": 8167,
    "pop_65plus": 2270,
    "pop_75plus": 1266,
+   "lat": 35.692334,
+   "lon": 139.840606,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 128.6,
+    "cool": 263.8,
     "medical": null,
-    "care": null
+    "care": 207.0
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -6338,17 +6597,19 @@
    "pop_total": 8364,
    "pop_65plus": 2318,
    "pop_75plus": 1325,
+   "lat": 35.688353,
+   "lon": 139.841542,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 172.5,
+    "cool": 183.7,
     "medical": null,
-    "care": null
+    "care": 177.7
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -6357,17 +6618,19 @@
    "pop_total": 3202,
    "pop_65plus": 1283,
    "pop_75plus": 709,
+   "lat": 35.690635,
+   "lon": 139.846063,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 224.0,
+    "cool": 78.6,
     "medical": null,
-    "care": null
+    "care": 469.8
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -6376,17 +6639,19 @@
    "pop_total": 5042,
    "pop_65plus": 1374,
    "pop_75plus": 854,
+   "lat": 35.681445,
+   "lon": 139.823313,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 175.7,
+    "cool": 263.0,
     "medical": null,
-    "care": null
+    "care": 377.3
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -6395,17 +6660,19 @@
    "pop_total": 2980,
    "pop_65plus": 605,
    "pop_75plus": 299,
+   "lat": 35.681245,
+   "lon": 139.826232,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 321.6,
+    "cool": 168.4,
     "medical": null,
-    "care": null
+    "care": 390.8
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "far",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -6414,17 +6681,19 @@
    "pop_total": 8214,
    "pop_65plus": 1926,
    "pop_75plus": 979,
+   "lat": 35.682435,
+   "lon": 139.828917,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 202.3,
+    "cool": 285.7,
     "medical": null,
-    "care": null
+    "care": 172.9
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -6433,17 +6702,19 @@
    "pop_total": 5535,
    "pop_65plus": 1603,
    "pop_75plus": 880,
+   "lat": 35.678143,
+   "lon": 139.830705,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 134.5,
+    "cool": 262.0,
     "medical": null,
-    "care": null
+    "care": 333.6
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -6452,17 +6723,19 @@
    "pop_total": 9859,
    "pop_65plus": 2786,
    "pop_75plus": 1390,
+   "lat": 35.682879,
+   "lon": 139.833083,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 101.9,
+    "cool": 308.8,
     "medical": null,
-    "care": null
+    "care": 134.1
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -6471,17 +6744,19 @@
    "pop_total": 3826,
    "pop_65plus": 1066,
    "pop_75plus": 602,
+   "lat": 35.683105,
+   "lon": 139.837393,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 150.6,
+    "cool": 221.7,
     "medical": null,
-    "care": null
+    "care": 109.4
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -6490,17 +6765,19 @@
    "pop_total": 3195,
    "pop_65plus": 925,
    "pop_75plus": 476,
+   "lat": 35.678181,
+   "lon": 139.836018,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 287.0,
+    "cool": 338.1,
     "medical": null,
-    "care": null
+    "care": 176.5
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -6509,17 +6786,19 @@
    "pop_total": 4769,
    "pop_65plus": 1471,
    "pop_75plus": 693,
+   "lat": 35.683395,
+   "lon": 139.840181,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 150.1,
+    "cool": 61.9,
     "medical": null,
-    "care": null
+    "care": 205.3
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -6528,17 +6807,19 @@
    "pop_total": 4965,
    "pop_65plus": 2186,
    "pop_75plus": 1473,
+   "lat": 35.6841,
+   "lon": 139.843893,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 92.3,
+    "cool": 380.5,
     "medical": null,
-    "care": null
+    "care": 374.0
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -6547,17 +6828,19 @@
    "pop_total": 6063,
    "pop_65plus": 1188,
    "pop_75plus": 601,
+   "lat": 35.679897,
+   "lon": 139.843954,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 186.0,
+    "cool": 96.5,
     "medical": null,
-    "care": null
+    "care": 331.0
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -6566,17 +6849,19 @@
    "pop_total": 3812,
    "pop_65plus": 845,
    "pop_75plus": 440,
+   "lat": 35.677662,
+   "lon": 139.839452,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 80.6,
+    "cool": 180.7,
     "medical": null,
-    "care": null
+    "care": 92.6
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -6585,17 +6870,19 @@
    "pop_total": 2324,
    "pop_65plus": 643,
    "pop_75plus": 342,
+   "lat": 35.676048,
+   "lon": 139.843688,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 341.0,
+    "cool": 469.8,
     "medical": null,
-    "care": null
+    "care": 206.3
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "far",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -6604,17 +6891,19 @@
    "pop_total": 2894,
    "pop_65plus": 597,
    "pop_75plus": 343,
+   "lat": 35.672298,
+   "lon": 139.843767,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 440.6,
+    "cool": 755.8,
     "medical": null,
-    "care": null
+    "care": 309.6
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "far",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -6623,17 +6912,19 @@
    "pop_total": 6740,
    "pop_65plus": 1626,
    "pop_75plus": 940,
+   "lat": 35.67265,
+   "lon": 139.838844,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 132.8,
+    "cool": 322.9,
     "medical": null,
-    "care": null
+    "care": 341.1
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -6642,17 +6933,19 @@
    "pop_total": 5599,
    "pop_65plus": 1263,
    "pop_75plus": 655,
+   "lat": 35.667763,
+   "lon": 139.84213,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 249.5,
+    "cool": 657.5,
     "medical": null,
-    "care": null
+    "care": 774.1
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -6661,17 +6954,19 @@
    "pop_total": 6980,
    "pop_65plus": 1709,
    "pop_75plus": 882,
+   "lat": 35.678826,
+   "lon": 139.822231,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 112.1,
+    "cool": 112.6,
     "medical": null,
-    "care": null
+    "care": 454.6
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -6680,17 +6975,19 @@
    "pop_total": 14823,
    "pop_65plus": 4728,
    "pop_75plus": 2751,
+   "lat": 35.672862,
+   "lon": 139.822903,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 35.0,
+    "cool": 283.6,
     "medical": null,
-    "care": null
+    "care": 613.2
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -6699,17 +6996,19 @@
    "pop_total": 3764,
    "pop_65plus": 1484,
    "pop_75plus": 890,
+   "lat": 35.670909,
+   "lon": 139.830018,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 90.5,
+    "cool": 378.3,
     "medical": null,
-    "care": null
+    "care": 350.8
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -6718,17 +7017,19 @@
    "pop_total": 3923,
    "pop_65plus": 1239,
    "pop_75plus": 757,
+   "lat": 35.673631,
+   "lon": 139.82968,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 153.2,
+    "cool": 350.8,
     "medical": null,
-    "care": null
+    "care": 472.3
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -6737,17 +7038,19 @@
    "pop_total": 4525,
    "pop_65plus": 1332,
    "pop_75plus": 810,
+   "lat": 35.675323,
+   "lon": 139.831974,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 240.4,
+    "cool": 248.5,
     "medical": null,
-    "care": null
+    "care": 498.9
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -6756,17 +7059,19 @@
    "pop_total": 2993,
    "pop_65plus": 710,
    "pop_75plus": 378,
+   "lat": 35.671933,
+   "lon": 139.83502,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 87.5,
+    "cool": 38.6,
     "medical": null,
-    "care": null
+    "care": 136.4
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -6775,17 +7080,19 @@
    "pop_total": 3422,
    "pop_65plus": 622,
    "pop_75plus": 301,
+   "lat": 35.668823,
+   "lon": 139.835551,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 121.2,
+    "cool": 332.6,
     "medical": null,
-    "care": null
+    "care": 295.7
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "near",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "near"
    }
   },
   {
@@ -6794,17 +7101,19 @@
    "pop_total": 824,
    "pop_65plus": 112,
    "pop_75plus": 46,
+   "lat": 35.662142,
+   "lon": 139.822203,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 724.9,
+    "cool": 705.8,
     "medical": null,
-    "care": null
+    "care": 831.9
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "far",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "out"
    }
   },
   {
@@ -6813,17 +7122,19 @@
    "pop_total": 453,
    "pop_65plus": 65,
    "pop_75plus": 19,
+   "lat": 35.662567,
+   "lon": 139.826169,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 758.7,
+    "cool": 652.2,
     "medical": null,
-    "care": null
+    "care": 768.6
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "far",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "far"
    }
   },
   {
@@ -6832,17 +7143,19 @@
    "pop_total": 4427,
    "pop_65plus": 652,
    "pop_75plus": 344,
+   "lat": 35.658814,
+   "lon": 139.837095,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 958.8,
+    "cool": 335.3,
     "medical": null,
-    "care": null
+    "care": 966.9
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "out",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "out"
    }
   },
   {
@@ -6851,17 +7164,19 @@
    "pop_total": 9,
    "pop_65plus": 2,
    "pop_75plus": 1,
+   "lat": 35.643729,
+   "lon": 139.826503,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 1377.6,
+    "cool": 577.6,
     "medical": null,
-    "care": null
+    "care": 1634.9
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "out",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "out"
    }
   },
   {
@@ -6870,17 +7185,19 @@
    "pop_total": 6,
    "pop_65plus": 1,
    "pop_75plus": 1,
+   "lat": 35.638361,
+   "lon": 139.826659,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 1649.5,
+    "cool": 1159.6,
     "medical": null,
-    "care": null
+    "care": 1899.2
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "out",
+    "cool": "out",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "out"
    }
   },
   {
@@ -6889,17 +7206,19 @@
    "pop_total": 22,
    "pop_65plus": 3,
    "pop_75plus": 1,
+   "lat": 35.635637,
+   "lon": 139.835057,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 2451.1,
+    "cool": 1738.0,
     "medical": null,
-    "care": null
+    "care": 2704.7
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "out",
+    "cool": "out",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "out"
    }
   },
   {
@@ -6908,17 +7227,19 @@
    "pop_total": 4,
    "pop_65plus": 0,
    "pop_75plus": 0,
+   "lat": 35.640845,
+   "lon": 139.838904,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 2543.1,
+    "cool": 1405.7,
     "medical": null,
-    "care": null
+    "care": 2800.5
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "out",
+    "cool": "out",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "out"
    }
   },
   {
@@ -6927,17 +7248,19 @@
    "pop_total": 0,
    "pop_65plus": 0,
    "pop_75plus": 0,
+   "lat": 35.651132,
+   "lon": 139.822368,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 878.5,
+    "cool": 142.8,
     "medical": null,
-    "care": null
+    "care": 965.6
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "out",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "out"
    }
   },
   {
@@ -6946,17 +7269,19 @@
    "pop_total": 0,
    "pop_65plus": 0,
    "pop_75plus": 0,
+   "lat": 35.651588,
+   "lon": 139.827802,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 1280.4,
+    "cool": 323.9,
     "medical": null,
-    "care": null
+    "care": 1325.0
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "out",
+    "cool": "far",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "out"
    }
   },
   {
@@ -6965,17 +7290,19 @@
    "pop_total": 0,
    "pop_65plus": 0,
    "pop_75plus": 0,
+   "lat": 35.651447,
+   "lon": 139.833841,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 1699.9,
+    "cool": 229.3,
     "medical": null,
-    "care": null
+    "care": 1710.4
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "out",
+    "cool": "near",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "out"
    }
   },
   {
@@ -6984,17 +7311,19 @@
    "pop_total": 0,
    "pop_65plus": 0,
    "pop_75plus": 0,
+   "lat": 35.626769,
+   "lon": 139.828714,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 2716.8,
+    "cool": 2256.6,
     "medical": null,
-    "care": null
+    "care": 2929.5
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "out",
+    "cool": "out",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "out"
    }
   },
   {
@@ -7003,17 +7332,19 @@
    "pop_total": 2,
    "pop_65plus": 0,
    "pop_75plus": 0,
+   "lat": 35.624033,
+   "lon": 139.833357,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 3209.3,
+    "cool": 2234.9,
     "medical": null,
-    "care": null
+    "care": 3428.9
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "out",
+    "cool": "out",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "out"
    }
   },
   {
@@ -7022,17 +7353,19 @@
    "pop_total": 0,
    "pop_65plus": 0,
    "pop_75plus": 0,
+   "lat": 35.622388,
+   "lon": 139.83617,
    "nearest_m": {
-    "shelter": null,
-    "cool": null,
+    "shelter": 3510.3,
+    "cool": 2280.7,
     "medical": null,
-    "care": null
+    "care": 3732.9
    },
    "reach": {
-    "shelter": "unknown",
-    "cool": "unknown",
+    "shelter": "out",
+    "cool": "out",
     "medical": "unknown",
-    "care": "unknown"
+    "care": "out"
    }
   }
  ],
@@ -7046,6 +7379,11 @@
    "kind": "medical",
    "reason": "source_missing",
    "note": "区単位の一般医療機関一覧が存在せず、都全域『災害拠点病院等』にスコープを狭めて取得（座標なし・住所のみ）。詳細は OPEN-ISSUES.md"
+  },
+  {
+   "kind": "area_centroid",
+   "reason": "source_missing",
+   "note": "D5に存在する町丁の代表点がD6に無い: 潮見３丁目"
   }
  ]
 }

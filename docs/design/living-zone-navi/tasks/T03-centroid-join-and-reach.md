@@ -1,4 +1,4 @@
-status: doing
+status: done
 phase: 1
 
 # T03 町丁位置の結合と reach 判定
@@ -16,3 +16,9 @@ areas の各町丁に lat/lon・nearest_m・reach が入る。
 verify 通過＋ dataset.json の areas に reach が入り、unknown の理由（D2欠損 or 位置不明）が gaps と整合。
 
 ## 作業ログ
+
+## 実施記録（2026-08-23）
+
+変更: `fetch_sources.py` に国土交通省D6（令和7年度ZIP）の検査・CSV展開を追加。`build_dataset.py` にNFKC＋空白除去＋丁目漢数字変換、町丁結合、haversine、種別別nearest/reachを追加。`verify.py` に結合率・町丁座標・reach/nearest整合性の検査を追加。
+検査: `fetch_sources.py --check`、`build_dataset.py`、`verify.py` がすべて終了コード0。D6の結合は158/159町丁（99.4%）。未結合の潮見３丁目は欠損パネルへ記録。D1〜D4の距離判定を生成し、座標欠損のD3医療4件は全町丁unknownとして保持。
+残課題: T04で生成データをSVG地図・ワースト表へ接続する。

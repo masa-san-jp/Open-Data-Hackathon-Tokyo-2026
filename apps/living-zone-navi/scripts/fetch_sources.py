@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""カタログから解決したD1〜D5のURLを取得し、data/raw/ に検査付きで保存する。
+"""カタログから解決したD1〜D5とD6のURLを取得し、data/raw/ に検査付きで保存する。
 
   python3 scripts/fetch_sources.py            # 解決＋取得＋検査＋sources.json更新
   python3 scripts/fetch_sources.py --check    # 既存 data/raw/ の検査のみ（取得しない・sources.jsonも書き換えない）
@@ -11,16 +11,22 @@
 D2（クーリングシェルター）だけは、解決できなくてもエラーにせず
 sources.json に {"status": "not_published"} と記録して先へ進む
 （design-spec §3: 涼み処ODが未公開の区がある想定への対応）。
+
+D6（町丁代表点）は東京都オープンデータのカタログではなく、設計仕様が
+指定する国土交通省の公式配布ZIPから取得する。ZIP内のCSVだけを展開して
+data/raw/ に置き、sources.json にはZIPのURL・取得日・ハッシュを記録する。
 """
 from __future__ import annotations
 
 import argparse
 import hashlib
+import io
 import json
 import os
 import sys
 import urllib.error
 import urllib.request
+import zipfile
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -47,6 +53,16 @@ TEXT_ENCODINGS = ("utf-8-sig", "cp932", "utf-8")
 DATASET_NOTES = {
     "D3": "区単位の一般医療機関一覧が存在せず、都全域『災害拠点病院等』に"
           "スコープを狭めて取得（座標なし・住所のみ）。詳細は OPEN-ISSUES.md",
+}
+
+# D6はカタログCSVの対象外なので、設計仕様で指定された公式配布元から
+# 直接解決する。19.0bは国土交通省「令和7年度」版（2025年版）。
+D6_INFO = {
+    "scope": "prefecture_wide",
+    "title": "大字・町丁目レベル位置参照情報（東京都、令和7年度）",
+    "org": "国土交通省",
+    "dataset_url": "https://nlftp.mlit.go.jp/isj/",
+    "resource_url": "https://nlftp.mlit.go.jp/isj/dls/data/19.0b/13000-19.0b.zip",
 }
 
 
@@ -76,6 +92,34 @@ def check(raw: bytes) -> str | None:
     return "utf-8-sig/cp932/utf-8のいずれでも読めない（テキストCSVではない可能性）"
 
 
+def inspect_d6_zip(raw: bytes) -> tuple[str | None, str | None, bytes | None]:
+    """D6 ZIPを検査し、(理由, CSVメンバー名, CSV bytes)を返す。"""
+    if len(raw) < 1000:
+        return f"小さすぎる（{len(raw)} バイト）。エラーページの可能性", None, None
+    if not raw.startswith(b"PK"):
+        return "ZIPの先頭シグネチャが無い", None, None
+    try:
+        with zipfile.ZipFile(io.BytesIO(raw)) as archive:
+            bad_member = archive.testzip()
+            if bad_member:
+                return f"ZIPのCRC検査に失敗（{bad_member}）", None, None
+            members = [
+                name for name in archive.namelist()
+                if not name.endswith("/") and name.lower().endswith(".csv")
+            ]
+            if len(members) != 1:
+                return f"CSVが1つに定まらない（{len(members)}件）", None, None
+            member = members[0]
+            csv_raw = archive.read(member)
+    except (OSError, zipfile.BadZipFile, zipfile.LargeZipFile) as exc:
+        return f"ZIPを開けない（{exc}）", None, None
+
+    reason = check(csv_raw)
+    if reason:
+        return f"ZIP内CSV: {reason}", None, None
+    return None, member, csv_raw
+
+
 def slug(dataset_id: str, resource_url: str) -> str:
     name = resource_url.rsplit("/", 1)[-1]
     if "." not in name:
@@ -97,6 +141,7 @@ def main() -> int:
 
     ward = json.loads(CONFIG_JSON.read_text(encoding="utf-8"))["ward"]
     resolved = resolve_all(ward)
+    resolved["D6"] = D6_INFO
 
     RAW.mkdir(parents=True, exist_ok=True)
     records: dict[str, dict] = {}
@@ -113,21 +158,41 @@ def main() -> int:
             failed += 1
             continue
 
-        path = RAW / slug(dataset_id, info["resource_url"])
+        archive_path = RAW / slug(dataset_id, info["resource_url"])
+        extracted_path = archive_path.with_suffix(".csv") if dataset_id == "D6" else None
         note = DATASET_NOTES.get(dataset_id)
 
         if args.check:
-            if not path.exists():
+            if dataset_id == "D6":
+                if not archive_path.exists() or not extracted_path or not extracted_path.exists():
+                    print(f"✗ {dataset_id}: ZIPまたは展開済みCSVが無い（先に取得が要る）")
+                    failed += 1
+                    continue
+                raw = archive_path.read_bytes()
+                reason, member, extracted_raw = inspect_d6_zip(raw)
+                if reason:
+                    print(f"✗ {dataset_id} ({info['title']}): {reason}")
+                    failed += 1
+                    continue
+                if extracted_raw != extracted_path.read_bytes():
+                    print(f"✗ {dataset_id} ({info['title']}): ZIPと展開済みCSVが一致しない")
+                    failed += 1
+                    continue
+                print(f"✓ {dataset_id} ({info['title']}, {info['scope']}) "
+                      f"{archive_path.stat().st_size:,} バイト / {member} [--checkのみ・sources.json未更新]")
+                continue
+
+            if not archive_path.exists():
                 print(f"✗ {dataset_id}: 検査対象ファイルが無い（先に取得が要る）")
                 failed += 1
                 continue
-            reason = check(path.read_bytes())
+            reason = check(archive_path.read_bytes())
             if reason:
                 print(f"✗ {dataset_id} ({info['title']}): {reason}")
                 failed += 1
                 continue
             print(f"✓ {dataset_id} ({info['title']}, {info['scope']}) "
-                  f"{path.stat().st_size:,} バイト [--checkのみ・sources.json未更新]")
+                  f"{archive_path.stat().st_size:,} バイト [--checkのみ・sources.json未更新]")
             continue
 
         try:
@@ -139,7 +204,12 @@ def main() -> int:
             failed += 1
             continue
 
-        reason = check(raw)
+        member = None
+        extracted_raw = None
+        if dataset_id == "D6":
+            reason, member, extracted_raw = inspect_d6_zip(raw)
+        else:
+            reason = check(raw)
         if reason:
             print(f"✗ {dataset_id} ({info['title']}): {reason}")
             records[dataset_id] = {"id": dataset_id, "status": "check_failed",
@@ -147,9 +217,14 @@ def main() -> int:
             failed += 1
             continue
 
-        atomic_write(path, raw)
+        atomic_write(archive_path, raw)
+        output_path = archive_path
+        if dataset_id == "D6":
+            assert extracted_path is not None and extracted_raw is not None and member is not None
+            atomic_write(extracted_path, extracted_raw)
+            output_path = extracted_path
         print(f"✓ {dataset_id} ({info['title']}, {info['scope']}) "
-              f"{path.stat().st_size:,} バイト")
+              f"{output_path.stat().st_size:,} バイト")
         record = {
             "id": dataset_id,
             "status": "ok",
@@ -158,10 +233,13 @@ def main() -> int:
             "org": info["org"],
             "dataset_url": info["dataset_url"],
             "url": info["resource_url"],
-            "file": str(path.relative_to(APP_DIR)),
+            "file": str(output_path.relative_to(APP_DIR)),
             "fetched_at": datetime.now(timezone.utc).isoformat(),
             "sha256": hashlib.sha256(raw).hexdigest(),
         }
+        if dataset_id == "D6":
+            record["archive_file"] = str(archive_path.relative_to(APP_DIR))
+            record["archive_member"] = member
         if note:
             record["note"] = note
         records[dataset_id] = record

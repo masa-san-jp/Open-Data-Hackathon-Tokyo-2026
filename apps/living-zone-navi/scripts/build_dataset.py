@@ -5,15 +5,18 @@
 
 前提: scripts/fetch_sources.py が先に実行済みで、data/raw/ と data/sources.json が揃っていること。
 
-このスクリプトの段階（Phase 0）では areas は町丁人口の集計のみで、
-nearest_m・reach は全て unknown/null にする（D6結合・距離・reach判定は T03）。
+D5の町丁人口にD6の町丁代表点を結合し、施設種別ごとの最短直線距離と
+reach（near/far/out/unknown）を決定論的に計算する。経路距離は扱わない。
 """
 from __future__ import annotations
 
 import csv
 import io
 import json
+import math
+import re
 import sys
+import unicodedata
 from pathlib import Path
 
 APP_DIR = Path(__file__).resolve().parent.parent
@@ -23,6 +26,43 @@ SOURCES_JSON = APP_DIR / "data" / "sources.json"
 CONFIG_JSON = APP_DIR / "config.json"
 
 TEXT_ENCODINGS = ("utf-8-sig", "cp932", "utf-8")
+KINDS = ("shelter", "cool", "medical", "care")
+EARTH_RADIUS_M = 6_371_000.0
+
+# D5は算用数字（例: 清澄１丁目）、D6は漢数字（例: 清澄一丁目）を
+# 使うため、丁目の直前だけを数値化する。地名中の「一」「十」などを
+# 無差別に置換すると固有名を壊すので、置換範囲を丁目番号に限定する。
+KANJI_DIGITS = {
+    "〇": 0, "零": 0, "一": 1, "二": 2, "三": 3, "四": 4,
+    "五": 5, "六": 6, "七": 7, "八": 8, "九": 9,
+}
+KANJI_UNITS = {"十": 10, "百": 100, "千": 1000}
+
+
+def kanji_number_to_int(token: str) -> int:
+    """一〜千程度の日本語数詞を整数にする（町丁目番号用）。"""
+    total = 0
+    current = 0
+    for char in token:
+        if char in KANJI_DIGITS:
+            current = KANJI_DIGITS[char]
+        elif char in KANJI_UNITS:
+            unit = KANJI_UNITS[char]
+            total += (current or 1) * unit
+            current = 0
+    return total + current
+
+
+def normalize_area_name(name: str) -> str:
+    """D5/D6の町丁名を結合用に正規化する。"""
+    normalized = unicodedata.normalize("NFKC", name)
+    normalized = "".join(normalized.split())
+    normalized = normalized.replace("ヶ", "ケ")
+
+    def replace_chome(match: re.Match[str]) -> str:
+        return f"{kanji_number_to_int(match.group(1))}丁目"
+
+    return re.sub(r"([〇零一二三四五六七八九十百千]+)丁目", replace_chome, normalized)
 
 
 def read_text(path: Path) -> str:
@@ -47,6 +87,105 @@ def to_float(s: str) -> float | None:
         return float(s)
     except ValueError:
         return None
+
+
+def build_centroids(path: Path, ward: str) -> tuple[dict[str, dict], int]:
+    """D6の都全域CSVから対象区の町丁代表点を読む。"""
+    rows = read_rows(path)
+    if not rows:
+        return {}, 0
+    header, body = rows[0], rows[1:]
+    idx = {name: i for i, name in enumerate(header)}
+    required = ("市区町村名", "大字町丁目名", "緯度", "経度")
+    missing = [name for name in required if name not in idx]
+    if missing:
+        raise ValueError(f"{path}: D6の必須列が無い: {'、'.join(missing)}")
+
+    points: dict[str, dict] = {}
+    duplicate_count = 0
+    max_idx = max(idx.values())
+    for row_index, row in enumerate(body):
+        if len(row) <= max_idx or row[idx["市区町村名"]] != ward:
+            continue
+        name = row[idx["大字町丁目名"]].strip()
+        key = normalize_area_name(name)
+        lat = to_float(row[idx["緯度"]])
+        lon = to_float(row[idx["経度"]])
+        if not key or lat is None or lon is None:
+            continue
+        if key in points:
+            duplicate_count += 1
+            continue
+        points[key] = {"lat": lat, "lon": lon, "source_row": row_index}
+
+    if duplicate_count:
+        print(f"⚠ D6: 正規化後に重複する町丁代表点を{duplicate_count}件除外", file=sys.stderr)
+    return points, duplicate_count
+
+
+def attach_centroids(areas: list[dict], points: dict[str, dict]) -> dict[str, int | float | list[str]]:
+    """D5の町丁人口にD6の代表点を名前で結合し、結合率を返す。"""
+    matched = 0
+    unmatched: list[str] = []
+    for area in areas:
+        point = points.get(normalize_area_name(area["name"]))
+        if point is None:
+            area["lat"] = None
+            area["lon"] = None
+            unmatched.append(area["name"])
+            continue
+        area["lat"] = point["lat"]
+        area["lon"] = point["lon"]
+        matched += 1
+    total = len(areas)
+    rate = matched / total if total else 1.0
+    return {"matched": matched, "total": total, "rate": rate, "unmatched": unmatched}
+
+
+def haversine_m(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
+    """2点間の直線距離（メートル）。"""
+    phi1, phi2 = math.radians(lat1), math.radians(lat2)
+    d_phi = math.radians(lat2 - lat1)
+    d_lambda = math.radians(lon2 - lon1)
+    a = (math.sin(d_phi / 2) ** 2
+         + math.cos(phi1) * math.cos(phi2) * math.sin(d_lambda / 2) ** 2)
+    return 2 * EARTH_RADIUS_M * math.asin(math.sqrt(min(1.0, a)))
+
+
+def classify_reach(distance_m: float | None, near_m: float, far_m: float) -> str:
+    if distance_m is None:
+        return "unknown"
+    if distance_m <= near_m:
+        return "near"
+    if distance_m <= far_m:
+        return "far"
+    return "out"
+
+
+def add_nearest_and_reach(areas: list[dict], facilities: list[dict],
+                          near_m: float, far_m: float) -> None:
+    """町丁代表点から種別ごとの最近施設とreachを計算する。"""
+    located_by_kind: dict[str, list[tuple[float, float]]] = {kind: [] for kind in KINDS}
+    for facility in facilities:
+        lat, lon = facility["lat"], facility["lon"]
+        if lat is None or lon is None:
+            continue
+        located_by_kind.setdefault(facility["kind"], []).append((lat, lon))
+
+    for area in areas:
+        lat, lon = area.get("lat"), area.get("lon")
+        area["nearest_m"] = {}
+        area["reach"] = {}
+        for kind in KINDS:
+            if lat is None or lon is None or not located_by_kind[kind]:
+                nearest = None
+            else:
+                nearest = min(
+                    haversine_m(lat, lon, facility_lat, facility_lon)
+                    for facility_lat, facility_lon in located_by_kind[kind]
+                )
+            area["nearest_m"][kind] = round(nearest, 1) if nearest is not None else None
+            area["reach"][kind] = classify_reach(nearest, near_m, far_m)
 
 
 def load_sources(ward: str) -> dict:
@@ -180,7 +319,7 @@ def build_population(path: Path) -> list[dict]:
     return sorted(areas.values(), key=lambda a: a["code"])
 
 
-def make_gaps(sources: dict) -> list[dict]:
+def make_gaps(sources: dict, centroid_join: dict[str, int | float | list[str]]) -> list[dict]:
     # バリアフリー線データ（段差・屋根・ベンチ間隔）は都ODに存在しない恒常的な欠損。
     # これは本作品の不具合ではなく公開データの現状そのもの（design-spec §3, §5）。
     gaps = [
@@ -194,6 +333,12 @@ def make_gaps(sources: dict) -> list[dict]:
     d3 = sources.get("D3", {})
     if d3.get("note"):
         gaps.append({"kind": "medical", "reason": "source_missing", "note": d3["note"]})
+    unmatched = centroid_join.get("unmatched", [])
+    if unmatched:
+        gaps.append({
+            "kind": "area_centroid", "reason": "source_missing",
+            "note": "D5に存在する町丁の代表点がD6に無い: " + "、".join(unmatched),
+        })
     return gaps
 
 
@@ -231,11 +376,30 @@ def main() -> int:
         return 1
     areas = build_population(APP_DIR / d5["file"])
 
-    gaps = make_gaps(sources)
+    d6 = sources.get("D6", {})
+    if d6.get("status") == "ok":
+        centroid_path = APP_DIR / d6["file"]
+        points, _duplicate_count = build_centroids(centroid_path, ward)
+    else:
+        print("⚠ D6（町丁代表点）が取得できていない。areasの座標と距離はunknownになる",
+              file=sys.stderr)
+        points = {}
+    centroid_join = attach_centroids(areas, points)
+    if centroid_join["rate"] < 0.7:
+        print(f"⚠ D6の町丁結合率が70%未満（{centroid_join['matched']}/"
+              f"{centroid_join['total']} = {centroid_join['rate']:.1%}）",
+              file=sys.stderr)
+
+    gaps = make_gaps(sources, centroid_join)
     missing_by_kind: dict[str, int] = {}
     for f in facilities:
         if f["lat"] is None or f["lon"] is None:
             missing_by_kind[f["kind"]] = missing_by_kind.get(f["kind"], 0) + 1
+
+    add_nearest_and_reach(
+        areas, facilities,
+        float(config["walk_near_m"]), float(config["walk_far_m"]),
+    )
 
     dataset = {
         "meta": {
@@ -250,17 +414,10 @@ def main() -> int:
             ],
             "facility_counts": count_by_kind(facilities),
             "missing_location_counts": missing_by_kind,
+            "centroid_join": centroid_join,
         },
         "facilities": facilities,
-        "areas": [
-            {
-                **area,
-                "nearest_m": {"shelter": None, "cool": None, "medical": None, "care": None},
-                "reach": {"shelter": "unknown", "cool": "unknown",
-                          "medical": "unknown", "care": "unknown"},
-            }
-            for area in areas
-        ],
+        "areas": areas,
         "gaps": gaps,
     }
 
@@ -273,6 +430,8 @@ def main() -> int:
     print(f"✓ facilities: {len(facilities)}件 {count_by_kind(facilities)} "
           f"位置不明: {missing_by_kind}")
     print(f"✓ areas: {len(areas)}町丁 / 65歳以上 {pop_65:,}人 / 75歳以上 {pop_75:,}人")
+    print(f"✓ D6 centroid join: {centroid_join['matched']}/{centroid_join['total']} "
+          f"({centroid_join['rate']:.1%})")
     print(f"✓ gaps: {len(gaps)}件")
     return 0
 

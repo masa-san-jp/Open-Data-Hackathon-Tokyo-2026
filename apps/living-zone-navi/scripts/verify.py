@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""design-spec §8 の固定点検査（この段階＝Phase 0で検査可能なもの）。
+"""design-spec §8 とT03の固定点検査。
 
   python3 scripts/verify.py
 
@@ -24,6 +24,8 @@ VALID_REACH = {"near", "far", "out", "unknown"}
 
 LAT_RANGE = (35.0, 36.0)
 LON_RANGE = (139.0, 140.0)
+JOIN_WARN_RATE = 0.7
+KINDS = ("shelter", "cool", "medical", "care")
 
 
 def fail(msg: str) -> None:
@@ -56,6 +58,14 @@ def main() -> int:
         fail("facilities が0件")
         ok = False
     else:
+        malformed_location = [
+            f for f in facilities
+            if (f["lat"] is None) != (f["lon"] is None)
+        ]
+        if malformed_location:
+            fail(f"facilities: 緯度・経度の片方だけ欠損が{len(malformed_location)}件"
+                 f"（例: {malformed_location[0]['id']}）")
+            ok = False
         out_of_range = [
             f for f in facilities
             if f["lat"] is not None and f["lon"] is not None
@@ -70,6 +80,45 @@ def main() -> int:
             print(f"✓ facilities: {len(facilities)}件、座標は全て範囲内（位置不明を除く）")
 
     areas = dataset["areas"]
+    meta = dataset.get("meta", {})
+    centroid_join = meta.get("centroid_join")
+    if not isinstance(centroid_join, dict):
+        fail("meta.centroid_join が無い（D6の結合率を記録して）")
+        ok = False
+    else:
+        matched = centroid_join.get("matched")
+        total = centroid_join.get("total")
+        rate = centroid_join.get("rate")
+        valid_join = (
+            isinstance(matched, int) and isinstance(total, int)
+            and isinstance(rate, (int, float))
+            and total == len(areas) and 0 <= matched <= total
+            and abs(rate - (matched / total if total else 1.0)) < 1e-9
+        )
+        if not valid_join:
+            fail("meta.centroid_join の matched/total/rate が不整合")
+            ok = False
+        elif rate < JOIN_WARN_RATE:
+            print(f"⚠ areas: D6町丁結合率が70%未満（{matched}/{total} = {rate:.1%}）")
+        else:
+            print(f"✓ areas: D6町丁結合率 {matched}/{total} ({rate:.1%})")
+
+    bad_area_location = [
+        a for a in areas
+        if (a.get("lat") is None) != (a.get("lon") is None)
+        or (
+            a.get("lat") is not None and a.get("lon") is not None
+            and not (LAT_RANGE[0] <= a["lat"] <= LAT_RANGE[1]
+                     and LON_RANGE[0] <= a["lon"] <= LON_RANGE[1])
+        )
+    ]
+    if bad_area_location:
+        fail(f"areas: 町丁代表点の座標が不正なものが{len(bad_area_location)}件"
+             f"（例: {bad_area_location[0]['code']}）")
+        ok = False
+    else:
+        print("✓ areas: 町丁代表点の緯度経度は範囲内（未結合を除く）")
+
     bad_pop = [a for a in areas if a["pop_65plus"] > a["pop_total"]]
     if bad_pop:
         fail(f"areas: pop_65plus > pop_total が{len(bad_pop)}件（例: {bad_pop[0]['code']}）")
@@ -80,8 +129,38 @@ def main() -> int:
     if bad_reach:
         fail(f"areas: reach値が想定外が{len(bad_reach)}件（例: {bad_reach[0]}）")
         ok = False
-    if not bad_pop and not bad_reach:
-        print(f"✓ areas: {len(areas)}町丁、pop_65plus<=pop_total・reach値とも異常なし")
+
+    bad_nearest = []
+    near_m = meta.get("walk_near_m")
+    far_m = meta.get("walk_far_m")
+    if not isinstance(near_m, (int, float)) or not isinstance(far_m, (int, float)):
+        fail("meta.walk_near_m / walk_far_m が数値ではない")
+        ok = False
+    elif near_m > far_m:
+        fail("meta.walk_near_m が walk_far_m より大きい")
+        ok = False
+    else:
+        for area in areas:
+            nearest = area.get("nearest_m", {})
+            reach = area.get("reach", {})
+            if set(nearest) != set(KINDS) or set(reach) != set(KINDS):
+                bad_nearest.append((area.get("code"), "keys"))
+                continue
+            for kind in KINDS:
+                distance = nearest[kind]
+                value = reach[kind]
+                if distance is None and value != "unknown":
+                    bad_nearest.append((area["code"], kind, distance, value))
+                elif distance is not None:
+                    expected = "near" if distance <= near_m else "far" if distance <= far_m else "out"
+                    if value != expected:
+                        bad_nearest.append((area["code"], kind, distance, value, expected))
+        if bad_nearest:
+            fail(f"areas: nearest_m と reach の不整合が{len(bad_nearest)}件"
+                 f"（例: {bad_nearest[0]}）")
+            ok = False
+        else:
+            print(f"✓ areas: {len(areas)}町丁、pop_65plus<=pop_total・reach/nearestとも異常なし")
 
     gaps = dataset["gaps"]
     if not gaps:
