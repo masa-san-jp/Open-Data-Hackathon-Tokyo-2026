@@ -1,4 +1,4 @@
-status: todo
+status: doing
 phase: 0
 
 # T01 骨組みと取得
