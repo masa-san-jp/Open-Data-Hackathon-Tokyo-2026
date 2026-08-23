@@ -109,9 +109,9 @@ apps/machikado-qr/
 
 ## 設計・実装管理
 
-- [設計仕様書 v0.2](../../docs/design/machikado-qr/20260823-machikado-qr-design-spec.md)
-- [レビュー結果](../../docs/design/machikado-qr/20260823-machikado-qr-review.md)
-- [フェーズ別実装計画](../../docs/design/machikado-qr/20260823-machikado-qr-implementation-plan.md)
+- [設計仕様書 v0.2](../../docs/design/20260823-machikado-qr-design-spec.md)
+- [レビュー結果](../../docs/design/20260823-machikado-qr-review.md)
+- [フェーズ別実装計画](../../docs/design/20260823-machikado-qr-implementation-plan.md)
 - [実装タスク](TASKS.md)
 - [残課題](OPEN-ISSUES.md)
 
