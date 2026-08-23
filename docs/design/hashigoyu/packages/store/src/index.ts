@@ -16,6 +16,8 @@ export interface StoreSnapshot {
 
 export type StoreListener = (snapshot: StoreSnapshot) => void;
 
+const STORE_CHANNEL = "hashigoyu-store";
+
 export interface HashigoyuStore {
   getSnapshot(): StoreSnapshot;
   subscribe(listener: StoreListener): () => void;
@@ -349,12 +351,27 @@ function cloneSnapshot(snapshot: StoreSnapshot): StoreSnapshot {
 export function createStore(initialSnapshot: StoreSnapshot = createSampleSnapshot()): HashigoyuStore {
   let snapshot = cloneSnapshot(initialSnapshot);
   const listeners = new Set<StoreListener>();
+  const channel =
+    typeof window !== "undefined" && typeof BroadcastChannel !== "undefined"
+      ? new BroadcastChannel(STORE_CHANNEL)
+      : null;
 
   const notify = (): void => {
     for (const listener of listeners) {
       listener(snapshot);
     }
   };
+
+  const publish = (): void => {
+    channel?.postMessage(snapshot);
+  };
+
+  if (channel) {
+    channel.addEventListener("message", (event: MessageEvent<StoreSnapshot>) => {
+      snapshot = cloneSnapshot(event.data);
+      notify();
+    });
+  }
 
   return {
     getSnapshot: () => snapshot,
@@ -383,6 +400,7 @@ export function createStore(initialSnapshot: StoreSnapshot = createSampleSnapsho
         },
       };
       notify();
+      publish();
     },
     confirmBudget: (bathhouseId, confirmedAt, confirmedBy) => {
       const current = snapshot.budgets[bathhouseId];
@@ -403,6 +421,7 @@ export function createStore(initialSnapshot: StoreSnapshot = createSampleSnapsho
         },
       };
       notify();
+      publish();
     },
     incrementToday: (bathhouseId) => {
       updateLatestCount(1, bathhouseId);
@@ -440,6 +459,7 @@ export function createStore(initialSnapshot: StoreSnapshot = createSampleSnapsho
       },
     };
     notify();
+    publish();
   }
 }
 

@@ -6,6 +6,7 @@ import { store } from "store";
 import { counterText as text } from "./counter.ja";
 
 type Tab = "counter" | "management";
+const COUNTER_BATHHOUSE_ID = "B005";
 
 function subscribe(onStoreChange: () => void): () => void {
   return store.subscribe(() => onStoreChange());
@@ -210,7 +211,7 @@ function ManagementView({ budget, counts }: { budget: Budget; counts: readonly D
 export function App() {
   const snapshot = useStoreSnapshot();
   const [tab, setTab] = useState<Tab>("counter");
-  const bathhouse = snapshot.bathhouses[0];
+  const bathhouse = snapshot.bathhouses.find((item) => item.id === COUNTER_BATHHOUSE_ID) ?? snapshot.bathhouses[0];
   const budget = bathhouse ? snapshot.budgets[bathhouse.id] : undefined;
   const counts = bathhouse ? snapshot.dailyCounts[bathhouse.id] ?? [] : [];
   const count = latestCount(counts);
