@@ -67,6 +67,14 @@ def check_data(data) -> None:
             if not isinstance(point, list) or len(point) != 2 or not all(finite_number(v) for v in point):
                 fail("REAL-BOUNDARY", f"境界点{index}の座標が不正")
 
+    boundary_lonlat = data.get("boundary_lonlat")
+    if not isinstance(boundary_lonlat, list) or len(boundary_lonlat) != len(boundary or []):
+        fail("REAL-BOUNDARY", "boundary_lonlat が境界点と対応していない")
+    else:
+        for index, point in enumerate(boundary_lonlat):
+            if not isinstance(point, list) or len(point) != 2 or not all(finite_number(v) for v in point):
+                fail("REAL-BOUNDARY", f"経緯度境界点{index}の座標が不正")
+
     facilities = data.get("facilities")
     if not isinstance(facilities, list) or not facilities:
         fail("REAL-FACILITIES", "施設が空")
@@ -126,6 +134,16 @@ def check_data(data) -> None:
         if not FAILURES:
             ok("REAL-SOURCES", "境界・施設の出典、ライセンス、取得日を検証")
 
+    display_sources = data.get("display_sources")
+    if not isinstance(display_sources, list) or not display_sources:
+        fail("REAL-DISPLAY-SOURCE", "表示専用背景地図の出典がない")
+    else:
+        osm = next((source for source in display_sources if source.get("id") == "osm_standard_tiles_display_only"), None)
+        if not osm or not osm.get("source_url") or not osm.get("tile_url") or not osm.get("license"):
+            fail("REAL-DISPLAY-SOURCE", "OpenStreetMap表示専用レイヤーの出典・タイルURL・ライセンスが不足")
+        else:
+            ok("REAL-DISPLAY-SOURCE", "OpenStreetMapは表示専用として出典・ODbL・タイルURLを記録")
+
 
 def extract_embedded_data(html: str):
     start_marker = '<script id="real-map-data" type="application/json">'
@@ -162,6 +180,11 @@ def check_output(data) -> None:
         "政策判断には使用しないでください",
         "境界外座標",
         "地図上は非表示・要監査",
+        "座標グリッド",
+        "2 km",
+        "OpenStreetMap contributors",
+        "オフラインフォールバック",
+        "道路データは解析に使用していません",
     )
     missing = [text for text in required_disclosures if text not in html]
     if missing:
@@ -171,7 +194,10 @@ def check_output(data) -> None:
     if re.search(r"(?:src|href)\s*=\s*[\"'](?:https?:)?//", html, re.IGNORECASE):
         fail("REAL-OFFLINE", "HTMLに外部script/link依存がある")
     else:
-        ok("REAL-OFFLINE", "外部API・CDN依存なし")
+        if "tile.openstreetmap.org" not in html or "座標グリッド" not in html:
+            fail("REAL-OFFLINE", "表示専用背景地図または座標グリッドのフォールバックがない")
+        else:
+            ok("REAL-OFFLINE", "外部スクリプト/CDNなし。オンライン背景地図失敗時は座標グリッドへフォールバック")
 
 
 def check_reproducibility(data) -> None:

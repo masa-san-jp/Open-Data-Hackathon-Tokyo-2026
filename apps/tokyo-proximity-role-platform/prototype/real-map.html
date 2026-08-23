@@ -14,6 +14,7 @@
     --welfare: #ea580c;
     --land: #eef4e6;
     --sea: #e8f2f8;
+    --grid: #64748b;
   }
   * { box-sizing: border-box; }
   body { margin: 0; font-family: "Hiragino Sans", "Yu Gothic", "Noto Sans JP", sans-serif; color: var(--ink); background: #fff; }
@@ -31,10 +32,12 @@
   .legend-row { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
   .dot { width: 10px; height: 10px; border-radius: 50%; flex: none; border: 1px solid rgba(0,0,0,0.2); }
   .layer-toggle { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+  .map-status { margin: 0 0 8px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 4px; background: #fff; color: var(--sub); font-size: 11px; line-height: 1.45; }
   .sources { font-size: 11px; color: var(--sub); line-height: 1.6; }
   .sources a { color: #1e3a8a; }
   section.map-panel { padding: 12px; }
-  svg#realMap { width: 100%; height: auto; max-width: 900px; display: block; border: 1px solid var(--line); border-radius: 6px; }
+  svg#realMap { width: 100%; height: auto; max-width: 900px; display: block; border: 1px solid var(--line); border-radius: 6px; background: var(--sea); }
+  .map-help { max-width: 900px; margin: 7px 0 0; color: var(--sub); font-size: 11px; line-height: 1.45; }
   .facility-dot { cursor: pointer; }
   .facility-detail { margin-top: 10px; font-size: 12px; border-top: 1px dashed var(--line); padding-top: 8px; min-height: 60px; }
   footer.app-footer { padding: 10px 16px; border-top: 1px solid var(--line); font-size: 11px; color: var(--sub); }
@@ -44,12 +47,12 @@
 
 <div class="status-banner">
   <strong>REAL DATA（M1途中経過）— 青梅市の実在する医療機関・介護サービス事業所の位置を、実際の行政区域境界の上に表示しています。</strong><br/>
-  歩行時間・徒歩到達圏（アクセシビリティ計算）はまだ実装していません。道路網・標高データの正式採用は未確認です。人口・世帯データも未統合です。<strong>政策判断には使用しないでください。</strong>
+  背景地図は表示専用です。歩行時間・徒歩到達圏（アクセシビリティ計算）はまだ実装していません。道路網・標高データの正式採用は未確認です。人口・世帯データも未統合です。<strong>政策判断には使用しないでください。</strong>
 </div>
 
 <header class="app-header">
   <h1>青梅市 実データマップ（M1 途中経過 — 施設位置のみ）</h1>
-  <p class="sub">D0（合成デモ）とは別系統。ここに表示しているのは実在の施設位置データです。出典は右側パネルを参照してください。</p>
+  <p class="sub">D0（合成デモ）とは別系統。実座標の行政区域・施設点・座標グリッドに、オンライン時は表示専用の背景地図を重ねています。出典は左側パネルを参照してください。</p>
 </header>
 
 <main class="layout">
@@ -61,6 +64,8 @@
     <h2>レイヤー表示</h2>
     <div class="layer-toggle"><input type="checkbox" id="toggleClinic" checked /><label for="toggleClinic">診療所・病院</label></div>
     <div class="layer-toggle"><input type="checkbox" id="toggleWelfare" checked /><label for="toggleWelfare">介護サービス事業所</label></div>
+    <div class="layer-toggle"><input type="checkbox" id="toggleBasemap" checked /><label for="toggleBasemap">背景地図（オンライン）</label></div>
+    <div class="map-status" id="basemapStatus">背景地図を読み込み中。失敗時は座標グリッドを表示します。</div>
 
     <h2>データ品質</h2>
     <div class="sources" id="qualitySummary"></div>
@@ -75,17 +80,24 @@
   <section class="map-panel">
     <svg id="realMap" viewBox="0 0 900 620" xmlns="http://www.w3.org/2000/svg">
       <rect x="0" y="0" width="900" height="620" fill="var(--sea)" />
+      <defs>
+        <clipPath id="mapClip"><rect x="0" y="0" width="900" height="620" /></clipPath>
+      </defs>
+      <g id="tileLayer" clip-path="url(#mapClip)"></g>
+      <g id="gridLayer"></g>
       <polygon id="boundaryPolygon" fill="var(--land)" stroke="#8a9a76" stroke-width="1.5" />
       <g id="clinicLayer"></g>
       <g id="welfareLayer"></g>
+      <g id="mapAnnotations" pointer-events="none"></g>
     </svg>
+    <p class="map-help">© OpenStreetMap contributors（背景地図は表示専用）。青梅市行政区域と施設点は、下記の出典付き実データを描画しています。座標グリッド・北矢印・縮尺は実座標から算出しています。</p>
   </section>
 </main>
 
 <footer class="app-footer">
   青梅市 実データマップ — apps/tokyo-proximity-role-platform M1途中経過。
   境界データ: 国土交通省 国土数値情報（行政区域）。施設データ: 青梅市オープンデータ（CC-BY-4.0）。
-  詳細は data/normalized/ome/real_map.json および DECISIONS.md ADR-0007/0008 を参照してください。
+  背景地図: OpenStreetMap（表示専用・ODbL）。詳細は data/normalized/ome/real_map.json および DECISIONS.md ADR-0007/0008/0010 を参照してください。
 </footer>
 
 <script id="real-map-data" type="application/json">{
@@ -100,6 +112,748 @@
     "meters_per_deg_lat": 111320.0,
     "meters_per_deg_lon": 90284.54801191528
   },
+  "boundary_lonlat": [
+    [
+      139.3303658,
+      35.7936169
+    ],
+    [
+      139.3303603,
+      35.7943385
+    ],
+    [
+      139.3257294,
+      35.7952119
+    ],
+    [
+      139.3239689,
+      35.7968674
+    ],
+    [
+      139.3222459,
+      35.799608
+    ],
+    [
+      139.3214717,
+      35.8020594
+    ],
+    [
+      139.3188037,
+      35.8077318
+    ],
+    [
+      139.318339,
+      35.8098293
+    ],
+    [
+      139.316789,
+      35.8114702
+    ],
+    [
+      139.3167521,
+      35.8126888
+    ],
+    [
+      139.3150249,
+      35.8142691
+    ],
+    [
+      139.3150293,
+      35.8168088
+    ],
+    [
+      139.3164968,
+      35.8193591
+    ],
+    [
+      139.3161591,
+      35.8236677
+    ],
+    [
+      139.3149216,
+      35.8252449
+    ],
+    [
+      139.3114724,
+      35.8252788
+    ],
+    [
+      139.3067774,
+      35.8230293
+    ],
+    [
+      139.3025918,
+      35.8240502
+    ],
+    [
+      139.3026913,
+      35.8260138
+    ],
+    [
+      139.3011855,
+      35.829771
+    ],
+    [
+      139.3017405,
+      35.8314829
+    ],
+    [
+      139.3011686,
+      35.8349599
+    ],
+    [
+      139.2963141,
+      35.8351396
+    ],
+    [
+      139.2956044,
+      35.8338454
+    ],
+    [
+      139.2924033,
+      35.8370024
+    ],
+    [
+      139.2909105,
+      35.8379571
+    ],
+    [
+      139.2861563,
+      35.8369057
+    ],
+    [
+      139.2851619,
+      35.8360157
+    ],
+    [
+      139.2828844,
+      35.8371685
+    ],
+    [
+      139.2818458,
+      35.8395196
+    ],
+    [
+      139.2799966,
+      35.8393096
+    ],
+    [
+      139.2718919,
+      35.8396882
+    ],
+    [
+      139.2682405,
+      35.8382418
+    ],
+    [
+      139.263663,
+      35.8374191
+    ],
+    [
+      139.2605044,
+      35.8360013
+    ],
+    [
+      139.2588046,
+      35.8372716
+    ],
+    [
+      139.2522555,
+      35.8382491
+    ],
+    [
+      139.2468102,
+      35.8368929
+    ],
+    [
+      139.242528,
+      35.8367871
+    ],
+    [
+      139.240961,
+      35.8401549
+    ],
+    [
+      139.2372135,
+      35.8402107
+    ],
+    [
+      139.2356746,
+      35.8383352
+    ],
+    [
+      139.2325349,
+      35.836636
+    ],
+    [
+      139.2306635,
+      35.8367418
+    ],
+    [
+      139.2277443,
+      35.8390457
+    ],
+    [
+      139.2245471,
+      35.8404991
+    ],
+    [
+      139.2200929,
+      35.841361
+    ],
+    [
+      139.2193327,
+      35.842521
+    ],
+    [
+      139.2139435,
+      35.8454385
+    ],
+    [
+      139.2126494,
+      35.8466113
+    ],
+    [
+      139.2096802,
+      35.8461818
+    ],
+    [
+      139.2074677,
+      35.8464199
+    ],
+    [
+      139.204901,
+      35.8445666
+    ],
+    [
+      139.2048024,
+      35.8430279
+    ],
+    [
+      139.2031379,
+      35.8411991
+    ],
+    [
+      139.1993112,
+      35.8412429
+    ],
+    [
+      139.1958096,
+      35.840046
+    ],
+    [
+      139.1924415,
+      35.8402715
+    ],
+    [
+      139.1868862,
+      35.8428651
+    ],
+    [
+      139.1841582,
+      35.8427915
+    ],
+    [
+      139.1836282,
+      35.8435746
+    ],
+    [
+      139.1772979,
+      35.846594
+    ],
+    [
+      139.1743576,
+      35.8483121
+    ],
+    [
+      139.1709954,
+      35.8486498
+    ],
+    [
+      139.1690932,
+      35.8499846
+    ],
+    [
+      139.1661668,
+      35.8499676
+    ],
+    [
+      139.1635307,
+      35.8508682
+    ],
+    [
+      139.1625762,
+      35.8495507
+    ],
+    [
+      139.1646992,
+      35.8472521
+    ],
+    [
+      139.1664187,
+      35.8445693
+    ],
+    [
+      139.1661181,
+      35.8429715
+    ],
+    [
+      139.1710853,
+      35.8399804
+    ],
+    [
+      139.1717203,
+      35.8400251
+    ],
+    [
+      139.1753364,
+      35.8360663
+    ],
+    [
+      139.1773503,
+      35.8351499
+    ],
+    [
+      139.1769003,
+      35.8330582
+    ],
+    [
+      139.1784309,
+      35.830589
+    ],
+    [
+      139.1752422,
+      35.8268282
+    ],
+    [
+      139.1774116,
+      35.8201901
+    ],
+    [
+      139.1742094,
+      35.8128271
+    ],
+    [
+      139.1755149,
+      35.8068415
+    ],
+    [
+      139.1736454,
+      35.8067943
+    ],
+    [
+      139.1716651,
+      35.8050943
+    ],
+    [
+      139.1715318,
+      35.8035529
+    ],
+    [
+      139.1673212,
+      35.8017251
+    ],
+    [
+      139.1648157,
+      35.8016001
+    ],
+    [
+      139.1609329,
+      35.7992004
+    ],
+    [
+      139.1582581,
+      35.7982865
+    ],
+    [
+      139.1563054,
+      35.7986254
+    ],
+    [
+      139.1546417,
+      35.7976948
+    ],
+    [
+      139.1498201,
+      35.7963784
+    ],
+    [
+      139.1487284,
+      35.7944645
+    ],
+    [
+      139.1469231,
+      35.7930314
+    ],
+    [
+      139.1475592,
+      35.7916345
+    ],
+    [
+      139.1475703,
+      35.7890126
+    ],
+    [
+      139.1468789,
+      35.7850631
+    ],
+    [
+      139.1478094,
+      35.7820245
+    ],
+    [
+      139.1428124,
+      35.7810498
+    ],
+    [
+      139.1404849,
+      35.7789945
+    ],
+    [
+      139.1371605,
+      35.7780392
+    ],
+    [
+      139.1376385,
+      35.772432
+    ],
+    [
+      139.1393827,
+      35.7720537
+    ],
+    [
+      139.142821,
+      35.7763448
+    ],
+    [
+      139.1444608,
+      35.776952
+    ],
+    [
+      139.1465594,
+      35.7753037
+    ],
+    [
+      139.1482416,
+      35.7752909
+    ],
+    [
+      139.148243,
+      35.7778851
+    ],
+    [
+      139.149135,
+      35.7788362
+    ],
+    [
+      139.1523397,
+      35.7759501
+    ],
+    [
+      139.1529758,
+      35.774142
+    ],
+    [
+      139.1546044,
+      35.7732354
+    ],
+    [
+      139.1574944,
+      35.7735379
+    ],
+    [
+      139.1586317,
+      35.7779145
+    ],
+    [
+      139.1606,
+      35.7771626
+    ],
+    [
+      139.1630442,
+      35.7782446
+    ],
+    [
+      139.1656764,
+      35.7795643
+    ],
+    [
+      139.1672406,
+      35.7811168
+    ],
+    [
+      139.1721339,
+      35.7822084
+    ],
+    [
+      139.1756192,
+      35.7848626
+    ],
+    [
+      139.1792151,
+      35.7861332
+    ],
+    [
+      139.1819529,
+      35.7876315
+    ],
+    [
+      139.1861843,
+      35.7877843
+    ],
+    [
+      139.1887896,
+      35.7890754
+    ],
+    [
+      139.1912004,
+      35.7886787
+    ],
+    [
+      139.1955307,
+      35.7868329
+    ],
+    [
+      139.1982448,
+      35.7864357
+    ],
+    [
+      139.1988957,
+      35.784451
+    ],
+    [
+      139.2021343,
+      35.7824796
+    ],
+    [
+      139.203572,
+      35.7801577
+    ],
+    [
+      139.206439,
+      35.7784352
+    ],
+    [
+      139.2105303,
+      35.7731777
+    ],
+    [
+      139.214384,
+      35.7740719
+    ],
+    [
+      139.2152548,
+      35.7732371
+    ],
+    [
+      139.217904,
+      35.7729285
+    ],
+    [
+      139.2207748,
+      35.7739969
+    ],
+    [
+      139.222584,
+      35.772446
+    ],
+    [
+      139.2238934,
+      35.7728444
+    ],
+    [
+      139.2306867,
+      35.7699955
+    ],
+    [
+      139.2317384,
+      35.7688891
+    ],
+    [
+      139.2337443,
+      35.768618
+    ],
+    [
+      139.235274,
+      35.7693724
+    ],
+    [
+      139.2383026,
+      35.7682594
+    ],
+    [
+      139.2383639,
+      35.7669999
+    ],
+    [
+      139.2426415,
+      35.7668077
+    ],
+    [
+      139.2448176,
+      35.7674024
+    ],
+    [
+      139.2507679,
+      35.765998
+    ],
+    [
+      139.2519128,
+      35.7644824
+    ],
+    [
+      139.2549581,
+      35.7629313
+    ],
+    [
+      139.2568648,
+      35.7607083
+    ],
+    [
+      139.2615267,
+      35.7598316
+    ],
+    [
+      139.2642748,
+      35.7605516
+    ],
+    [
+      139.2671909,
+      35.7600414
+    ],
+    [
+      139.2693228,
+      35.7611303
+    ],
+    [
+      139.2742073,
+      35.7608922
+    ],
+    [
+      139.2761126,
+      35.7616186
+    ],
+    [
+      139.287727,
+      35.7609194
+    ],
+    [
+      139.2881428,
+      35.7596136
+    ],
+    [
+      139.2900912,
+      35.760073
+    ],
+    [
+      139.2943361,
+      35.7553608
+    ],
+    [
+      139.296542,
+      35.7545453
+    ],
+    [
+      139.297442,
+      35.7600805
+    ],
+    [
+      139.2965484,
+      35.7631519
+    ],
+    [
+      139.2966362,
+      35.7662825
+    ],
+    [
+      139.2952076,
+      35.7697989
+    ],
+    [
+      139.2930943,
+      35.7720369
+    ],
+    [
+      139.2921326,
+      35.7753419
+    ],
+    [
+      139.2955032,
+      35.7776558
+    ],
+    [
+      139.2984143,
+      35.7812788
+    ],
+    [
+      139.3019446,
+      35.7798949
+    ],
+    [
+      139.3033188,
+      35.7781338
+    ],
+    [
+      139.3080224,
+      35.7772341
+    ],
+    [
+      139.3091868,
+      35.7757055
+    ],
+    [
+      139.3113699,
+      35.7767616
+    ],
+    [
+      139.312281,
+      35.7755247
+    ],
+    [
+      139.3184399,
+      35.7784111
+    ],
+    [
+      139.3210732,
+      35.7772197
+    ],
+    [
+      139.3237491,
+      35.7800452
+    ],
+    [
+      139.3241199,
+      35.7810841
+    ],
+    [
+      139.3206605,
+      35.7833627
+    ],
+    [
+      139.3207858,
+      35.7882986
+    ],
+    [
+      139.3220491,
+      35.7897819
+    ],
+    [
+      139.3262638,
+      35.7870313
+    ],
+    [
+      139.3300708,
+      35.7906124
+    ],
+    [
+      139.3284828,
+      35.7917691
+    ],
+    [
+      139.3303658,
+      35.7936169
+    ]
+  ],
   "boundary_m": [
     [
       8721.7,
@@ -4442,6 +5196,17 @@
     },
     "coordinate_rule": "施設の緯度経度を行政区域ポリゴンへpoint-in-polygon判定。境界外は地図表示から除外し、データ監査対象として残す。"
   },
+  "display_sources": [
+    {
+      "id": "osm_standard_tiles_display_only",
+      "title": "OpenStreetMap 標準タイル（表示専用）",
+      "provider": "OpenStreetMap contributors / OpenStreetMap Foundation",
+      "source_url": "https://www.openstreetmap.org/copyright",
+      "tile_url": "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+      "license": "Open Database License (ODbL)",
+      "notes": "オンライン時の背景表示だけに使用。施設データ、道路経路、徒歩時間、アクセシビリティ計算の入力には使用しない。タイル取得に失敗した場合は座標グリッドへフォールバックする。"
+    }
+  ],
   "sources": [
     {
       "id": "ome_boundary_n03_2021",
@@ -4477,14 +5242,26 @@
 (function () {
   "use strict";
   var DATA = JSON.parse(document.getElementById("real-map-data").textContent);
+  var PROJECTION = DATA.projection;
+  var VIEW_W = 900, VIEW_H = 620, PAD = 30;
 
   var xs = DATA.boundary_m.map(function (p) { return p[0]; });
   var ys = DATA.boundary_m.map(function (p) { return p[1]; });
   var minX = Math.min.apply(null, xs), maxX = Math.max.apply(null, xs);
   var minY = Math.min.apply(null, ys), maxY = Math.max.apply(null, ys);
 
-  var VIEW_W = 900, VIEW_H = 620, PAD = 30;
   var scale = Math.min((VIEW_W - PAD * 2) / (maxX - minX), (VIEW_H - PAD * 2) / (maxY - minY));
+
+  var boundaryLonLat = DATA.boundary_lonlat || DATA.boundary_m.map(function (p) {
+    return [
+      PROJECTION.lon0 + p[0] / PROJECTION.meters_per_deg_lon,
+      PROJECTION.lat0 + p[1] / PROJECTION.meters_per_deg_lat,
+    ];
+  });
+  var boundaryLons = boundaryLonLat.map(function (p) { return p[0]; });
+  var boundaryLats = boundaryLonLat.map(function (p) { return p[1]; });
+  var minLon = Math.min.apply(null, boundaryLons), maxLon = Math.max.apply(null, boundaryLons);
+  var minLat = Math.min.apply(null, boundaryLats), maxLat = Math.max.apply(null, boundaryLats);
 
   function toSvg(x_m, y_m) {
     // y_m は北が正なので、SVGでは上に行くほどyが小さくなるよう反転する
@@ -4493,11 +5270,177 @@
     return [sx, sy];
   }
 
+  function toSvgLonLat(lon, lat) {
+    return toSvg(
+      (lon - PROJECTION.lon0) * PROJECTION.meters_per_deg_lon,
+      (lat - PROJECTION.lat0) * PROJECTION.meters_per_deg_lat
+    );
+  }
+
+  function svgElement(name, attributes, parent) {
+    var element = document.createElementNS("http://www.w3.org/2000/svg", name);
+    Object.keys(attributes).forEach(function (key) {
+      element.setAttribute(key, attributes[key]);
+    });
+    if (parent) parent.appendChild(element);
+    return element;
+  }
+
   var boundaryPoints = DATA.boundary_m.map(function (p) {
     var xy = toSvg(p[0], p[1]);
     return xy[0].toFixed(1) + "," + xy[1].toFixed(1);
   }).join(" ");
   document.getElementById("boundaryPolygon").setAttribute("points", boundaryPoints);
+
+  function gridStep(span) {
+    var candidates = [0.01, 0.02, 0.05, 0.1, 0.2, 0.5];
+    for (var i = 0; i < candidates.length; i += 1) {
+      if (span / candidates[i] <= 8) return candidates[i];
+    }
+    return 1;
+  }
+
+  function firstTick(value, step) {
+    return Math.ceil((value - 1e-9) / step) * step;
+  }
+
+  function renderGrid() {
+    var grid = document.getElementById("gridLayer");
+    grid.replaceChildren();
+    var lonStep = gridStep(maxLon - minLon);
+    var latStep = gridStep(maxLat - minLat);
+    var lonStart = firstTick(minLon, lonStep);
+    var latStart = firstTick(minLat, latStep);
+    for (var lonIndex = 0; lonIndex < 100; lonIndex += 1) {
+      var lon = lonStart + lonIndex * lonStep;
+      if (lon > maxLon + lonStep / 2) break;
+      var top = toSvgLonLat(lon, maxLat);
+      var bottom = toSvgLonLat(lon, minLat);
+      svgElement("line", {
+        x1: top[0].toFixed(1), y1: top[1].toFixed(1),
+        x2: bottom[0].toFixed(1), y2: bottom[1].toFixed(1),
+        stroke: "var(--grid)", "stroke-width": "0.7", "stroke-dasharray": "3 4", "stroke-opacity": "0.38"
+      }, grid);
+      var lonLabel = svgElement("text", {
+        x: bottom[0].toFixed(1), y: String(VIEW_H - 8),
+        fill: "#334155", "font-size": "10", "text-anchor": "middle"
+      }, grid);
+      lonLabel.textContent = lon.toFixed(2) + "°E";
+    }
+    for (var latIndex = 0; latIndex < 100; latIndex += 1) {
+      var lat = latStart + latIndex * latStep;
+      if (lat > maxLat + latStep / 2) break;
+      var left = toSvgLonLat(minLon, lat);
+      var right = toSvgLonLat(maxLon, lat);
+      svgElement("line", {
+        x1: left[0].toFixed(1), y1: left[1].toFixed(1),
+        x2: right[0].toFixed(1), y2: right[1].toFixed(1),
+        stroke: "var(--grid)", "stroke-width": "0.7", "stroke-dasharray": "3 4", "stroke-opacity": "0.38"
+      }, grid);
+      var latLabel = svgElement("text", {
+        x: "8", y: (left[1] - 3).toFixed(1),
+        fill: "#334155", "font-size": "10", "text-anchor": "start"
+      }, grid);
+      latLabel.textContent = lat.toFixed(2) + "°N";
+    }
+  }
+
+  function renderMapAnnotations() {
+    var annotations = document.getElementById("mapAnnotations");
+    annotations.replaceChildren();
+
+    var arrowGroup = svgElement("g", {}, annotations);
+    svgElement("line", { x1: "50", y1: "82", x2: "50", y2: "42", stroke: "#0f172a", "stroke-width": "2" }, arrowGroup);
+    svgElement("polygon", { points: "50,32 42,48 50,44 58,48", fill: "#0f172a" }, arrowGroup);
+    var north = svgElement("text", { x: "50", y: "24", fill: "#0f172a", "font-size": "12", "font-weight": "700", "text-anchor": "middle" }, arrowGroup);
+    north.textContent = "N";
+
+    var barMeters = 2000;
+    var barWidth = barMeters * scale;
+    var barX = 42, barY = VIEW_H - 30;
+    var scaleGroup = svgElement("g", {}, annotations);
+    svgElement("rect", { x: String(barX - 6), y: String(barY - 19), width: String(barWidth + 12), height: "27", rx: "3", fill: "#ffffff", "fill-opacity": "0.78" }, scaleGroup);
+    svgElement("line", { x1: String(barX), y1: String(barY), x2: String(barX + barWidth), y2: String(barY), stroke: "#0f172a", "stroke-width": "4" }, scaleGroup);
+    svgElement("line", { x1: String(barX), y1: String(barY - 5), x2: String(barX), y2: String(barY + 5), stroke: "#0f172a", "stroke-width": "1.5" }, scaleGroup);
+    svgElement("line", { x1: String(barX + barWidth), y1: String(barY - 5), x2: String(barX + barWidth), y2: String(barY + 5), stroke: "#0f172a", "stroke-width": "1.5" }, scaleGroup);
+    var scaleLabel = svgElement("text", { x: String(barX + barWidth / 2), y: String(barY - 7), fill: "#0f172a", "font-size": "11", "font-weight": "700", "text-anchor": "middle" }, scaleGroup);
+    scaleLabel.textContent = "2 km";
+
+    var attributionGroup = svgElement("g", {}, annotations);
+    svgElement("rect", { x: "674", y: "586", width: "214", height: "24", rx: "3", fill: "#ffffff", "fill-opacity": "0.88" }, attributionGroup);
+    var attribution = svgElement("text", { x: "880", y: "602", fill: "#1f2937", "font-size": "11", "text-anchor": "end" }, attributionGroup);
+    attribution.textContent = "© OpenStreetMap contributors";
+  }
+
+  function lonToTileX(lon, zoom) {
+    return (lon + 180) / 360 * Math.pow(2, zoom);
+  }
+
+  function latToTileY(lat, zoom) {
+    var sinLat = Math.sin(lat * Math.PI / 180);
+    return (0.5 - Math.log((1 + sinLat) / (1 - sinLat)) / (4 * Math.PI)) * Math.pow(2, zoom);
+  }
+
+  function tileXToLon(x, zoom) {
+    return x / Math.pow(2, zoom) * 360 - 180;
+  }
+
+  function tileYToLat(y, zoom) {
+    return 180 / Math.PI * Math.atan(Math.sinh(Math.PI * (1 - 2 * y / Math.pow(2, zoom))));
+  }
+
+  function renderBasemap(enabled) {
+    var layer = document.getElementById("tileLayer");
+    var status = document.getElementById("basemapStatus");
+    layer.replaceChildren();
+    var boundary = document.getElementById("boundaryPolygon");
+    if (!enabled) {
+      status.textContent = "背景地図: OFF。実座標のグリッドと行政区域を表示中。";
+      boundary.setAttribute("fill-opacity", "0.82");
+      return;
+    }
+
+    var zoom = 12;
+    var minTileX = Math.max(0, Math.floor(lonToTileX(minLon, zoom)));
+    var maxTileX = Math.min(Math.pow(2, zoom) - 1, Math.floor(lonToTileX(maxLon, zoom)));
+    var minTileY = Math.max(0, Math.floor(latToTileY(maxLat, zoom)));
+    var maxTileY = Math.min(Math.pow(2, zoom) - 1, Math.floor(latToTileY(minLat, zoom)));
+    var total = (maxTileX - minTileX + 1) * (maxTileY - minTileY + 1);
+    var loaded = 0, failed = 0;
+    status.textContent = "背景地図: OpenStreetMapを読み込み中（表示専用）。";
+    boundary.setAttribute("fill-opacity", "0.28");
+
+    function updateStatus() {
+      if (loaded + failed < total) return;
+      if (loaded === 0) {
+        status.textContent = "背景地図を読み込めません。座標グリッドを表示中（オフラインフォールバック）。";
+        boundary.setAttribute("fill-opacity", "0.82");
+      } else if (failed > 0) {
+        status.textContent = "背景地図: OpenStreetMap（表示専用・一部未読込）。座標グリッドも表示中。";
+      } else {
+        status.textContent = "背景地図: OpenStreetMap（表示専用）。道路データは解析に使用していません。";
+      }
+    }
+
+    for (var tileX = minTileX; tileX <= maxTileX; tileX += 1) {
+      for (var tileY = minTileY; tileY <= maxTileY; tileY += 1) {
+        var topLeft = toSvgLonLat(tileXToLon(tileX, zoom), tileYToLat(tileY, zoom));
+        var bottomRight = toSvgLonLat(tileXToLon(tileX + 1, zoom), tileYToLat(tileY + 1, zoom));
+        var image = svgElement("image", {
+          x: topLeft[0].toFixed(2), y: topLeft[1].toFixed(2),
+          width: Math.max(1, bottomRight[0] - topLeft[0]).toFixed(2),
+          height: Math.max(1, bottomRight[1] - topLeft[1]).toFixed(2),
+          preserveAspectRatio: "none", opacity: "0.92"
+        }, layer);
+        image.setAttribute("href", "https://tile.openstreetmap.org/" + zoom + "/" + tileX + "/" + tileY + ".png");
+        image.addEventListener("load", function () { loaded += 1; updateStatus(); });
+        image.addEventListener("error", function () { failed += 1; updateStatus(); });
+      }
+    }
+  }
+
+  renderGrid();
+  renderMapAnnotations();
 
   var clinicsAll = DATA.facilities.filter(function (f) { return f.function_code === "clinic"; });
   var welfareAll = DATA.facilities.filter(function (f) { return f.function_code === "welfare"; });
@@ -4527,6 +5470,9 @@
       c.setAttribute("stroke", "#ffffff");
       c.setAttribute("stroke-width", "0.7");
       c.setAttribute("class", "facility-dot");
+      var title = document.createElementNS("http://www.w3.org/2000/svg", "title");
+      title.textContent = f.name || "(名称不明)";
+      c.appendChild(title);
       c.addEventListener("click", function () { showFacility(f); });
       g.appendChild(c);
     });
@@ -4550,6 +5496,7 @@
 
   renderLayer("clinicLayer", clinics, getComputedStyle(document.documentElement).getPropertyValue("--clinic").trim());
   renderLayer("welfareLayer", welfare, getComputedStyle(document.documentElement).getPropertyValue("--welfare").trim());
+  renderBasemap(true);
 
   document.getElementById("toggleClinic").addEventListener("change", function (e) {
     document.getElementById("clinicLayer").style.display = e.target.checked ? "" : "none";
@@ -4557,9 +5504,12 @@
   document.getElementById("toggleWelfare").addEventListener("change", function (e) {
     document.getElementById("welfareLayer").style.display = e.target.checked ? "" : "none";
   });
+  document.getElementById("toggleBasemap").addEventListener("change", function (e) {
+    renderBasemap(e.target.checked);
+  });
 
   var sourcesEl = document.getElementById("sourcesList");
-  DATA.sources.forEach(function (s) {
+  (DATA.sources || []).concat(DATA.display_sources || []).forEach(function (s) {
     var p = document.createElement("p");
     var title = document.createElement("strong");
     title.textContent = s.title;
@@ -4567,7 +5517,8 @@
     appendSourceLine(p, s.provider);
     appendSourceLine(p, "出典URL: " + s.source_url);
     appendSourceLine(p, "ライセンス: " + s.license);
-    appendSourceLine(p, "取得日: " + s.retrieved_at);
+    if (s.tile_url) appendSourceLine(p, "タイルURL: " + s.tile_url);
+    if (s.retrieved_at) appendSourceLine(p, "取得日: " + s.retrieved_at);
     appendSourceLine(p, s.notes || "");
     sourcesEl.appendChild(p);
   });

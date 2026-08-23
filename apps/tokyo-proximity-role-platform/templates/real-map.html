@@ -14,6 +14,7 @@
     --welfare: #ea580c;
     --land: #eef4e6;
     --sea: #e8f2f8;
+    --grid: #64748b;
   }
   * { box-sizing: border-box; }
   body { margin: 0; font-family: "Hiragino Sans", "Yu Gothic", "Noto Sans JP", sans-serif; color: var(--ink); background: #fff; }
@@ -31,10 +32,12 @@
   .legend-row { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
   .dot { width: 10px; height: 10px; border-radius: 50%; flex: none; border: 1px solid rgba(0,0,0,0.2); }
   .layer-toggle { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+  .map-status { margin: 0 0 8px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 4px; background: #fff; color: var(--sub); font-size: 11px; line-height: 1.45; }
   .sources { font-size: 11px; color: var(--sub); line-height: 1.6; }
   .sources a { color: #1e3a8a; }
   section.map-panel { padding: 12px; }
-  svg#realMap { width: 100%; height: auto; max-width: 900px; display: block; border: 1px solid var(--line); border-radius: 6px; }
+  svg#realMap { width: 100%; height: auto; max-width: 900px; display: block; border: 1px solid var(--line); border-radius: 6px; background: var(--sea); }
+  .map-help { max-width: 900px; margin: 7px 0 0; color: var(--sub); font-size: 11px; line-height: 1.45; }
   .facility-dot { cursor: pointer; }
   .facility-detail { margin-top: 10px; font-size: 12px; border-top: 1px dashed var(--line); padding-top: 8px; min-height: 60px; }
   footer.app-footer { padding: 10px 16px; border-top: 1px solid var(--line); font-size: 11px; color: var(--sub); }
@@ -44,12 +47,12 @@
 
 <div class="status-banner">
   <strong>REAL DATA（M1途中経過）— 青梅市の実在する医療機関・介護サービス事業所の位置を、実際の行政区域境界の上に表示しています。</strong><br/>
-  歩行時間・徒歩到達圏（アクセシビリティ計算）はまだ実装していません。道路網・標高データの正式採用は未確認です。人口・世帯データも未統合です。<strong>政策判断には使用しないでください。</strong>
+  背景地図は表示専用です。歩行時間・徒歩到達圏（アクセシビリティ計算）はまだ実装していません。道路網・標高データの正式採用は未確認です。人口・世帯データも未統合です。<strong>政策判断には使用しないでください。</strong>
 </div>
 
 <header class="app-header">
   <h1>青梅市 実データマップ（M1 途中経過 — 施設位置のみ）</h1>
-  <p class="sub">D0（合成デモ）とは別系統。ここに表示しているのは実在の施設位置データです。出典は右側パネルを参照してください。</p>
+  <p class="sub">D0（合成デモ）とは別系統。実座標の行政区域・施設点・座標グリッドに、オンライン時は表示専用の背景地図を重ねています。出典は左側パネルを参照してください。</p>
 </header>
 
 <main class="layout">
@@ -61,6 +64,8 @@
     <h2>レイヤー表示</h2>
     <div class="layer-toggle"><input type="checkbox" id="toggleClinic" checked /><label for="toggleClinic">診療所・病院</label></div>
     <div class="layer-toggle"><input type="checkbox" id="toggleWelfare" checked /><label for="toggleWelfare">介護サービス事業所</label></div>
+    <div class="layer-toggle"><input type="checkbox" id="toggleBasemap" checked /><label for="toggleBasemap">背景地図（オンライン）</label></div>
+    <div class="map-status" id="basemapStatus">背景地図を読み込み中。失敗時は座標グリッドを表示します。</div>
 
     <h2>データ品質</h2>
     <div class="sources" id="qualitySummary"></div>
@@ -75,17 +80,24 @@
   <section class="map-panel">
     <svg id="realMap" viewBox="0 0 900 620" xmlns="http://www.w3.org/2000/svg">
       <rect x="0" y="0" width="900" height="620" fill="var(--sea)" />
+      <defs>
+        <clipPath id="mapClip"><rect x="0" y="0" width="900" height="620" /></clipPath>
+      </defs>
+      <g id="tileLayer" clip-path="url(#mapClip)"></g>
+      <g id="gridLayer"></g>
       <polygon id="boundaryPolygon" fill="var(--land)" stroke="#8a9a76" stroke-width="1.5" />
       <g id="clinicLayer"></g>
       <g id="welfareLayer"></g>
+      <g id="mapAnnotations" pointer-events="none"></g>
     </svg>
+    <p class="map-help">© OpenStreetMap contributors（背景地図は表示専用）。青梅市行政区域と施設点は、下記の出典付き実データを描画しています。座標グリッド・北矢印・縮尺は実座標から算出しています。</p>
   </section>
 </main>
 
 <footer class="app-footer">
   青梅市 実データマップ — apps/tokyo-proximity-role-platform M1途中経過。
   境界データ: 国土交通省 国土数値情報（行政区域）。施設データ: 青梅市オープンデータ（CC-BY-4.0）。
-  詳細は data/normalized/ome/real_map.json および DECISIONS.md ADR-0007/0008 を参照してください。
+  背景地図: OpenStreetMap（表示専用・ODbL）。詳細は data/normalized/ome/real_map.json および DECISIONS.md ADR-0007/0008/0010 を参照してください。
 </footer>
 
 <script id="real-map-data" type="application/json">__REAL_MAP_JSON__</script>
@@ -94,14 +106,26 @@
 (function () {
   "use strict";
   var DATA = JSON.parse(document.getElementById("real-map-data").textContent);
+  var PROJECTION = DATA.projection;
+  var VIEW_W = 900, VIEW_H = 620, PAD = 30;
 
   var xs = DATA.boundary_m.map(function (p) { return p[0]; });
   var ys = DATA.boundary_m.map(function (p) { return p[1]; });
   var minX = Math.min.apply(null, xs), maxX = Math.max.apply(null, xs);
   var minY = Math.min.apply(null, ys), maxY = Math.max.apply(null, ys);
 
-  var VIEW_W = 900, VIEW_H = 620, PAD = 30;
   var scale = Math.min((VIEW_W - PAD * 2) / (maxX - minX), (VIEW_H - PAD * 2) / (maxY - minY));
+
+  var boundaryLonLat = DATA.boundary_lonlat || DATA.boundary_m.map(function (p) {
+    return [
+      PROJECTION.lon0 + p[0] / PROJECTION.meters_per_deg_lon,
+      PROJECTION.lat0 + p[1] / PROJECTION.meters_per_deg_lat,
+    ];
+  });
+  var boundaryLons = boundaryLonLat.map(function (p) { return p[0]; });
+  var boundaryLats = boundaryLonLat.map(function (p) { return p[1]; });
+  var minLon = Math.min.apply(null, boundaryLons), maxLon = Math.max.apply(null, boundaryLons);
+  var minLat = Math.min.apply(null, boundaryLats), maxLat = Math.max.apply(null, boundaryLats);
 
   function toSvg(x_m, y_m) {
     // y_m は北が正なので、SVGでは上に行くほどyが小さくなるよう反転する
@@ -110,11 +134,177 @@
     return [sx, sy];
   }
 
+  function toSvgLonLat(lon, lat) {
+    return toSvg(
+      (lon - PROJECTION.lon0) * PROJECTION.meters_per_deg_lon,
+      (lat - PROJECTION.lat0) * PROJECTION.meters_per_deg_lat
+    );
+  }
+
+  function svgElement(name, attributes, parent) {
+    var element = document.createElementNS("http://www.w3.org/2000/svg", name);
+    Object.keys(attributes).forEach(function (key) {
+      element.setAttribute(key, attributes[key]);
+    });
+    if (parent) parent.appendChild(element);
+    return element;
+  }
+
   var boundaryPoints = DATA.boundary_m.map(function (p) {
     var xy = toSvg(p[0], p[1]);
     return xy[0].toFixed(1) + "," + xy[1].toFixed(1);
   }).join(" ");
   document.getElementById("boundaryPolygon").setAttribute("points", boundaryPoints);
+
+  function gridStep(span) {
+    var candidates = [0.01, 0.02, 0.05, 0.1, 0.2, 0.5];
+    for (var i = 0; i < candidates.length; i += 1) {
+      if (span / candidates[i] <= 8) return candidates[i];
+    }
+    return 1;
+  }
+
+  function firstTick(value, step) {
+    return Math.ceil((value - 1e-9) / step) * step;
+  }
+
+  function renderGrid() {
+    var grid = document.getElementById("gridLayer");
+    grid.replaceChildren();
+    var lonStep = gridStep(maxLon - minLon);
+    var latStep = gridStep(maxLat - minLat);
+    var lonStart = firstTick(minLon, lonStep);
+    var latStart = firstTick(minLat, latStep);
+    for (var lonIndex = 0; lonIndex < 100; lonIndex += 1) {
+      var lon = lonStart + lonIndex * lonStep;
+      if (lon > maxLon + lonStep / 2) break;
+      var top = toSvgLonLat(lon, maxLat);
+      var bottom = toSvgLonLat(lon, minLat);
+      svgElement("line", {
+        x1: top[0].toFixed(1), y1: top[1].toFixed(1),
+        x2: bottom[0].toFixed(1), y2: bottom[1].toFixed(1),
+        stroke: "var(--grid)", "stroke-width": "0.7", "stroke-dasharray": "3 4", "stroke-opacity": "0.38"
+      }, grid);
+      var lonLabel = svgElement("text", {
+        x: bottom[0].toFixed(1), y: String(VIEW_H - 8),
+        fill: "#334155", "font-size": "10", "text-anchor": "middle"
+      }, grid);
+      lonLabel.textContent = lon.toFixed(2) + "°E";
+    }
+    for (var latIndex = 0; latIndex < 100; latIndex += 1) {
+      var lat = latStart + latIndex * latStep;
+      if (lat > maxLat + latStep / 2) break;
+      var left = toSvgLonLat(minLon, lat);
+      var right = toSvgLonLat(maxLon, lat);
+      svgElement("line", {
+        x1: left[0].toFixed(1), y1: left[1].toFixed(1),
+        x2: right[0].toFixed(1), y2: right[1].toFixed(1),
+        stroke: "var(--grid)", "stroke-width": "0.7", "stroke-dasharray": "3 4", "stroke-opacity": "0.38"
+      }, grid);
+      var latLabel = svgElement("text", {
+        x: "8", y: (left[1] - 3).toFixed(1),
+        fill: "#334155", "font-size": "10", "text-anchor": "start"
+      }, grid);
+      latLabel.textContent = lat.toFixed(2) + "°N";
+    }
+  }
+
+  function renderMapAnnotations() {
+    var annotations = document.getElementById("mapAnnotations");
+    annotations.replaceChildren();
+
+    var arrowGroup = svgElement("g", {}, annotations);
+    svgElement("line", { x1: "50", y1: "82", x2: "50", y2: "42", stroke: "#0f172a", "stroke-width": "2" }, arrowGroup);
+    svgElement("polygon", { points: "50,32 42,48 50,44 58,48", fill: "#0f172a" }, arrowGroup);
+    var north = svgElement("text", { x: "50", y: "24", fill: "#0f172a", "font-size": "12", "font-weight": "700", "text-anchor": "middle" }, arrowGroup);
+    north.textContent = "N";
+
+    var barMeters = 2000;
+    var barWidth = barMeters * scale;
+    var barX = 42, barY = VIEW_H - 30;
+    var scaleGroup = svgElement("g", {}, annotations);
+    svgElement("rect", { x: String(barX - 6), y: String(barY - 19), width: String(barWidth + 12), height: "27", rx: "3", fill: "#ffffff", "fill-opacity": "0.78" }, scaleGroup);
+    svgElement("line", { x1: String(barX), y1: String(barY), x2: String(barX + barWidth), y2: String(barY), stroke: "#0f172a", "stroke-width": "4" }, scaleGroup);
+    svgElement("line", { x1: String(barX), y1: String(barY - 5), x2: String(barX), y2: String(barY + 5), stroke: "#0f172a", "stroke-width": "1.5" }, scaleGroup);
+    svgElement("line", { x1: String(barX + barWidth), y1: String(barY - 5), x2: String(barX + barWidth), y2: String(barY + 5), stroke: "#0f172a", "stroke-width": "1.5" }, scaleGroup);
+    var scaleLabel = svgElement("text", { x: String(barX + barWidth / 2), y: String(barY - 7), fill: "#0f172a", "font-size": "11", "font-weight": "700", "text-anchor": "middle" }, scaleGroup);
+    scaleLabel.textContent = "2 km";
+
+    var attributionGroup = svgElement("g", {}, annotations);
+    svgElement("rect", { x: "674", y: "586", width: "214", height: "24", rx: "3", fill: "#ffffff", "fill-opacity": "0.88" }, attributionGroup);
+    var attribution = svgElement("text", { x: "880", y: "602", fill: "#1f2937", "font-size": "11", "text-anchor": "end" }, attributionGroup);
+    attribution.textContent = "© OpenStreetMap contributors";
+  }
+
+  function lonToTileX(lon, zoom) {
+    return (lon + 180) / 360 * Math.pow(2, zoom);
+  }
+
+  function latToTileY(lat, zoom) {
+    var sinLat = Math.sin(lat * Math.PI / 180);
+    return (0.5 - Math.log((1 + sinLat) / (1 - sinLat)) / (4 * Math.PI)) * Math.pow(2, zoom);
+  }
+
+  function tileXToLon(x, zoom) {
+    return x / Math.pow(2, zoom) * 360 - 180;
+  }
+
+  function tileYToLat(y, zoom) {
+    return 180 / Math.PI * Math.atan(Math.sinh(Math.PI * (1 - 2 * y / Math.pow(2, zoom))));
+  }
+
+  function renderBasemap(enabled) {
+    var layer = document.getElementById("tileLayer");
+    var status = document.getElementById("basemapStatus");
+    layer.replaceChildren();
+    var boundary = document.getElementById("boundaryPolygon");
+    if (!enabled) {
+      status.textContent = "背景地図: OFF。実座標のグリッドと行政区域を表示中。";
+      boundary.setAttribute("fill-opacity", "0.82");
+      return;
+    }
+
+    var zoom = 12;
+    var minTileX = Math.max(0, Math.floor(lonToTileX(minLon, zoom)));
+    var maxTileX = Math.min(Math.pow(2, zoom) - 1, Math.floor(lonToTileX(maxLon, zoom)));
+    var minTileY = Math.max(0, Math.floor(latToTileY(maxLat, zoom)));
+    var maxTileY = Math.min(Math.pow(2, zoom) - 1, Math.floor(latToTileY(minLat, zoom)));
+    var total = (maxTileX - minTileX + 1) * (maxTileY - minTileY + 1);
+    var loaded = 0, failed = 0;
+    status.textContent = "背景地図: OpenStreetMapを読み込み中（表示専用）。";
+    boundary.setAttribute("fill-opacity", "0.28");
+
+    function updateStatus() {
+      if (loaded + failed < total) return;
+      if (loaded === 0) {
+        status.textContent = "背景地図を読み込めません。座標グリッドを表示中（オフラインフォールバック）。";
+        boundary.setAttribute("fill-opacity", "0.82");
+      } else if (failed > 0) {
+        status.textContent = "背景地図: OpenStreetMap（表示専用・一部未読込）。座標グリッドも表示中。";
+      } else {
+        status.textContent = "背景地図: OpenStreetMap（表示専用）。道路データは解析に使用していません。";
+      }
+    }
+
+    for (var tileX = minTileX; tileX <= maxTileX; tileX += 1) {
+      for (var tileY = minTileY; tileY <= maxTileY; tileY += 1) {
+        var topLeft = toSvgLonLat(tileXToLon(tileX, zoom), tileYToLat(tileY, zoom));
+        var bottomRight = toSvgLonLat(tileXToLon(tileX + 1, zoom), tileYToLat(tileY + 1, zoom));
+        var image = svgElement("image", {
+          x: topLeft[0].toFixed(2), y: topLeft[1].toFixed(2),
+          width: Math.max(1, bottomRight[0] - topLeft[0]).toFixed(2),
+          height: Math.max(1, bottomRight[1] - topLeft[1]).toFixed(2),
+          preserveAspectRatio: "none", opacity: "0.92"
+        }, layer);
+        image.setAttribute("href", "https://tile.openstreetmap.org/" + zoom + "/" + tileX + "/" + tileY + ".png");
+        image.addEventListener("load", function () { loaded += 1; updateStatus(); });
+        image.addEventListener("error", function () { failed += 1; updateStatus(); });
+      }
+    }
+  }
+
+  renderGrid();
+  renderMapAnnotations();
 
   var clinicsAll = DATA.facilities.filter(function (f) { return f.function_code === "clinic"; });
   var welfareAll = DATA.facilities.filter(function (f) { return f.function_code === "welfare"; });
@@ -144,6 +334,9 @@
       c.setAttribute("stroke", "#ffffff");
       c.setAttribute("stroke-width", "0.7");
       c.setAttribute("class", "facility-dot");
+      var title = document.createElementNS("http://www.w3.org/2000/svg", "title");
+      title.textContent = f.name || "(名称不明)";
+      c.appendChild(title);
       c.addEventListener("click", function () { showFacility(f); });
       g.appendChild(c);
     });
@@ -167,6 +360,7 @@
 
   renderLayer("clinicLayer", clinics, getComputedStyle(document.documentElement).getPropertyValue("--clinic").trim());
   renderLayer("welfareLayer", welfare, getComputedStyle(document.documentElement).getPropertyValue("--welfare").trim());
+  renderBasemap(true);
 
   document.getElementById("toggleClinic").addEventListener("change", function (e) {
     document.getElementById("clinicLayer").style.display = e.target.checked ? "" : "none";
@@ -174,9 +368,12 @@
   document.getElementById("toggleWelfare").addEventListener("change", function (e) {
     document.getElementById("welfareLayer").style.display = e.target.checked ? "" : "none";
   });
+  document.getElementById("toggleBasemap").addEventListener("change", function (e) {
+    renderBasemap(e.target.checked);
+  });
 
   var sourcesEl = document.getElementById("sourcesList");
-  DATA.sources.forEach(function (s) {
+  (DATA.sources || []).concat(DATA.display_sources || []).forEach(function (s) {
     var p = document.createElement("p");
     var title = document.createElement("strong");
     title.textContent = s.title;
@@ -184,7 +381,8 @@
     appendSourceLine(p, s.provider);
     appendSourceLine(p, "出典URL: " + s.source_url);
     appendSourceLine(p, "ライセンス: " + s.license);
-    appendSourceLine(p, "取得日: " + s.retrieved_at);
+    if (s.tile_url) appendSourceLine(p, "タイルURL: " + s.tile_url);
+    if (s.retrieved_at) appendSourceLine(p, "取得日: " + s.retrieved_at);
     appendSourceLine(p, s.notes || "");
     sourcesEl.appendChild(p);
   });

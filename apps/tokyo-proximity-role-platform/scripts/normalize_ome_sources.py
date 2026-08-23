@@ -126,6 +126,7 @@ def main():
             "meters_per_deg_lat": METERS_PER_DEG_LAT,
             "meters_per_deg_lon": meters_per_deg_lon,
         },
+        "boundary_lonlat": [[round(lon, 7), round(lat, 7)] for lon, lat in boundary_lonlat],
         "boundary_m": [[round(x, 1), round(y, 1)] for x, y in boundary_m],
         "facilities": all_facilities,
         "data_quality_summary": {
@@ -135,6 +136,17 @@ def main():
             "outside_by_function": outside_by_function,
             "coordinate_rule": "施設の緯度経度を行政区域ポリゴンへpoint-in-polygon判定。境界外は地図表示から除外し、データ監査対象として残す。",
         },
+        "display_sources": [
+            {
+                "id": "osm_standard_tiles_display_only",
+                "title": "OpenStreetMap 標準タイル（表示専用）",
+                "provider": "OpenStreetMap contributors / OpenStreetMap Foundation",
+                "source_url": "https://www.openstreetmap.org/copyright",
+                "tile_url": "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                "license": "Open Database License (ODbL)",
+                "notes": "オンライン時の背景表示だけに使用。施設データ、道路経路、徒歩時間、アクセシビリティ計算の入力には使用しない。タイル取得に失敗した場合は座標グリッドへフォールバックする。",
+            }
+        ],
         "sources": [
             {
                 "id": "ome_boundary_n03_2021",

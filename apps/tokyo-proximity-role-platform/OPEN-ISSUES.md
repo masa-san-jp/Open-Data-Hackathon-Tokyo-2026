@@ -35,6 +35,11 @@
   rawデータを推測で修正・削除せず、`data/normalized/ome/real_map.json` に `within_boundary: false` として残し、位置マップでは
   「地図上は非表示・要監査」と表示している。出典元による住所・座標確認が必要。
 
+### M11B 表示専用背景タイルの運用
+
+- OpenStreetMap標準タイルは背景表示だけに使い、道路網の分析入力にはしていない（ADR-0010）。タイルの可用性・利用量制限・
+  本番での提供者選定は別途確認が必要。失敗時は座標グリッドへフォールバックする。
+
 ### スクリーンショット自動化のOS依存
 
 - `scripts/screenshot.py` はmacOSローカルの Google Chrome バイナリ（`/Applications/Google Chrome.app/Contents/MacOS/Google Chrome`）をheadlessモードで呼び出す実装とした。CI環境や他OSでは動作しない可能性がある。Playwright等クロスプラットフォームなツールの導入は、依存追加の可否をオーナー判断が必要なため保留し、`needs-human` として記録する。
