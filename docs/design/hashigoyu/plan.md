@@ -127,6 +127,7 @@
 **`T1-05` 改善提案**
 
 - 依存: `T1-03`
+- 状態: 完了
 - 作るもの: `packages/domain/src/advice.ts`、`packages/domain/src/advice.ja.ts`
 - 内容: spec §4-11。**計算と日本語文言を必ず別ファイルに分ける**
 - 受け入れ条件:
