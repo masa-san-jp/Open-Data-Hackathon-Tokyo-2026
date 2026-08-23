@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 """カタログから解決したD1〜D5のURLを取得し、data/raw/ に検査付きで保存する。
 
-  python3 scripts/fetch_sources.py            # 解決＋取得＋検査
-  python3 scripts/fetch_sources.py --check    # 既存ファイルの検査のみ（再取得しない）
+  python3 scripts/fetch_sources.py            # 解決＋取得＋検査＋sources.json更新
+  python3 scripts/fetch_sources.py --check    # 既存 data/raw/ の検査のみ（取得しない・sources.jsonも書き換えない）
 
 検査に落ちたら非ゼロで終わる。**中身を見ずに次へ進ませないためのゲート**。
+取得した内容は一時ファイルに書き、検査を通ってから data/raw/ に置き換える
+（検査落ちで直前の正常ファイルを壊さないため）。
+
 D2（クーリングシェルター）だけは、解決できなくてもエラーにせず
 sources.json に {"status": "not_published"} と記録して先へ進む
 （design-spec §3: 涼み処ODが未公開の区がある想定への対応）。
@@ -14,6 +17,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import sys
 import urllib.error
 import urllib.request
@@ -35,6 +39,15 @@ BROWSER_UA = (
 )
 
 HTML_MARKERS = (b"<!doctype html", b"<html")
+TEXT_ENCODINGS = ("utf-8-sig", "cp932", "utf-8")
+
+# D3は区単位の一般医療機関一覧が無く、都全域の災害拠点病院リストに
+# スコープを狭めて取得している（詳細は OPEN-ISSUES.md）。sources.json
+# にも理由を残し、build_dataset.py 側で見落とされないようにする。
+DATASET_NOTES = {
+    "D3": "区単位の一般医療機関一覧が存在せず、都全域『災害拠点病院等』に"
+          "スコープを狭めて取得（座標なし・住所のみ）。詳細は OPEN-ISSUES.md",
+}
 
 
 def fetch(url: str) -> bytes:
@@ -54,7 +67,13 @@ def check(raw: bytes) -> str | None:
     head = raw[:2000].lower()
     if any(m in head for m in HTML_MARKERS):
         return "中身がHTMLページ（生データではない）"
-    return None
+    for enc in TEXT_ENCODINGS:
+        try:
+            raw[:4096].decode(enc)
+            return None
+        except UnicodeDecodeError:
+            continue
+    return "utf-8-sig/cp932/utf-8のいずれでも読めない（テキストCSVではない可能性）"
 
 
 def slug(dataset_id: str, resource_url: str) -> str:
@@ -64,9 +83,16 @@ def slug(dataset_id: str, resource_url: str) -> str:
     return f"{dataset_id}_{name}"
 
 
+def atomic_write(path: Path, raw: bytes) -> None:
+    tmp = path.with_name(path.name + ".tmp")
+    tmp.write_bytes(raw)
+    os.replace(tmp, path)
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--check", action="store_true", help="取得せず検査のみ")
+    ap.add_argument("--check", action="store_true",
+                     help="取得せず data/raw/ の検査のみ（sources.jsonは書き換えない）")
     args = ap.parse_args()
 
     ward = json.loads(CONFIG_JSON.read_text(encoding="utf-8"))["ward"]
@@ -88,22 +114,31 @@ def main() -> int:
             continue
 
         path = RAW / slug(dataset_id, info["resource_url"])
-        if not args.check:
-            try:
-                path.write_bytes(fetch(info["resource_url"]))
-            except Exception as exc:
-                print(f"✗ {dataset_id}: 取得できない: {exc}")
-                records[dataset_id] = {"id": dataset_id, "status": "fetch_failed",
-                                        "error": str(exc), **info}
+        note = DATASET_NOTES.get(dataset_id)
+
+        if args.check:
+            if not path.exists():
+                print(f"✗ {dataset_id}: 検査対象ファイルが無い（先に取得が要る）")
                 failed += 1
                 continue
+            reason = check(path.read_bytes())
+            if reason:
+                print(f"✗ {dataset_id} ({info['title']}): {reason}")
+                failed += 1
+                continue
+            print(f"✓ {dataset_id} ({info['title']}, {info['scope']}) "
+                  f"{path.stat().st_size:,} バイト [--checkのみ・sources.json未更新]")
+            continue
 
-        if not path.exists():
-            print(f"✗ {dataset_id}: 検査対象ファイルが無い（--check には先に取得が要る）")
+        try:
+            raw = fetch(info["resource_url"])
+        except Exception as exc:
+            print(f"✗ {dataset_id}: 取得できない: {exc}")
+            records[dataset_id] = {"id": dataset_id, "status": "fetch_failed",
+                                    "error": str(exc), **info}
             failed += 1
             continue
 
-        raw = path.read_bytes()
         reason = check(raw)
         if reason:
             print(f"✗ {dataset_id} ({info['title']}): {reason}")
@@ -112,9 +147,10 @@ def main() -> int:
             failed += 1
             continue
 
+        atomic_write(path, raw)
         print(f"✓ {dataset_id} ({info['title']}, {info['scope']}) "
               f"{path.stat().st_size:,} バイト")
-        records[dataset_id] = {
+        record = {
             "id": dataset_id,
             "status": "ok",
             "scope": info["scope"],
@@ -126,11 +162,15 @@ def main() -> int:
             "fetched_at": datetime.now(timezone.utc).isoformat(),
             "sha256": hashlib.sha256(raw).hexdigest(),
         }
+        if note:
+            record["note"] = note
+        records[dataset_id] = record
 
-    SOURCES_JSON.write_text(
-        json.dumps({"ward": ward, "sources": records}, ensure_ascii=False, indent=1),
-        encoding="utf-8",
-    )
+    if not args.check:
+        SOURCES_JSON.write_text(
+            json.dumps({"ward": ward, "sources": records}, ensure_ascii=False, indent=1),
+            encoding="utf-8",
+        )
 
     if failed:
         print(f"\n{failed} 件が検査に落ちた。data/raw/ か catalog.py の解決条件を直すまで先へ進まない。")

@@ -74,7 +74,7 @@ def _matches(row: dict, terms: tuple[str, ...]) -> bool:
     return any(t in row["タイトル"] for t in terms)
 
 
-def _row_info(row: dict, scope: str) -> dict:
+def _row_info(row: dict, scope: str, candidate_count: int) -> dict:
     return {
         "scope": scope,
         "title": row["タイトル"],
@@ -83,6 +83,9 @@ def _row_info(row: dict, scope: str) -> dict:
         "updated_at": row["更新日"],
         "dataset_url": row["データセットURL"],
         "resource_url": row["リソースURL(先頭)"],
+        # 同条件で他に何件ヒットしたか。1件なら一意、2件以上なら
+        # ヒューリスティック（リソース数最大 / タイトル最短）で選んだ旨の目印。
+        "candidate_count": candidate_count,
     }
 
 
@@ -104,7 +107,7 @@ def resolve_one(rows: list[dict], spec: dict, ward: str) -> dict | None:
     pick_from = ward_csv_rows or ward_rows
     if pick_from:
         best = max(pick_from, key=lambda r: _safe_int(r["リソース数"]))
-        return _row_info(best, "ward")
+        return _row_info(best, "ward", len(pick_from))
 
     wide_rows = [
         r for r in candidates
@@ -117,7 +120,7 @@ def resolve_one(rows: list[dict], spec: dict, ward: str) -> dict | None:
     if wide_rows:
         # 一覧そのものは名前が短く素直な傾向がある（統計報告書等は長くなりがち）
         best = min(wide_rows, key=lambda r: len(r["タイトル"]))
-        return _row_info(best, "prefecture_wide")
+        return _row_info(best, "prefecture_wide", len(wide_rows))
 
     return None
 
