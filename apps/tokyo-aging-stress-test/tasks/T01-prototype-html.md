@@ -1,8 +1,8 @@
 ---
 id: T01
 phase: 1
-status: todo
-owner:
+status: done
+owner: hisyo
 depends_on: []
 files: prototype/index.html
 ---
@@ -54,3 +54,11 @@ python3 scripts/verify.py        # ✓ すべて通った
 「実装した」では終わらない。**開いて見えた**で終わる。
 
 ## 作業ログ（done にするとき追記）
+
+- 2026-08-23 09:20 hisyo。`scripts/build_prototype.py` を新設し、`data/stress_test.json` を
+  埋め込んだ単体HTMLを生成する形にした（手書きにしないのは、データを作り直したら画面も
+  作り直せるようにするため）。
+- Chrome で file:// を開いて確認した: JSエラーなし／一覧53行／見出し 0→12（53自治体中）／
+  列見出しで並べ替わる（高齢化率順にすると1行目が檜原村に替わる）／行を押すと6年分の推移が出る／
+  除外9件が理由つきで出ている。`scripts/verify.py` は「✓ すべて通った」。
+- 高齢化率の小数表記が揺れていた（35% と 35.0%）ので toFixed(1) に統一した。

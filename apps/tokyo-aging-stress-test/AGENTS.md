@@ -54,6 +54,9 @@ python3 scripts/verify.py
 | `scripts/fetch_sources.py` | **動く**（4本とも検査を通過） |
 | `scripts/build_dataset.py` | **動く**（53自治体・除外9件を出力） |
 | `scripts/verify.py` | **動く**（データ層は全通過。prototype が無いので1件落ちるのが正しい状態） |
-| `prototype/index.html` | **未着手 ← ここが Phase 1 の残り全部** |
+| `prototype/index.html` | **動く**（`scripts/build_prototype.py` が生成。Chrome で開いて確認済み） |
 
-**つまり残っているのは画面1枚。** データはもう手元にある。
+**Phase 1 は通っている。** 次に触る人は、比較で選ばれてから Phase 2（`tasks/T03`）へ。
+
+画面を作り替えるときは `prototype/index.html` を直接編集せず `scripts/build_prototype.py` を直す
+（index.html は生成物なので、直接編集すると次の生成で消える）。
