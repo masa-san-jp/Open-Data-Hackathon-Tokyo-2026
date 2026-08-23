@@ -1,5 +1,7 @@
 export const guestText = {
   title: "はしごゆ",
+  defaultLocation: "東京都墨田区",
+  routeConditions: "ルート条件",
   locationLabel: "いる場所",
   locationPlaceholder: "住所を入力",
   currentLocation: "現在地",
@@ -13,6 +15,7 @@ export const guestText = {
   walk: "徒歩",
   transit: "電車",
   minutes: "分",
+  bathhouseUnit: "軒",
   arrival: "到着",
   hours: "営業時間",
   map: "地図",

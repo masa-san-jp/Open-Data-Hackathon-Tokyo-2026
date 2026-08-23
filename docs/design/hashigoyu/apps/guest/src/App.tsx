@@ -87,7 +87,7 @@ function RouteCard({ leg, index }: { leg: Leg; index: number }) {
 
 export function App() {
   const snapshot = useStoreSnapshot();
-  const [locationText, setLocationText] = useState("東京都墨田区");
+  const [locationText, setLocationText] = useState<string>(text.defaultLocation);
   const [location, setLocation] = useState<GeoPoint>(DEFAULT_LOCATION);
   const [time, setTime] = useState(currentTime);
   const [count, setCount] = useState<1 | 2 | 3>(2);
@@ -134,7 +134,7 @@ export function App() {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         setLocation({ lat: position.coords.latitude, lng: position.coords.longitude });
-        setLocationText("現在地");
+        setLocationText(text.currentLocation);
         setLocationError("");
       },
       () => setLocationError(text.currentLocationError),
@@ -147,7 +147,7 @@ export function App() {
         <h1>{text.title}</h1>
       </header>
 
-      <section className="controls" aria-label="ルート条件">
+      <section className="controls" aria-label={text.routeConditions}>
         <div className="control location-control">
           <label htmlFor="location">{text.locationLabel}</label>
           <div className="location-row">
@@ -181,7 +181,7 @@ export function App() {
                 aria-pressed={count === value}
                 onClick={() => setCount(value as 1 | 2 | 3)}
               >
-                {value}軒
+                {value}{text.bathhouseUnit}
               </button>
             ))}
           </div>
@@ -192,7 +192,7 @@ export function App() {
         <section className="panel route-panel">
           <div className="panel-heading">
             <h2>{text.routeTitle}</h2>
-            <span>{route.length}軒</span>
+            <span>{route.length}{text.bathhouseUnit}</span>
           </div>
           {route.length > 0 ? (
             <ol className="route-list">
@@ -206,7 +206,7 @@ export function App() {
         <section className="panel list-panel">
           <div className="panel-heading">
             <h2>{text.listTitle}</h2>
-            <span>{list.length}軒</span>
+            <span>{list.length}{text.bathhouseUnit}</span>
           </div>
           <ul className="bathhouse-list">
             {list.map(({ bathhouse, distance }) => {

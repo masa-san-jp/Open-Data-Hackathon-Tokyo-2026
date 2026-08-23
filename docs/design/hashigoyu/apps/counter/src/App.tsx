@@ -17,7 +17,7 @@ function useStoreSnapshot() {
 }
 
 function yen(value: number): string {
-  return `${Math.round(value).toLocaleString("ja-JP")}円`;
+  return `${Math.round(value).toLocaleString("ja-JP")}${text.yen}`;
 }
 
 function formatDate(value: string | null): string {
@@ -184,7 +184,7 @@ function ManagementView({ budget, counts }: { budget: Budget; counts: readonly D
             [text.land, yen(budget.land)],
             [text.cash, yen(budget.cash)],
             [text.debt, yen(budget.debt)],
-            [text.yearsToRenewal, `${budget.yearsToRenewal}年`],
+            [text.yearsToRenewal, `${budget.yearsToRenewal}${text.year}`],
             [text.renewalCost, yen(budget.renewalCost)],
           ]} />
           <BudgetGroup title={text.cf} fields={[[text.loanRepayment, yen(budget.loanRepayment)]]} />
@@ -229,7 +229,7 @@ export function App() {
     <main className="counter-app">
       <header className="counter-header">
         <h1>{bathhouse.name}</h1>
-        <nav className="tabs" aria-label="画面">
+        <nav className="tabs" aria-label={text.screen}>
           <button type="button" className={tab === "counter" ? "active" : ""} onClick={() => setTab("counter")}>{text.counterTab}</button>
           <button type="button" className={tab === "management" ? "active" : ""} onClick={() => setTab("management")}>{text.managementTab}</button>
         </nav>

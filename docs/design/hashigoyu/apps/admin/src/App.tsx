@@ -76,7 +76,7 @@ function useStoreSnapshot() {
 }
 
 function yen(value: number): string {
-  return `${Math.round(value).toLocaleString("ja-JP")}円`;
+  return `${Math.round(value).toLocaleString("ja-JP")}${text.yen}`;
 }
 
 function percent(value: number): string {
@@ -245,7 +245,7 @@ function Detail({
     store.updateBudget(bathhouse.id, { [field]: value });
   };
   const confirm = (): void => {
-    store.confirmBudget(bathhouse.id, new Date().toISOString(), "東京都浴場組合");
+    store.confirmBudget(bathhouse.id, new Date().toISOString(), text.sampleConfirmedBy);
   };
   return (
     <section className="detail-view">
@@ -311,7 +311,7 @@ export function App() {
     <main className="admin-app">
       <header className="admin-header">
         <h1>{text.title}</h1>
-        <nav aria-label="画面">
+        <nav aria-label={text.screen}>
           <button type="button" className={view === "dashboard" ? "active" : ""} onClick={() => setView("dashboard")}>{text.dashboard}</button>
           <button type="button" className={view === "bathhouse" ? "active" : ""} onClick={() => setView("bathhouse")} disabled={!selectedBathhouse}>{text.bathhouse}</button>
         </nav>
