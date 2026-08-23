@@ -1,0 +1,74 @@
+# タスク索引（AGENTS.md §3）
+# status: blocked | ready | claimed | doing | review | done
+
+tasks:
+  - id: D00
+    title: 構造・Makefile・AGENTS
+    phase: demo
+    status: done
+    depends_on: []
+    file: tasks/D00-scaffold.md
+
+  - id: D01
+    title: デモデータ生成
+    phase: demo
+    status: done
+    depends_on: [D00]
+    file: tasks/D01-demo-data.md
+
+  - id: D02
+    title: 地図シェル（SVGグリッド・凡例・DEMO DATA表示）
+    phase: demo
+    status: done
+    depends_on: [D01]
+    file: tasks/D02-demo-map-shell.md
+
+  - id: D03
+    title: 閾値・速度・勾配コントロールと再判定
+    phase: demo
+    status: done
+    depends_on: [D02]
+    file: tasks/D03-demo-controls.md
+
+  - id: D04
+    title: 介入シミュレーション（生活拠点・Human Bridge・モビリティ）
+    phase: demo
+    status: done
+    depends_on: [D03]
+    file: tasks/D04-demo-intervention.md
+
+  - id: D05
+    title: 地域役割カード下書き生成
+    phase: demo
+    status: done
+    depends_on: [D03]
+    file: tasks/D05-demo-role-card.md
+
+  - id: D06
+    title: 検証・スクリーンショット
+    phase: demo
+    status: review
+    depends_on: [D04, D05]
+    file: tasks/D06-demo-verify.md
+
+  - id: M10
+    title: データレジストリ（監査ツール・候補地域の実データ監査）
+    phase: m1
+    status: review
+    depends_on: [D06]
+    file: tasks/M10-data-registry.md
+
+  - id: M11
+    title: 対象地域決定（人間承認）
+    phase: m1
+    status: review
+    depends_on: [M10]
+    file: tasks/M11-source-audit.md
+
+  - id: M11B
+    title: 青梅市実データ位置マップの再現経路
+    phase: m1
+    status: claimed
+    owner: codex
+    depends_on: [M11]
+    file: tasks/M11b-real-data-baseline.md
