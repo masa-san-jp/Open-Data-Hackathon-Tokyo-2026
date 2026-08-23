@@ -1,5 +1,27 @@
 {
   "ward": "江東区",
   "walk_near_m": 300,
-  "walk_far_m": 800
+  "walk_far_m": 800,
+  "stress_scenarios": [
+    {
+      "id": "current",
+      "label": "現在",
+      "factor": 1.0,
+      "source": "D5町丁別年齢人口の現況値（data/processed/dataset.json）"
+    },
+    {
+      "id": "stress_2070",
+      "label": "2070相当",
+      "factor": 1.5,
+      "source": "設計既定値（2070年相当のストレス係数）"
+    },
+    {
+      "id": "stress_2100",
+      "label": "2100相当",
+      "factor": 2.0,
+      "source": "設計既定値（2100年相当・転入半減のストレス係数）"
+    }
+  ],
+  "stress_source": "apps/tokyo-aging-stress-test/data/stress_test.json（江東区の65歳以上推計は2045年まで。2070/2100の75歳以上町丁別実出力は未収録）",
+  "stress_note": "係数1.5/2.0は将来人口の予測ではなく、人口負荷を増やしたストレステストの仮定です。"
 }

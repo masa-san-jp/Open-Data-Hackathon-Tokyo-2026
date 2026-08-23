@@ -16,6 +16,7 @@ from pathlib import Path
 
 APP_DIR = Path(__file__).resolve().parent.parent
 DATA = APP_DIR / "data" / "processed" / "dataset.json"
+CONFIG = APP_DIR / "config.json"
 OUT = APP_DIR / "prototype" / "index.html"
 
 KIND_LABELS = {
@@ -244,6 +245,14 @@ TEMPLATE = """<!doctype html>
  .reach.out{color:#fff;background:#b42318}.reach.near{color:#fff;background:#18794e}
  .reach.far{color:#fff;background:#a66a00}.reach.unknown{color:#fff;background:#77736c}
  .table-note{font-size:.8rem;color:var(--mut);margin:8px 0 0}
+ .stress-controls{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin:-12px 0 28px}
+ .stress-controls .label{font-size:.8rem;color:var(--mut);margin-right:8px}
+ .stress-buttons{display:inline-flex;flex-wrap:wrap;gap:6px;vertical-align:middle}
+ .stress-button{appearance:none;border:1px solid var(--line);border-radius:999px;background:var(--bg);color:var(--fg);cursor:pointer;font:inherit;font-size:.82rem;padding:4px 10px}
+ .stress-button[aria-pressed="true"]{background:var(--fg);border-color:var(--fg);color:var(--bg);font-weight:700}
+ .stress-button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+ .stress-note{font-size:.78rem;color:var(--mut);margin:8px 0 0}
+ .stress-note strong{color:var(--fg)}
  .gaps{list-style:none;margin:0;padding:0}
  .gaps li{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--warn);
   border-radius:6px;padding:12px 16px;margin-bottom:8px}
@@ -268,6 +277,13 @@ TEMPLATE = """<!doctype html>
 
 <div class="stats" id="stats"></div>
 
+<div class="stress-controls" aria-label="75歳以上人口のストレステスト">
+ <span class="label">75歳以上人口シナリオ:</span>
+ <span class="stress-buttons" id="stress-buttons"></span>
+ <p class="stress-note"><strong>これは予測ではなくストレステストです。</strong> <span id="stress-note"></span></p>
+ <p class="stress-note" id="stress-source"></p>
+</div>
+
 <section>
  <h2>町丁の届きやすさ（涼み処）</h2>
  <div class="map-shell">__MAP__</div>
@@ -282,15 +298,15 @@ TEMPLATE = """<!doctype html>
 </section>
 
 <section>
- <h2>涼み処が800mを超える町丁（75歳以上人口順）</h2>
+ <h2>涼み処が800mを超える町丁（<span id="worst-scenario">現在</span>の75歳以上人口順）</h2>
  <div class="scroll">
  <table>
   <thead><tr><th>順位</th><th>町丁</th><th>75歳以上</th><th>最近の涼み処</th><th>判定</th></tr></thead>
-  <tbody>__WORST_ROWS__</tbody>
+  <tbody id="worst-body">__WORST_ROWS__</tbody>
  </table>
  </div>
  <p class="table-note">対象: 涼み処のreachがout（800m超）の町丁。unknownは表から除外し、下に別掲。</p>
- <p class="table-note">涼み処の判定不能: __UNKNOWN_COOL_AREAS__町丁 / __UNKNOWN_COOL_POP__人。</p>
+ <p class="table-note" id="unknown-note">涼み処の判定不能: __UNKNOWN_COOL_AREAS__町丁 / __UNKNOWN_COOL_POP__人。</p>
 </section>
 
 <section>
@@ -325,28 +341,72 @@ TEMPLATE = """<!doctype html>
 const DATA = __DATA__;
 const KIND_LABELS = __KIND_LABELS__;
 const REASON_LABELS = __REASON_LABELS__;
+const STRESS = __STRESS_CONFIG__;
 const nf = n => n.toLocaleString('ja-JP');
 
 const meta = DATA.meta, areas = DATA.areas, gaps = DATA.gaps;
 document.getElementById('ward-name').textContent = meta.ward;
 
 const pop65 = areas.reduce((a, x) => a + x.pop_65plus, 0);
-const pop75 = areas.reduce((a, x) => a + x.pop_75plus, 0);
-const coolOut = areas.filter(a => a.reach.cool === 'out');
-const coolUnknown = areas.filter(a => a.reach.cool === 'unknown');
-const coolOutPop = coolOut.reduce((a, x) => a + x.pop_75plus, 0);
-const coolUnknownPop = coolUnknown.reduce((a, x) => a + x.pop_75plus, 0);
+const stressScenarios = STRESS.scenarios || [];
+const stressById = Object.fromEntries(stressScenarios.map(s => [s.id, s]));
+const defaultStress = stressById.current || stressScenarios[0];
+const scaled75 = (area, scenario) => Math.round(area.pop_75plus * scenario.factor);
 
-const stats = [
-  {label: '対象区', value: meta.ward, pending: false},
-  {label: '65歳以上人口 / 75歳以上人口', value: nf(pop65) + '人 / ' + nf(pop75) + '人', pending: false},
-  {label: '800m以内に涼み処が無い75歳以上', value: nf(coolOutPop) + '人', pending: false},
-  {label: '涼み処のデータ欠損で判定不能な75歳以上', value: nf(coolUnknownPop) + '人', pending: true},
-];
-document.getElementById('stats').innerHTML = stats.map(s =>
-  `<div class="stat"><div class="n${s.pending ? ' pending' : ''}">${s.value}</div>`
-  + `<div class="l">${s.label}</div></div>`
+document.getElementById('stress-note').textContent = STRESS.note;
+document.getElementById('stress-source').textContent = '係数の出所: ' + STRESS.source;
+document.getElementById('stress-buttons').innerHTML = stressScenarios.map(s =>
+  `<button type="button" class="stress-button" data-scenario="${s.id}" aria-pressed="false">${s.label} ×${s.factor}</button>`
 ).join('');
+
+function renderStats(scenario) {
+  const pop75 = areas.reduce((total, area) => total + scaled75(area, scenario), 0);
+  const coolOut = areas.filter(a => a.reach.cool === 'out');
+  const coolUnknown = areas.filter(a => a.reach.cool === 'unknown');
+  const coolOutPop = coolOut.reduce((total, area) => total + scaled75(area, scenario), 0);
+  const coolUnknownPop = coolUnknown.reduce((total, area) => total + scaled75(area, scenario), 0);
+  const stats = [
+    {label: '対象区', value: meta.ward, pending: false},
+    {label: '65歳以上人口 / 75歳以上人口（' + scenario.label + '）', value: nf(pop65) + '人 / ' + nf(pop75) + '人', pending: false},
+    {label: '800m以内に涼み処が無い75歳以上（' + scenario.label + '）', value: nf(coolOutPop) + '人', pending: false},
+    {label: '涼み処のデータ欠損で判定不能な75歳以上（' + scenario.label + '）', value: nf(coolUnknownPop) + '人', pending: true},
+  ];
+  document.getElementById('stats').innerHTML = stats.map(s =>
+    `<div class="stat"><div class="n${s.pending ? ' pending' : ''}">${s.value}</div>`
+    + `<div class="l">${s.label}</div></div>`
+  ).join('');
+}
+
+function renderWorst(scenario) {
+  const outAreas = areas.filter(a => a.reach.cool === 'out')
+    .map(area => ({area, population: scaled75(area, scenario)}))
+    .sort((left, right) => right.population - left.population || left.area.code.localeCompare(right.area.code));
+  document.getElementById('worst-body').innerHTML = outAreas.slice(0, 10).map((item, index) => {
+    const area = item.area;
+    const distance = typeof area.nearest_m.cool === 'number' ? nf(area.nearest_m.cool.toFixed(1)) + 'm' : '位置不明';
+    return `<tr data-area-code="${area.code}" tabindex="0"><td>${index + 1}</td><td>${area.name}</td>`
+      + `<td>${nf(item.population)}人</td><td>${distance}</td><td><span class="reach out">out</span></td></tr>`;
+  }).join('');
+  const unknownAreas = areas.filter(a => a.reach.cool === 'unknown');
+  const unknownPopulation = unknownAreas.reduce((total, area) => total + scaled75(area, scenario), 0);
+  document.getElementById('unknown-note').textContent =
+    '涼み処の判定不能: ' + nf(unknownAreas.length) + '町丁 / ' + nf(unknownPopulation) + '人（' + scenario.label + '）。';
+  document.getElementById('worst-scenario').textContent = scenario.label;
+}
+
+function selectStressScenario(id) {
+  const scenario = stressById[id] || defaultStress;
+  document.querySelectorAll('.stress-button').forEach(button => {
+    button.setAttribute('aria-pressed', button.dataset.scenario === scenario.id ? 'true' : 'false');
+  });
+  renderStats(scenario);
+  renderWorst(scenario);
+}
+
+document.querySelectorAll('.stress-button').forEach(button => {
+  button.addEventListener('click', () => selectStressScenario(button.dataset.scenario));
+});
+selectStressScenario(defaultStress.id);
 
 const kinds = ['shelter', 'cool', 'medical', 'care'];
 document.getElementById('facility-table').innerHTML = kinds.map(k => {
@@ -378,13 +438,23 @@ def main() -> int:
     if not DATA.exists():
         print("✗ data/processed/dataset.json が無い。先に scripts/build_dataset.py", file=sys.stderr)
         return 1
+    if not CONFIG.exists():
+        print("✗ config.json が無い", file=sys.stderr)
+        return 1
     payload = json.loads(DATA.read_text(encoding="utf-8"))
+    config = json.loads(CONFIG.read_text(encoding="utf-8"))
+    stress_config = {
+        "scenarios": config.get("stress_scenarios", []),
+        "source": config.get("stress_source", ""),
+        "note": config.get("stress_note", ""),
+    }
     worst_rows, _out_population, unknown_population, unknown_area_count = build_worst_rows(payload)
     html = (
         TEMPLATE
         .replace("__DATA__", json.dumps(payload, ensure_ascii=False, separators=(",", ":")))
         .replace("__KIND_LABELS__", json.dumps(KIND_LABELS, ensure_ascii=False))
         .replace("__REASON_LABELS__", json.dumps(REASON_LABELS, ensure_ascii=False))
+        .replace("__STRESS_CONFIG__", json.dumps(stress_config, ensure_ascii=False, separators=(",", ":")))
         .replace("__MAP__", build_svg(payload))
         .replace("__WORST_ROWS__", worst_rows)
         .replace("__UNKNOWN_COOL_AREAS__", number(unknown_area_count))

@@ -15,6 +15,7 @@ from pathlib import Path
 APP_DIR = Path(__file__).resolve().parent.parent
 SOURCES_JSON = APP_DIR / "data" / "sources.json"
 DATASET_JSON = APP_DIR / "data" / "processed" / "dataset.json"
+CONFIG_JSON = APP_DIR / "config.json"
 INDEX_HTML = APP_DIR / "prototype" / "index.html"
 
 # design-spec §4: reachは near(≤300m)/far(≤800m)/out(>800m)/unknown(欠損・位置不明)の4値。
@@ -52,6 +53,25 @@ def main() -> int:
         fail("data/processed/dataset.json が無い。scripts/build_dataset.py を先に実行して")
         return 1
     dataset = json.loads(DATASET_JSON.read_text(encoding="utf-8"))
+
+    if not CONFIG_JSON.exists():
+        fail("config.json が無い（ストレス係数の出所を確認できない）")
+        ok = False
+    else:
+        config = json.loads(CONFIG_JSON.read_text(encoding="utf-8"))
+        scenarios = config.get("stress_scenarios")
+        scenario_ids = {s.get("id") for s in scenarios} if isinstance(scenarios, list) else set()
+        valid_scenarios = (
+            isinstance(scenarios, list)
+            and scenario_ids == {"current", "stress_2070", "stress_2100"}
+            and all(isinstance(s.get("factor"), (int, float)) and s.get("factor") > 0
+                    and s.get("source") for s in scenarios)
+        )
+        if not valid_scenarios or not config.get("stress_source") or not config.get("stress_note"):
+            fail("config.json: ストレス係数3件または係数の出所・注記が不足")
+            ok = False
+        else:
+            print("✓ config.json: 現在/2070/2100の係数と出所注記あり")
 
     facilities = dataset["facilities"]
     if len(facilities) == 0:
@@ -174,7 +194,7 @@ def main() -> int:
         ok = False
     else:
         html = INDEX_HTML.read_text(encoding="utf-8")
-        missing_str = [n for n in ("直線距離", "取得日") if n not in html]
+        missing_str = [n for n in ("直線距離", "取得日", "ストレステスト", "予測ではなく") if n not in html]
         if missing_str:
             fail(f"prototype/index.html に「{'」「'.join(missing_str)}」の文字列が無い")
             ok = False
