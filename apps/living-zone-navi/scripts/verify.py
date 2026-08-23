@@ -60,11 +60,13 @@ def main() -> int:
     else:
         config = json.loads(CONFIG_JSON.read_text(encoding="utf-8"))
         scenarios = config.get("stress_scenarios")
-        scenario_ids = {s.get("id") for s in scenarios} if isinstance(scenarios, list) else set()
+        scenario_ids = ({s.get("id") for s in scenarios if isinstance(s, dict)}
+                        if isinstance(scenarios, list) else set())
         valid_scenarios = (
             isinstance(scenarios, list)
             and scenario_ids == {"current", "stress_2070", "stress_2100"}
-            and all(isinstance(s.get("factor"), (int, float)) and s.get("factor") > 0
+            and all(isinstance(s, dict)
+                    and isinstance(s.get("factor"), (int, float)) and s.get("factor") > 0
                     and s.get("source") for s in scenarios)
         )
         if not valid_scenarios or not config.get("stress_source") or not config.get("stress_note"):
@@ -194,7 +196,10 @@ def main() -> int:
         ok = False
     else:
         html = INDEX_HTML.read_text(encoding="utf-8")
-        missing_str = [n for n in ("直線距離", "取得日", "ストレステスト", "予測ではなく") if n not in html]
+        missing_str = [n for n in (
+            "直線距離", "取得日", "ストレステスト", "予測ではなく",
+            "pilot-card", "次の30日で確認すること", "中止条件", "@media print"
+        ) if n not in html]
         if missing_str:
             fail(f"prototype/index.html に「{'」「'.join(missing_str)}」の文字列が無い")
             ok = False

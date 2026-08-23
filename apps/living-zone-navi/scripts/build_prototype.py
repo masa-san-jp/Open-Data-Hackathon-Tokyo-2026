@@ -197,7 +197,7 @@ def build_worst_rows(payload: dict) -> tuple[str, int, int, int]:
     rows = []
     for rank, area in enumerate(out_areas[:10], 1):
         rows.append(
-            f'<tr><td>{rank}</td><td>{esc(area["name"])}</td>'
+            f'<tr data-area-code="{esc(area["code"])}" tabindex="0" aria-selected="false"><td>{rank}</td><td>{esc(area["name"])}</td>'
             f'<td>{number(area["pop_75plus"])}人</td>'
             f'<td>{distance_label(area["nearest_m"].get("cool"))}</td>'
             f'<td><span class="reach out">out</span></td></tr>'
@@ -253,6 +253,36 @@ TEMPLATE = """<!doctype html>
  .stress-button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
  .stress-note{font-size:.78rem;color:var(--mut);margin:8px 0 0}
  .stress-note strong{color:var(--fg)}
+ #worst-body tr{cursor:pointer}
+ #worst-body tr:hover,#worst-body tr:focus{background:color-mix(in srgb,var(--accent) 8%,var(--card));outline:none}
+ #worst-body tr[aria-selected="true"]{box-shadow:inset 3px 0 0 var(--accent);background:color-mix(in srgb,var(--accent) 10%,var(--card))}
+ .pilot-section[hidden]{display:none}
+ .pilot-card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:18px}
+ .pilot-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;border-bottom:1px solid var(--line);padding-bottom:12px}
+ .pilot-kicker{color:var(--mut);font-size:.75rem;letter-spacing:.04em;margin:0}
+ .pilot-card h3{font-size:1.35rem;margin:2px 0 0}
+ .pilot-card h4{font-size:.85rem;margin:0 0 7px}
+ .pilot-meta{color:var(--mut);font-size:.8rem;margin:4px 0 0}
+ .print-button{appearance:none;border:1px solid var(--fg);border-radius:5px;background:var(--fg);color:var(--bg);cursor:pointer;font:inherit;font-size:.82rem;padding:6px 10px;white-space:nowrap}
+ .print-button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+ .pilot-summary{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+ .pilot-summary .summary-item{background:color-mix(in srgb,var(--fg) 5%,var(--card));border:1px solid var(--line);border-radius:5px;padding:7px 10px}
+ .pilot-summary .summary-item b{display:block;font-size:1.05rem}
+ .pilot-summary .summary-item span{color:var(--mut);font-size:.72rem}
+ .pilot-card table{min-width:0}
+ .pilot-card th,.pilot-card td{padding:6px 8px}
+ .pilot-card th:first-child,.pilot-card td:first-child{text-align:left}
+ .pilot-card .reach{white-space:nowrap}
+ .pilot-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;margin-top:16px}
+ .pilot-subsection{min-width:0}
+ .pilot-list{font-size:.78rem;margin:0;padding-left:1.15em}
+ .pilot-list li{margin:3px 0}
+ .pilot-list code{font-size:.72rem}
+ .pilot-list a{overflow-wrap:anywhere}
+ .pilot-actions{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;margin-top:16px}
+ .write-box{min-height:74px;border:1px solid var(--line);border-radius:4px;background:repeating-linear-gradient(to bottom,transparent 0,transparent 25px,var(--line) 26px,var(--line) 27px);padding:5px 8px}
+ .write-box.short{min-height:52px}
+ .pilot-footnote{color:var(--mut);font-size:.75rem;margin:14px 0 0}
  .gaps{list-style:none;margin:0;padding:0}
  .gaps li{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--warn);
   border-radius:6px;padding:12px 16px;margin-bottom:8px}
@@ -265,6 +295,27 @@ TEMPLATE = """<!doctype html>
  footer ul{margin:0;padding-left:1.2em}
  footer li{margin:2px 0}
  code{background:color-mix(in srgb,var(--fg) 8%,transparent);padding:1px 5px;border-radius:3px}
+ @media print{
+  @page{size:A4 portrait;margin:10mm}
+  body{background:#fff;color:#111;font-size:9.5pt;line-height:1.4}
+  body .wrap{max-width:none;padding:0}
+  body .wrap> *:not(#pilot-section){display:none !important}
+  #pilot-section{display:block !important;margin:0}
+  .pilot-card{border:1px solid #111;border-radius:0;padding:5mm;box-shadow:none}
+  .pilot-card-head{padding-bottom:3mm}
+  .pilot-card h3{font-size:17pt}
+  .pilot-meta,.pilot-footnote,.pilot-list{font-size:8pt}
+  .print-button{display:none}
+  .pilot-summary{gap:5px;margin:3mm 0}
+  .pilot-summary .summary-item{padding:4px 7px}
+  .pilot-summary .summary-item b{font-size:11pt}
+  .pilot-grid,.pilot-actions{gap:4mm;margin-top:3mm}
+  .pilot-card h4{font-size:9pt;margin-bottom:4px}
+  .pilot-card th,.pilot-card td{padding:3px 5px}
+  .write-box{min-height:42mm}
+  .write-box.short{min-height:28mm}
+  .pilot-footnote{margin-top:3mm}
+ }
 </style>
 </head>
 <body>
@@ -309,6 +360,51 @@ TEMPLATE = """<!doctype html>
  <p class="table-note" id="unknown-note">涼み処の判定不能: __UNKNOWN_COOL_AREAS__町丁 / __UNKNOWN_COOL_POP__人。</p>
 </section>
 
+<section class="pilot-section" id="pilot-section" hidden>
+ <div class="pilot-card" id="pilot-card" aria-live="polite">
+  <div class="pilot-card-head">
+   <div>
+    <p class="pilot-kicker">30日パイロット確認カード</p>
+    <h3 id="pilot-area-name"></h3>
+    <p class="pilot-meta" id="pilot-area-meta"></p>
+   </div>
+   <button type="button" class="print-button" id="print-card">このカードを印刷</button>
+  </div>
+  <div class="pilot-summary" id="pilot-summary"></div>
+  <section class="pilot-subsection">
+   <h4>拠点までの直線距離とreach</h4>
+   <div class="scroll">
+    <table>
+     <thead><tr><th>種別</th><th>最近の拠点</th><th>判定</th></tr></thead>
+     <tbody id="pilot-reach"></tbody>
+    </table>
+   </div>
+   <p class="pilot-meta" id="pilot-location-note"></p>
+  </section>
+  <div class="pilot-grid">
+   <section class="pilot-subsection">
+    <h4>欠損理由コード一覧（区全体）</h4>
+    <ul class="pilot-list" id="pilot-gaps"></ul>
+   </section>
+   <section class="pilot-subsection">
+    <h4>出典</h4>
+    <ul class="pilot-list" id="pilot-sources"></ul>
+   </section>
+  </div>
+  <div class="pilot-actions">
+   <section>
+    <h4>次の30日で確認すること</h4>
+    <div class="write-box" aria-label="次の30日で確認することの記入欄"></div>
+   </section>
+   <section>
+    <h4>中止条件</h4>
+    <div class="write-box short" aria-label="中止条件の記入欄"></div>
+   </section>
+  </div>
+  <p class="pilot-footnote" id="pilot-footnote"></p>
+ </div>
+</section>
+
 <section>
  <h2>拠点の件数（位置不明を含む）</h2>
  <div class="scroll">
@@ -341,6 +437,7 @@ TEMPLATE = """<!doctype html>
 const DATA = __DATA__;
 const KIND_LABELS = __KIND_LABELS__;
 const REASON_LABELS = __REASON_LABELS__;
+const REACH_LABELS = __REACH_LABELS__;
 const STRESS = __STRESS_CONFIG__;
 const nf = n => n.toLocaleString('ja-JP');
 
@@ -352,6 +449,8 @@ const stressScenarios = STRESS.scenarios || [];
 const stressById = Object.fromEntries(stressScenarios.map(s => [s.id, s]));
 const defaultStress = stressById.current || stressScenarios[0];
 const scaled75 = (area, scenario) => Math.round(area.pop_75plus * scenario.factor);
+let activeStress = defaultStress;
+let selectedAreaCode = null;
 
 document.getElementById('stress-note').textContent = STRESS.note;
 document.getElementById('stress-source').textContent = '係数の出所: ' + STRESS.source;
@@ -384,7 +483,8 @@ function renderWorst(scenario) {
   document.getElementById('worst-body').innerHTML = outAreas.slice(0, 10).map((item, index) => {
     const area = item.area;
     const distance = typeof area.nearest_m.cool === 'number' ? nf(area.nearest_m.cool.toFixed(1)) + 'm' : '位置不明';
-    return `<tr data-area-code="${area.code}" tabindex="0"><td>${index + 1}</td><td>${area.name}</td>`
+    const selected = area.code === selectedAreaCode;
+    return `<tr data-area-code="${area.code}" tabindex="0" aria-selected="${selected}"><td>${index + 1}</td><td>${area.name}</td>`
       + `<td>${nf(item.population)}人</td><td>${distance}</td><td><span class="reach out">out</span></td></tr>`;
   }).join('');
   const unknownAreas = areas.filter(a => a.reach.cool === 'unknown');
@@ -392,10 +492,66 @@ function renderWorst(scenario) {
   document.getElementById('unknown-note').textContent =
     '涼み処の判定不能: ' + nf(unknownAreas.length) + '町丁 / ' + nf(unknownPopulation) + '人（' + scenario.label + '）。';
   document.getElementById('worst-scenario').textContent = scenario.label;
+  if (selectedAreaCode) {
+    const selectedArea = areas.find(area => area.code === selectedAreaCode);
+    if (selectedArea) renderPilotCard(selectedArea);
+  }
+}
+
+const htmlEscape = value => String(value).replace(/[&<>"']/g, character => ({
+  '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+}[character]));
+const distanceText = value => typeof value === 'number'
+  ? value.toLocaleString('ja-JP', {minimumFractionDigits: 1, maximumFractionDigits: 1}) + 'm'
+  : '位置不明';
+
+function renderPilotCard(area) {
+  const scenario = activeStress;
+  document.getElementById('pilot-area-name').textContent = area.name;
+  document.getElementById('pilot-area-meta').textContent =
+    'コード: ' + area.code + ' ／ 選択シナリオ: ' + scenario.label + '（×' + scenario.factor + '）';
+  document.getElementById('pilot-summary').innerHTML = [
+    {value: nf(scaled75(area, scenario)) + '人', label: '75歳以上人口（' + scenario.label + '）'},
+    {value: nf(area.pop_65plus) + '人', label: '65歳以上人口（現況）'},
+    {value: REACH_LABELS[area.reach.cool] || area.reach.cool, label: '涼み処 reach'},
+  ].map(item => `<div class="summary-item"><b>${htmlEscape(item.value)}</b><span>${htmlEscape(item.label)}</span></div>`).join('');
+  document.getElementById('pilot-reach').innerHTML = ['shelter', 'cool', 'medical', 'care'].map(kind => {
+    const reach = area.reach[kind];
+    return `<tr><th>${htmlEscape(KIND_LABELS[kind])}</th><td>${distanceText(area.nearest_m[kind])}</td>`
+      + `<td><span class="reach ${htmlEscape(reach)}">${htmlEscape(REACH_LABELS[reach] || reach)}</span></td></tr>`;
+  }).join('');
+  document.getElementById('pilot-location-note').textContent = area.lat === null
+    ? 'この町丁は代表点が未結合のため、全拠点の距離判定から除外されています。'
+    : '町丁代表点: 北緯 ' + area.lat.toFixed(6) + ' ／ 東経 ' + area.lon.toFixed(6) + '（距離は直線距離）';
+  const areaGap = area.lat === null
+    ? `<li><code>source_missing</code> 町丁代表点: この町丁の代表点がD6にありません</li>` : '';
+  document.getElementById('pilot-gaps').innerHTML = gaps.map(g =>
+    `<li><code>${htmlEscape(g.reason)}</code> ${htmlEscape(KIND_LABELS[g.kind] || g.kind)}: ${htmlEscape(g.note)}</li>`
+  ).join('') + areaGap;
+  document.getElementById('pilot-sources').innerHTML = meta.sources.map(source => {
+    const date = (source.fetched_at || '').slice(0, 10) || '不明';
+    return `<li>${htmlEscape(source.id)}（${htmlEscape(date)}）<br>`
+      + `<a href="${htmlEscape(source.url)}">${htmlEscape(source.url)}</a></li>`;
+  }).join('');
+  document.getElementById('pilot-footnote').textContent =
+    'このカードは選択時点のストレステスト表示です。経路距離・段差・信号待ちは含まず、位置不明データは判定不能として扱います。';
+  document.getElementById('pilot-section').hidden = false;
+}
+
+function selectArea(code) {
+  const area = areas.find(candidate => candidate.code === code);
+  if (!area) return;
+  selectedAreaCode = area.code;
+  document.querySelectorAll('#worst-body tr[data-area-code]').forEach(row => {
+    row.setAttribute('aria-selected', row.dataset.areaCode === selectedAreaCode ? 'true' : 'false');
+  });
+  renderPilotCard(area);
+  document.getElementById('pilot-section').scrollIntoView({behavior: 'smooth', block: 'start'});
 }
 
 function selectStressScenario(id) {
   const scenario = stressById[id] || defaultStress;
+  activeStress = scenario;
   document.querySelectorAll('.stress-button').forEach(button => {
     button.setAttribute('aria-pressed', button.dataset.scenario === scenario.id ? 'true' : 'false');
   });
@@ -407,6 +563,19 @@ document.querySelectorAll('.stress-button').forEach(button => {
   button.addEventListener('click', () => selectStressScenario(button.dataset.scenario));
 });
 selectStressScenario(defaultStress.id);
+
+document.getElementById('worst-body').addEventListener('click', event => {
+  const row = event.target.closest('tr[data-area-code]');
+  if (row) selectArea(row.dataset.areaCode);
+});
+document.getElementById('worst-body').addEventListener('keydown', event => {
+  if (event.key !== 'Enter' && event.key !== ' ') return;
+  const row = event.target.closest('tr[data-area-code]');
+  if (!row) return;
+  event.preventDefault();
+  selectArea(row.dataset.areaCode);
+});
+document.getElementById('print-card').addEventListener('click', () => window.print());
 
 const kinds = ['shelter', 'cool', 'medical', 'care'];
 document.getElementById('facility-table').innerHTML = kinds.map(k => {
@@ -454,6 +623,7 @@ def main() -> int:
         .replace("__DATA__", json.dumps(payload, ensure_ascii=False, separators=(",", ":")))
         .replace("__KIND_LABELS__", json.dumps(KIND_LABELS, ensure_ascii=False))
         .replace("__REASON_LABELS__", json.dumps(REASON_LABELS, ensure_ascii=False))
+        .replace("__REACH_LABELS__", json.dumps(REACH_LABELS, ensure_ascii=False))
         .replace("__STRESS_CONFIG__", json.dumps(stress_config, ensure_ascii=False, separators=(",", ":")))
         .replace("__MAP__", build_svg(payload))
         .replace("__WORST_ROWS__", worst_rows)
