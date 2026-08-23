@@ -1,0 +1,65 @@
+{
+ "ward": "江東区",
+ "sources": {
+  "D1": {
+   "id": "D1",
+   "status": "ok",
+   "scope": "prefecture_wide",
+   "title": "東京都防災マップ 避難所・避難場所一覧データ",
+   "org": "東京都総務局",
+   "dataset_url": "https://catalog.data.metro.tokyo.lg.jp/dataset/t000003d0000000093",
+   "url": "https://www.opendata.metro.tokyo.lg.jp/soumu/130001_evacuation_center.csv",
+   "file": "data/raw/D1_130001_evacuation_center.csv",
+   "fetched_at": "2026-08-23T03:07:24.315039+00:00",
+   "sha256": "dc6cc97a78d613ae4beab1dfbbd56280a3652d67f5f49ba31c39a5579d22483d"
+  },
+  "D2": {
+   "id": "D2",
+   "status": "ok",
+   "scope": "ward",
+   "title": "クーリングシェルター(指定暑熱避難施設)一覧",
+   "org": "江東区",
+   "dataset_url": "https://catalog.data.metro.tokyo.lg.jp/dataset/t131083d3100000016",
+   "url": "https://www.opendata.metro.tokyo.lg.jp/koto/131083_202_cooling_shelter.csv",
+   "file": "data/raw/D2_131083_202_cooling_shelter.csv",
+   "fetched_at": "2026-08-23T03:07:24.322470+00:00",
+   "sha256": "85f09e02642d5e456b27ed6dfd753d25af3ef20cdf573a11ec3be3fc06108e39"
+  },
+  "D3": {
+   "id": "D3",
+   "status": "ok",
+   "scope": "prefecture_wide",
+   "title": "東京都の災害拠点病院等",
+   "org": "東京都保健医療局",
+   "dataset_url": "https://catalog.data.metro.tokyo.lg.jp/dataset/t000055d0000000357",
+   "url": "https://www.hokeniryo.metro.tokyo.lg.jp/documents/d/hokeniryo/kyotenbyoinlist",
+   "file": "data/raw/D3_kyotenbyoinlist.csv",
+   "fetched_at": "2026-08-23T03:07:24.322578+00:00",
+   "sha256": "b68e3c6fc3d1792a16a2e0b26f0d288a4f5a375324984777b75084b1d7b1fbd9"
+  },
+  "D4": {
+   "id": "D4",
+   "status": "ok",
+   "scope": "ward",
+   "title": "介護サービス事業所一覧",
+   "org": "江東区",
+   "dataset_url": "https://catalog.data.metro.tokyo.lg.jp/dataset/t131083d0000000026",
+   "url": "https://www.opendata.metro.tokyo.lg.jp/koto/131083_009_care_service.csv",
+   "file": "data/raw/D4_131083_009_care_service.csv",
+   "fetched_at": "2026-08-23T03:07:24.322661+00:00",
+   "sha256": "69cf5c74c904fbfcc0a6e81c4c21f647fbd1461e09294e6771f61d76111e7246"
+  },
+  "D5": {
+   "id": "D5",
+   "status": "ok",
+   "scope": "ward",
+   "title": "町丁別・年齢別・男女別人口",
+   "org": "江東区",
+   "dataset_url": "https://catalog.data.metro.tokyo.lg.jp/dataset/t131083d3100000017",
+   "url": "https://www.opendata.metro.tokyo.lg.jp/koto/131083_204_population_detail_chouchoubetu_202401.csv",
+   "file": "data/raw/D5_131083_204_population_detail_chouchoubetu_202401.csv",
+   "fetched_at": "2026-08-23T03:07:24.323179+00:00",
+   "sha256": "f6bf931c4d3e03e04679186fa65d23e385ba249b1a44f669d78eae6882b8bd82"
+  }
+ }
+}

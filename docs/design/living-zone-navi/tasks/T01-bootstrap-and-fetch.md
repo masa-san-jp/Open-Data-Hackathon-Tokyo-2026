@@ -1,4 +1,4 @@
-status: doing
+status: done
 phase: 0
 
 # T01 骨組みと取得
@@ -16,4 +16,6 @@ phase: 0
 `python3 scripts/fetch_sources.py` が非ゼロ終了なし。sources.json に D1〜D5 の記録（not_published含む）が揃う。
 
 ## 作業ログ
-（完了時に1〜3行）
+- `apps/living-zone-navi/`（scripts/ data/raw/ data/processed/ prototype/ + config.json + OPEN-ISSUES.md + .gitignore）を作成
+- `catalog.py` はカタログCSVをタイトル検索して都度URLを解決（ward優先→都全域フォールバック）。D3は区単位の一般医療機関一覧が無く「実施医療機関」系（予防接種・検査台帳）しか無かったため、都全域の「東京都の災害拠点病院等」に狭めて解決（OPEN-ISSUES.md参照）
+- `fetch_sources.py` 実行: D1〜D5すべて `status: ok` で取得成功（非ゼロ終了なし）。D2は実際には解決できたが、未解決時に `not_published` を返す分岐も実装済み
