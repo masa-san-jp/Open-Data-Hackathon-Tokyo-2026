@@ -5,8 +5,8 @@
 ## 1. 最初に読む順序
 
 1. `README.md` — 起動方法と現状
-2. `../../docs/design/machikado-qr/20260823-machikado-qr-design-spec.md` — 要件の正本
-3. `../../docs/design/machikado-qr/20260823-machikado-qr-implementation-plan.md` — フェーズとゲート
+2. `../../docs/design/20260823-machikado-qr-design-spec.md` — 要件の正本
+3. `../../docs/design/20260823-machikado-qr-implementation-plan.md` — フェーズとゲート
 4. `TASKS.md` — 実行可能タスクと依存関係
 5. `data/sources.json` と `data/build-report.json` — データの利用可否
 
