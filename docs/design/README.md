@@ -19,7 +19,7 @@
 - [`living-zone-navi/`](./living-zone-navi/) — 暑さと災害に強い生活圏ナビ。江東区を既定対象に、涼み処・避難所・医療・介護への到達性とデータ欠損を、すぐ動くHTMLデモとして実装する。
 - [`silverpunk-proof-map/`](./silverpunk-proof-map/) — 高齢者・要配慮者のための暑熱・災害対応生活圏ナビ。設計仕様、実装計画、自律実装用 `AGENT.md`、タスク分解を含む。
 - [`20260823-tokyo-proximity-role-platform/`](./20260823-tokyo-proximity-role-platform/) — 近接×役割のプラットフォーム設計。設計仕様・実装計画・エージェントハーネスを含む。
-- [`machikado-qr/`](./machikado-qr/) — まちかどQR「ここはどこ」。軒先のステッカーで現在地を確定させ、迷子（子ども・高齢者・外国人）と緊急通報を助ける。spec v0.1 と動くHTMLを含む。
+- [`machikado-qr/`](./machikado-qr/) — まちかどQR「ここはどこ」。spec v0.2、レビュー、フェーズ別実装計画を収録。動くデモと自律実装ハーネスは [`apps/machikado-qr/`](../../apps/machikado-qr/) に置く。
 
 ## 命名
 

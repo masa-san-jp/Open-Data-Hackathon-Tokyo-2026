@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "data_mode": "candidate-demo",
+  "data_quality": {
+    "min_candidate_points": 1200,
+    "max_candidate_points": 1300,
+    "allowed_destination_kinds": [
+      "water"
+    ],
+    "max_duplicate_destination_coordinate_cluster": 2
+  },
+  "wayfinding": {
+    "enabled_for_public_use": false,
+    "minimum_leg_m": 40,
+    "maximum_leg_m": 400,
+    "minimum_progress_m": 25,
+    "maximum_walk_home_m": 2000
+  },
+  "demo": {
+    "current_place_code": "新宿0001",
+    "home_place_code": "新宿0004",
+    "contact_name": "デモ家族",
+    "contact_phone": "000"
+  }
+}
