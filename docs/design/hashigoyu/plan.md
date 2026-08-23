@@ -53,6 +53,7 @@
 **`T1-01` リポジトリ初期化**
 
 - 依存: なし
+- 状態: 完了
 - 作るもの: `pnpm-workspace.yaml`、ルート `package.json`、`tsconfig.base.json`（`strict: true`）、`.gitignore`
 - 受け入れ条件:
   - `pnpm install` が成功する
