@@ -65,6 +65,7 @@
 **`T1-02` ドメイン型定義**
 
 - 依存: `T1-01`
+- 状態: 完了
 - 作るもの: `packages/domain/src/types.ts`
 - 内容: `docs/spec.md` §3 の型をそのまま実装する。**型を追加・改名しない**
 - 受け入れ条件: `tsc --noEmit` が通る。spec §3 の全 interface が export されている
