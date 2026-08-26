@@ -21,6 +21,28 @@ export function annualRenewalReserve(budget: Budget): number {
     : budget.renewalCost;
 }
 
+export function annualCashIncrease(budget: Budget): number {
+  const cashGap = budget.targetCash - budget.cash;
+  if (cashGap <= 0) {
+    return 0;
+  }
+
+  return budget.yearsToCashTarget > 0
+    ? cashGap / budget.yearsToCashTarget
+    : cashGap;
+}
+
+export function annualRequiredRevenue(budget: Budget): number {
+  return Math.max(
+    0,
+    annualFixed(budget) +
+      budget.loanRepayment +
+      annualRenewalReserve(budget) +
+      annualCashIncrease(budget) -
+      budget.subsidy,
+  );
+}
+
 export function requiredDailyVisitors(budget: Budget): number {
   const revenue = unitRevenue(budget);
   if (revenue <= 0) {
@@ -29,14 +51,7 @@ export function requiredDailyVisitors(budget: Budget): number {
 
   return Math.max(
     1,
-    Math.ceil(
-      (annualFixed(budget) +
-        budget.loanRepayment +
-        annualRenewalReserve(budget) -
-        budget.subsidy) /
-        budget.operatingDays /
-        revenue,
-    ),
+    Math.ceil(annualRequiredRevenue(budget) / budget.operatingDays / revenue),
   );
 }
 

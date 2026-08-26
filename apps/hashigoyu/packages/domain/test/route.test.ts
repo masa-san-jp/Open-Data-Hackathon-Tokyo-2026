@@ -45,6 +45,8 @@ function budget(bathhouseId: string): Budget {
     asset: 30000000,
     land: 50000000,
     cash: 4000000,
+    targetCash: 4000000,
+    yearsToCashTarget: 1,
     debt: 12000000,
     yearsToRenewal: 7,
     renewalCost: 32000000,

@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
   achievementRate,
+  annualCashIncrease,
   annualFixed,
+  annualRequiredRevenue,
   annualRenewalReserve,
   annualSales,
   consecutiveShortfallDays,
@@ -38,6 +40,8 @@ const budgetA: Budget = {
   asset: 30000000,
   land: 50000000,
   cash: 4000000,
+  targetCash: 4000000,
+  yearsToCashTarget: 1,
   debt: 12000000,
   yearsToRenewal: 7,
   renewalCost: 32000000,
@@ -79,6 +83,52 @@ describe("budget calculations", () => {
 
   it("uses the full renewal cost when renewal is due this year", () => {
     expect(annualRenewalReserve({ ...budgetA, yearsToRenewal: 0 })).toBe(32000000);
+  });
+
+  it("spreads the cash gap over the years to the cash target", () => {
+    expect(
+      annualCashIncrease({
+        ...budgetA,
+        cash: 4000000,
+        targetCash: 10000000,
+        yearsToCashTarget: 2,
+      }),
+    ).toBe(3000000);
+  });
+
+  it("uses the full cash gap when the cash target is due this year", () => {
+    expect(
+      annualCashIncrease({
+        ...budgetA,
+        cash: 4000000,
+        targetCash: 10000000,
+        yearsToCashTarget: 0,
+      }),
+    ).toBe(6000000);
+  });
+
+  it("does not increase cash when the current cash meets the target", () => {
+    expect(annualCashIncrease({ ...budgetA, targetCash: 4000000 })).toBe(0);
+    expect(annualCashIncrease({ ...budgetA, targetCash: 3000000 })).toBe(0);
+  });
+
+  it("includes the cash increase in annual required revenue and daily visitors", () => {
+    const withCashTarget = {
+      ...budgetA,
+      targetCash: 10000000,
+      yearsToCashTarget: 2,
+    };
+
+    expect(annualRequiredRevenue(withCashTarget)).toBeCloseTo(
+      annualFixed(budgetA) +
+        budgetA.loanRepayment +
+        annualRenewalReserve(budgetA) +
+        3000000 -
+        budgetA.subsidy,
+    );
+    expect(requiredDailyVisitors(withCashTarget)).toBeGreaterThan(
+      requiredDailyVisitors(budgetA),
+    );
   });
 
   it("calculates PL, BS and CF values", () => {

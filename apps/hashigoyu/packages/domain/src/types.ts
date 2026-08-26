@@ -36,6 +36,8 @@ export interface Budget {
   asset: number;
   land: number;
   cash: number;
+  targetCash: number;
+  yearsToCashTarget: number;
   debt: number;
   yearsToRenewal: number;
   renewalCost: number;
