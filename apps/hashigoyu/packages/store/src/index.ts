@@ -21,6 +21,8 @@ const STORE_CHANNEL = "hashigoyu-store";
 export interface HashigoyuStore {
   getSnapshot(): StoreSnapshot;
   subscribe(listener: StoreListener): () => void;
+  addBathhouse(bathhouse: Omit<Bathhouse, "id">): BathhouseId;
+  updateBathhouse(bathhouseId: BathhouseId, patch: Partial<Omit<Bathhouse, "id">>): void;
   updateBudget(bathhouseId: BathhouseId, patch: Partial<Budget>): void;
   confirmBudget(bathhouseId: BathhouseId, confirmedAt: ISODateTime, confirmedBy: string): void;
   incrementToday(bathhouseId: BathhouseId): void;
@@ -348,6 +350,14 @@ function cloneSnapshot(snapshot: StoreSnapshot): StoreSnapshot {
   };
 }
 
+function nextBathhouseId(bathhouses: readonly Bathhouse[]): BathhouseId {
+  const largestId = bathhouses.reduce((largest, bathhouse) => {
+    const match = /^B(\d+)$/.exec(bathhouse.id);
+    return match ? Math.max(largest, Number(match[1])) : largest;
+  }, 0);
+  return `B${String(largestId + 1).padStart(3, "0")}`;
+}
+
 export function createStore(initialSnapshot: StoreSnapshot = createSampleSnapshot()): HashigoyuStore {
   let snapshot = cloneSnapshot(initialSnapshot);
   const listeners = new Set<StoreListener>();
@@ -378,6 +388,31 @@ export function createStore(initialSnapshot: StoreSnapshot = createSampleSnapsho
     subscribe: (listener) => {
       listeners.add(listener);
       return () => listeners.delete(listener);
+    },
+    addBathhouse: (bathhouse) => {
+      const id = nextBathhouseId(snapshot.bathhouses);
+      snapshot = {
+        ...snapshot,
+        bathhouses: [...snapshot.bathhouses, { ...bathhouse, id }],
+      };
+      notify();
+      publish();
+      return id;
+    },
+    updateBathhouse: (bathhouseId, patch) => {
+      const current = snapshot.bathhouses.find((bathhouse) => bathhouse.id === bathhouseId);
+      if (!current) {
+        return;
+      }
+
+      snapshot = {
+        ...snapshot,
+        bathhouses: snapshot.bathhouses.map((bathhouse) =>
+          bathhouse.id === bathhouseId ? { ...current, ...patch, id: bathhouseId } : bathhouse,
+        ),
+      };
+      notify();
+      publish();
     },
     updateBudget: (bathhouseId, patch) => {
       const current = snapshot.budgets[bathhouseId];

@@ -33,4 +33,32 @@ describe("store", () => {
     testStore.decrementToday("B001");
     expect(testStore.getSnapshot().dailyCounts.B001?.at(-1)?.total).toBe(before);
   });
+
+  it("adds and updates a bathhouse without creating a budget", () => {
+    const testStore = createStore();
+    const id = testStore.addBathhouse({
+      name: "新町湯",
+      address: "東京都新宿区新町1-2-3",
+      ward: "新宿区",
+      lat: 35.69,
+      lng: 139.71,
+      hasSauna: false,
+      openHour: 15,
+      closeHour: 24,
+      unionMember: false,
+      active: true,
+    });
+
+    expect(id).toBe("B007");
+    expect(testStore.getSnapshot().bathhouses.at(-1)).toMatchObject({ id, name: "新町湯" });
+    expect(testStore.getSnapshot().budgets[id]).toBeUndefined();
+
+    testStore.updateBathhouse(id, { name: "新町温泉", closeHour: 25 });
+
+    expect(testStore.getSnapshot().bathhouses.at(-1)).toMatchObject({
+      id,
+      name: "新町温泉",
+      closeHour: 25,
+    });
+  });
 });
