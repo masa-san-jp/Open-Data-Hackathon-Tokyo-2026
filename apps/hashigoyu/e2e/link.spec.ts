@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 const sampleNotice = "銭湯名・住所・人数・金額はすべて架空のサンプルです";
 
-test("管理の予算変更が番台へリロードなしで反映される", async ({ browser, baseURL }) => {
+test("管理の現金目標変更が番台へリロードなしで反映される", async ({ browser, baseURL }) => {
   const context = await browser.newContext();
   const counter = await context.newPage();
   const admin = await context.newPage();
@@ -12,9 +12,27 @@ test("管理の予算変更が番台へリロードなしで反映される", as
 
   await admin.goto(`${baseURL}/admin/`);
   await admin.getByRole("button", { name: /若葉湯/ }).click();
-  await admin.getByRole("spinbutton", { name: "更新まで", exact: true }).fill("10");
+  await admin.getByRole("spinbutton", { name: "残したい現金", exact: true }).fill("10000000");
 
-  await expect(counter.locator(".counter-kpis").getByText("目標 83", { exact: true })).toBeVisible();
+  await expect(counter.locator(".counter-kpis").getByText("目標 286", { exact: true })).toBeVisible();
+  await context.close();
+});
+
+test("管理の現金目標変更が顧客の2軒目提案へ反映される", async ({ browser, baseURL }) => {
+  const context = await browser.newContext();
+  const guest = await context.newPage();
+  const admin = await context.newPage();
+
+  await guest.goto(`${baseURL}/guest/`);
+  await guest.getByLabel("入る時間", { exact: true }).fill("16:00");
+  await guest.getByRole("button", { name: "3軒", exact: true }).click();
+  await expect(guest.locator(".route-card h3").nth(1)).toHaveText("若葉湯");
+
+  await admin.goto(`${baseURL}/admin/`);
+  await admin.getByRole("button", { name: /日の出湯/ }).click();
+  await admin.getByRole("spinbutton", { name: "残したい現金", exact: true }).fill("100000000");
+
+  await expect(guest.locator(".route-card h3").nth(1)).toHaveText("日の出湯");
   await context.close();
 });
 

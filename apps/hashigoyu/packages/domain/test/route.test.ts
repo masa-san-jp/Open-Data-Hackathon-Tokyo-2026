@@ -95,6 +95,40 @@ describe("route selection", () => {
     expect(result.map((leg) => leg.bathhouse.id)).toEqual(["B001", "B003", "B002"]);
   });
 
+  it("changes the second bathhouse when its cash target raises the shortfall", () => {
+    const input = {
+      from: point,
+      startHour: 15,
+      count: 2 as const,
+      bathhouses: [
+        bathhouse("B001", 35.701, 139.7),
+        bathhouse("B002", 35.702, 139.7),
+        bathhouse("B003", 35.73, 139.7),
+      ],
+      todayCounts: { B001: 100, B002: 100, B003: 100 },
+    };
+    const baseBudgets = {
+      B001: budget("B001"),
+      B002: budget("B002"),
+      B003: budget("B003"),
+    };
+    const before = buildRoute({ ...input, budgets: baseBudgets });
+    const after = buildRoute({
+      ...input,
+      budgets: {
+        ...baseBudgets,
+        B003: {
+          ...baseBudgets.B003,
+          targetCash: 100000000,
+          yearsToCashTarget: 1,
+        },
+      },
+    });
+
+    expect(before.map((leg) => leg.bathhouse.id)).toEqual(["B001", "B002"]);
+    expect(after.map((leg) => leg.bathhouse.id)).toEqual(["B001", "B003"]);
+  });
+
   it("does not repeat a bathhouse and returns fewer legs when candidates run out", () => {
     const result = buildRoute({
       from: point,

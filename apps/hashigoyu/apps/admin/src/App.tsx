@@ -1,10 +1,14 @@
 import { useMemo, useState, useSyncExternalStore } from "react";
 import {
   achievementRate,
+  annualCashIncrease,
+  annualFixed,
+  annualRenewalReserve,
+  annualRequiredRevenue,
   annualSales,
   consecutiveShortfallDays,
   requiredDailyVisitors,
-  reserveGap,
+  unitRevenue,
 } from "domain/calc";
 import { adviceFor } from "domain/advice";
 import type { Bathhouse, Budget, DailyCount } from "domain/types";
@@ -90,6 +94,7 @@ function validateBathhouseForm(form: BathhouseForm): BathhouseFormErrors {
   return errors;
 }
 type EditableBudgetField =
+  | "operatingDays"
   | "price"
   | "addon"
   | "annualVisitors"
@@ -101,12 +106,15 @@ type EditableBudgetField =
   | "asset"
   | "land"
   | "cash"
+  | "targetCash"
+  | "yearsToCashTarget"
   | "debt"
   | "yearsToRenewal"
   | "renewalCost"
   | "loanRepayment";
 
 const EDITABLE_FIELDS: Record<EditableBudgetField, string> = {
+  operatingDays: text.operatingDays,
   price: text.price,
   addon: text.addon,
   annualVisitors: text.annualVisitors,
@@ -118,6 +126,8 @@ const EDITABLE_FIELDS: Record<EditableBudgetField, string> = {
   asset: text.asset,
   land: text.land,
   cash: text.cash,
+  targetCash: text.targetCash,
+  yearsToCashTarget: text.yearsToCashTarget,
   debt: text.debt,
   yearsToRenewal: text.yearsToRenewal,
   renewalCost: text.renewalCost,
@@ -143,6 +153,24 @@ const BS_FIELDS: readonly EditableBudgetField[] = [
   "renewalCost",
 ];
 const CF_FIELDS: readonly EditableBudgetField[] = ["loanRepayment"];
+const REVENUE_PLAN_FIELDS: readonly EditableBudgetField[] = ["price", "addon"];
+const EXPENSE_PLAN_FIELDS: readonly EditableBudgetField[] = [
+  "fuel",
+  "labor",
+  "otherFixed",
+  "loanRepayment",
+  "subsidy",
+];
+const RENEWAL_PLAN_FIELDS: readonly EditableBudgetField[] = [
+  "renewalCost",
+  "yearsToRenewal",
+];
+const CASH_PLAN_FIELDS: readonly EditableBudgetField[] = [
+  "cash",
+  "targetCash",
+  "yearsToCashTarget",
+];
+const BUSINESS_PLAN_FIELDS: readonly EditableBudgetField[] = ["operatingDays"];
 
 function subscribe(onStoreChange: () => void): () => void {
   return store.subscribe(() => onStoreChange());
@@ -479,14 +507,14 @@ function Dashboard({
         <div className="table-scroll">
           <table>
             <thead><tr>
-              <th>{text.bathhouse}</th><th>{text.today}</th><th>{text.target}</th><th>{text.achievement}</th>
+              <th>{text.bathhouse}</th><th>{text.today}</th><th>{text.target}</th><th>{text.remaining}</th><th>{text.achievement}</th>
               <th>{text.first}</th><th>{text.hop}</th><th>{text.sales}</th><th>{text.streak}</th>
             </tr></thead>
             <tbody>
               {stats.map((item) => (
                 <tr key={item.bathhouse.id} className={item.streak >= 30 ? "critical" : ""} onClick={() => onSelect(item.bathhouse.id)}>
                   <td><button type="button" className="row-button">{item.bathhouse.name}<small>{item.bathhouse.address}</small></button></td>
-                  <td>{item.today.total}</td><td>{item.required}</td><td className={item.achievement >= 1 ? "good" : ""}>{percent(item.achievement)}</td>
+                  <td>{item.today.total}</td><td>{item.required}</td><td className={item.today.total < item.required ? "bad" : "muted"}>{Math.max(0, item.required - item.today.total)}</td><td className={item.achievement >= 1 ? "good" : ""}>{percent(item.achievement)}</td>
                   <td>{Math.max(0, item.today.total - item.today.hop)}</td><td>{item.today.hop}</td>
                   <td>{yen(item.sales)}</td><td className={item.streak >= 30 ? "bad" : "muted"}>{item.streak || text.noValue}</td>
                 </tr>
@@ -514,6 +542,7 @@ function Detail({
 }) {
   const today = latestCount(counts);
   const required = requiredDailyVisitors(budget);
+  const remaining = Math.max(0, required - today.total);
   const hopRate = today.total > 0 ? today.hop / today.total : 0;
   const advice = adviceFor(budget, today.total, hopRate);
   const snapshot = store.getSnapshot();
@@ -538,8 +567,8 @@ function Detail({
       <div className="detail-kpis">
         <div><span>{text.kpiToday}</span><b>{today.total}{text.people}</b></div>
         <div><span>{text.kpiRequired}</span><b>{required}{text.people}</b></div>
+        <div><span>{text.kpiRemaining}</span><b className={remaining > 0 ? "bad" : "good"}>{remaining}{text.people}</b></div>
         <div><span>{text.kpiAchievement}</span><b>{percent(achievementRate(today.total, required))}</b></div>
-        <div><span>{text.kpiReserve}</span><b className={reserveGap(budget) < 0 ? "bad" : "good"}>{yen(reserveGap(budget))}</b></div>
       </div>
       <section className="detail-panel">
         <div className="section-title-row"><h2>{text.historyTitle}</h2><span>{text.targetLine}</span></div>
@@ -547,18 +576,40 @@ function Detail({
       </section>
       <section className="detail-panel">
         <div className="section-title-row">
-          <h2>{text.budgetTitle}</h2>
+          <h2>{text.visitorPlanTitle}</h2>
           <span className={budget.status === "confirmed" ? "confirmed" : "draft"}>
             {budget.status === "confirmed" ? text.confirmed : text.draft}
           </span>
         </div>
         <div className="budget-meta">{text.confirmedDate}: {budget.confirmedAt?.slice(0, 10) ?? text.noValue} ／ {text.confirmedBy}: {budget.confirmedBy ?? text.noValue}</div>
-        <div className="budget-edit-grid">
-          <BudgetGroup title={text.pl} budget={budget} fields={PL_FIELDS} onChange={update} />
-          <BudgetGroup title={text.bs} budget={budget} fields={BS_FIELDS} onChange={update} />
-          <BudgetGroup title={text.cf} budget={budget} fields={CF_FIELDS} onChange={update} />
+        <div className="plan-results">
+          <div><span>{text.annualRequiredRevenue}</span><b>{yen(annualRequiredRevenue(budget))}</b></div>
+          <div><span>{text.kpiRequired}</span><b>{required}{text.people}</b></div>
         </div>
-        <button type="button" className="confirm-button" onClick={confirm}>{text.confirm}</button>
+        <div className="plan-input-grid">
+          <BudgetGroup title={text.averageSpendGroup} budget={budget} fields={REVENUE_PLAN_FIELDS} onChange={update} />
+          <BudgetGroup title={text.annualExpensesGroup} budget={budget} fields={EXPENSE_PLAN_FIELDS} onChange={update} />
+          <BudgetGroup title={text.equipmentReserveGroup} budget={budget} fields={RENEWAL_PLAN_FIELDS} onChange={update} />
+          <BudgetGroup title={text.cashTargetGroup} budget={budget} fields={CASH_PLAN_FIELDS} onChange={update} />
+          <BudgetGroup title={text.businessConditionsGroup} budget={budget} fields={BUSINESS_PLAN_FIELDS} onChange={update} />
+        </div>
+        <dl className="plan-breakdown">
+          <div><dt>{text.averageUnitRevenue}</dt><dd>{yen(unitRevenue(budget))}</dd></div>
+          <div><dt>{text.annualFixed}</dt><dd>{yen(annualFixed(budget))}</dd></div>
+          <div><dt>{text.annualRenewalReserve}</dt><dd>{yen(annualRenewalReserve(budget))}</dd></div>
+          <div><dt>{text.annualCashIncrease}</dt><dd>{yen(annualCashIncrease(budget))}</dd></div>
+        </dl>
+        <details className="detailed-budget">
+          <summary>{text.detailedBudget}</summary>
+          <div className="budget-edit-grid">
+            <BudgetGroup title={text.pl} budget={budget} fields={PL_FIELDS} onChange={update} />
+            <BudgetGroup title={text.bs} budget={budget} fields={BS_FIELDS} onChange={update} />
+            <BudgetGroup title={text.cf} budget={budget} fields={CF_FIELDS} onChange={update} />
+          </div>
+        </details>
+        <div className="confirm-row">
+          <button type="button" className="confirm-button" onClick={confirm}>{text.confirm}</button>
+        </div>
       </section>
       <section className="detail-panel">
         <h2>{text.adviceTitle}</h2>
