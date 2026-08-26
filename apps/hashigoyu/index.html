@@ -17,6 +17,8 @@ h1{font-family:"Hiragino Mincho ProN","Yu Mincho",serif;font-size:46px;letter-sp
 .noren i{flex:1;height:16px;background:rgba(255,255,255,.16);border-radius:0 0 3px 3px}
 .hero p{font-size:17px;color:#cfe0ea;max-width:660px}
 .hero p b{color:var(--kero)}
+.repo{margin-top:16px;font-size:13px;line-height:1.6}
+.repo a{color:#fff;text-underline-offset:3px;overflow-wrap:anywhere}
 .wrap{max-width:1040px;margin:0 auto;padding:36px 26px 70px}
 h2{font-size:12px;letter-spacing:.18em;color:var(--gray);margin:38px 0 14px}
 h2:first-child{margin-top:0}
@@ -45,6 +47,8 @@ h2:first-child{margin-top:0}
 .app .b{padding:18px;flex:1}
 .app ul{margin-left:17px;font-size:13.5px;color:var(--gray)}
 .app li{margin-bottom:6px}
+.app .url{padding:0 18px 14px;font-size:12px;color:var(--gray);overflow-wrap:anywhere}
+.app .url code{font-family:ui-monospace,"SF Mono",Menlo,monospace;color:var(--ai)}
 .app .go{padding:14px 18px;border-top:1px solid var(--line);
  font-size:14px;font-weight:700;color:var(--ai);display:flex;justify-content:space-between}
 
@@ -65,6 +69,7 @@ h2:first-child{margin-top:0}
   <h1>はしごゆ</h1>
   <div class="noren"><i></i><i></i><i></i><i></i><i></i><i></i></div>
   <p>東京の銭湯は<b>年20〜30軒</b>のペースで減っている。湯は客が来る前に沸かすため、その日の費用は開店時点でほぼ確定する。<b>空いたまま閉店した湯は、そのまま損失になる。</b></p>
+  <p class="repo">リポジトリ：<a href="https://github.com/masa-san-jp/Open-Data-Hackathon-Tokyo-2026" target="_blank" rel="noopener">https://github.com/masa-san-jp/Open-Data-Hackathon-Tokyo-2026</a></p>
 </div></div>
 
 <div class="wrap">
@@ -96,6 +101,7 @@ h2:first-child{margin-top:0}
       <li>各湯の住所と地図アプリへのリンク</li>
       <li>2軒め以降は必要客数に届いていない湯を優先</li>
     </ul></div>
+    <div class="url">URL：<code>./kyaku.html</code></div>
     <div class="go"><span>開く</span><span>→</span></div>
   </a>
 
@@ -107,6 +113,7 @@ h2:first-child{margin-top:0}
       <li>1軒め／はしごの内訳は管理側から取得</li>
       <li>経営タブに30日推移・確定予算・改善提案</li>
     </ul></div>
+    <div class="url">URL：<code>./bandai.html</code></div>
     <div class="go"><span>開く</span><span>→</span></div>
   </a>
 
@@ -118,6 +125,7 @@ h2:first-child{margin-top:0}
       <li>1日の必要客数を算出して番台へ配信</li>
       <li>優先度つきの改善提案を月次で出力</li>
     </ul></div>
+    <div class="url">URL：<code>./kanri.html</code></div>
     <div class="go"><span>開く</span><span>→</span></div>
   </a>
 </div>

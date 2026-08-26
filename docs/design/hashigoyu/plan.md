@@ -1,7 +1,7 @@
 # はしごゆ 実装計画
 
 版: 1.0 ／ 2026-08-22
-前提: `docs/spec.md` を読んでいること。仕様と矛盾する実装は差し戻す。
+前提: `spec.md` を読んでいること。仕様と矛盾する実装は差し戻す。
 
 ---
 
@@ -67,7 +67,7 @@
 - 依存: `T1-01`
 - 状態: 完了
 - 作るもの: `packages/domain/src/types.ts`
-- 内容: `docs/spec.md` §3 の型をそのまま実装する。**型を追加・改名しない**
+- 内容: `spec.md` §3 の型をそのまま実装する。**型を追加・改名しない**
 - 受け入れ条件: `tsc --noEmit` が通る。spec §3 の全 interface が export されている
 - 検証: `pnpm --filter domain exec tsc --noEmit`
 

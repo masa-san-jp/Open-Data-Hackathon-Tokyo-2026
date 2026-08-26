@@ -1,5 +1,5 @@
 export const adminText = {
-  title: "ゆけむり 管理",
+  title: "はしごゆ 管理",
   dashboard: "ダッシュボード",
   bathhouse: "各湯",
   participants: "参加軒数",
