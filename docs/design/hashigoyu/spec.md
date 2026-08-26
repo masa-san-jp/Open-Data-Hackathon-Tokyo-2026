@@ -1,6 +1,6 @@
 # はしごゆ 設計仕様書
 
-版: 1.4 ／ 2026-08-26
+版: 1.5 ／ 2026-08-26
 この文書は実装の唯一の正とする。ここに書かれていないことは実装してはならない。判断が必要な箇所は §9 未決事項に集約する。
 
 ---
@@ -384,29 +384,28 @@ hashigoyu/
 
 ## 8. 配色とタイポグラフィ
 
-モダン和風・サウナの落ち着きを基調に、ケロリンイエローを操作アクセントとして残す。本節のトークンを唯一の正とする。
+富士山のペンキ絵、浴槽の水面、淡色タイルを現代的に再構成した「東京銭湯リバイバル」を基調とする。本節のトークンを唯一の正とする。
 
 ```css
---midnight:      #17384c;   /* 水風呂。ヘッダー・主要数値 */
---midnight-deep: #0b2838;   /* 主要文字・強調文字 */
---moss:          #466354;   /* 深緑のタイル */
---sage:          #a8b5ad;   /* サウナストーン */
---hinoki:        #d8c7a8;   /* 木部・進捗の下地 */
---surface:       #f6f4ee;   /* オフホワイトの主要面 */
---surface-muted: #e9eeeb;   /* guest / admin の背景 */
---kero:          #f5c518;   /* 選択中・＋1・確定 */
---shu:           #b94840;   /* 警告・未達だけに使用 */
---green:         #3f7c5b;   /* 達成・営業中 */
---text:          #1e2b2a;
---gray:          #687771;
---line:          #d6ded9;
+--fuji-sky:  #49a9d2;   /* 富士山の空。ブランド色・主要数値 */
+--fuji-deep: #123b53;   /* 輪郭・主要文字 */
+--water:     #bfe7ee;   /* 水面。補助面・グラフ */
+--tile-green:#9fcdbf;   /* 現代銭湯の淡い緑タイル */
+--tile-white:#f8faf7;   /* 白タイルの主要面 */
+--tile-mist: #eef5f4;   /* 目地を含む画面背景 */
+--kero:      #f2c515;   /* 選択中・＋1・確定 */
+--noren:     #d95f4e;   /* 警告・未達だけに使用 */
+--green:     #2f7a62;   /* 達成・営業中 */
+--text:      #17323f;
+--gray:      #60757d;
+--line:      #cedfe2;
 ```
 
-`surface` と `surface-muted` を画面の大部分に使い、`midnight` はヘッダーと重要数値、`moss` と `sage` は状態・補助面、`hinoki` は中立的な下地に使う。`kero` は選択中・主要操作だけ、`shu` は警告・未達だけに限定する。
+`tile-white` と `tile-mist` を画面の大部分に使い、細い目地と浅い影でタイルの清潔感を出す。`fuji-sky` はヘッダーと重要数値、`water` と `tile-green` は状態・補助面に使う。`kero` は選択中・主要操作だけ、`noren` は警告・未達だけに限定する。
 
-3画面のヘッダーは `midnight-deep` から `moss` の色面で統一する。guest のルート面、admin のKPIと必要客数計画、counter の残り人数面には色付きの境界または背景を使い、背景色の微差だけで新旧を表現しない。admin の年間必要売上は `midnight`、1日の必要客数は `moss` の面に分ける。
+3画面のヘッダーは `fuji-sky` から `water` へ明るくつながる空色の色面で統一し、文字は `fuji-deep` とする。背景にはごく薄いタイル目地を使い、カードは白タイルとしてフラットに区切る。guest のルート面、admin のKPIと必要客数計画、counter の残り人数面には `fuji-sky`・`water`・`tile-green` の色付き境界または背景を使う。admin の年間必要売上は `fuji-deep`、1日の必要客数は `tile-green` の面に分ける。
 
-見出しは明朝（`"Hiragino Mincho ProN","Yu Mincho",serif`）、本文とUIはゴシック（`"Hiragino Sans","Noto Sans JP","Yu Gothic",sans-serif`）。数値は `font-variant-numeric: tabular-nums`。
+見出し・本文・UIはすべて現代的な角ゴシック（`"Avenir Next","Helvetica Neue","Hiragino Kaku Gothic ProN","Hiragino Sans","Yu Gothic",sans-serif`）で統一する。見出しは `700` 以上、ブランド名は字間を広く取る。数値は `font-variant-numeric: tabular-nums`。
 
 ---
 

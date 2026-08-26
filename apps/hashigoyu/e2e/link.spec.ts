@@ -43,7 +43,7 @@ test("3画面に架空サンプルの免責表示がある", async ({ page, base
   }
 });
 
-test("3画面でモダン和風カラーパレットを共有する", async ({ page, baseURL }) => {
+test("3画面で富士山タイルの配色と角ゴシックを共有する", async ({ page, baseURL }) => {
   const headerSelectors = {
     guest: ".topbar",
     counter: ".counter-header",
@@ -54,19 +54,24 @@ test("3画面でモダン和風カラーパレットを共有する", async ({ p
     const palette = await page.evaluate(() => {
       const style = getComputedStyle(document.documentElement);
       return {
-        midnight: style.getPropertyValue("--midnight").trim(),
-        surface: style.getPropertyValue("--surface").trim(),
+        sky: style.getPropertyValue("--fuji-sky").trim(),
+        water: style.getPropertyValue("--water").trim(),
+        tile: style.getPropertyValue("--tile-green").trim(),
         accent: style.getPropertyValue("--kero").trim(),
-        danger: style.getPropertyValue("--shu").trim(),
+        danger: style.getPropertyValue("--noren").trim(),
+        font: style.fontFamily,
       };
     });
     expect(palette).toEqual({
-      midnight: "#17384c",
-      surface: "#f6f4ee",
-      accent: "#f5c518",
-      danger: "#b94840",
+      sky: "#49a9d2",
+      water: "#bfe7ee",
+      tile: "#9fcdbf",
+      accent: "#f2c515",
+      danger: "#d95f4e",
+      font: expect.stringContaining("Avenir Next"),
     });
     await expect.poll(() => page.locator(headerSelectors[app]).evaluate((element) => getComputedStyle(element).backgroundImage)).toContain("linear-gradient");
+    await expect.poll(() => page.evaluate(() => getComputedStyle(document.body).backgroundImage)).toContain("linear-gradient");
   }
 });
 

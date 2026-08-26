@@ -1,22 +1,21 @@
 :root {
-  --midnight: #17384c;
-  --midnight-deep: #0b2838;
-  --moss: #466354;
-  --sage: #a8b5ad;
-  --hinoki: #d8c7a8;
-  --surface: #f6f4ee;
-  --surface-muted: #e9eeeb;
-  --kero: #f5c518;
-  --shu: #b94840;
-  --green: #3f7c5b;
-  --text: #1e2b2a;
-  --gray: #687771;
-  --line: #d6ded9;
-  --ai: var(--midnight);
-  --ai-dark: var(--midnight-deep);
-  --tile: var(--surface-muted);
+  --fuji-sky: #49a9d2;
+  --fuji-deep: #123b53;
+  --water: #bfe7ee;
+  --tile-green: #9fcdbf;
+  --tile-white: #f8faf7;
+  --tile-mist: #eef5f4;
+  --kero: #f2c515;
+  --noren: #d95f4e;
+  --green: #2f7a62;
+  --text: #17323f;
+  --gray: #60757d;
+  --line: #cedfe2;
+  --ai: var(--fuji-sky);
+  --ai-dark: var(--fuji-deep);
+  --tile: var(--tile-mist);
   color: var(--text);
-  font-family: "Hiragino Sans", "Noto Sans JP", "Yu Gothic", sans-serif;
+  font-family: "Avenir Next", "Helvetica Neue", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", sans-serif;
   background: var(--tile);
 }
 
@@ -27,7 +26,11 @@
 body {
   margin: 0;
   min-width: 320px;
-  background: var(--tile);
+  background-color: var(--tile);
+  background-image:
+    linear-gradient(rgba(73, 169, 210, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(73, 169, 210, 0.055) 1px, transparent 1px);
+  background-size: 32px 32px;
 }
 
 button,
@@ -51,14 +54,35 @@ button {
 }
 
 .topbar {
+  position: relative;
   display: flex;
   align-items: center;
   min-height: 76px;
   margin: 16px 0;
   padding: 0 22px;
-  border-radius: 14px;
-  background: linear-gradient(120deg, var(--midnight-deep), var(--moss));
-  box-shadow: 0 10px 28px rgba(11, 40, 56, 0.12);
+  border: 1px solid rgba(18, 59, 83, 0.12);
+  border-radius: 10px;
+  background: linear-gradient(118deg, #78cbed 0%, var(--fuji-sky) 58%, var(--water) 100%);
+  box-shadow: 0 7px 0 rgba(18, 59, 83, 0.055);
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.topbar::before {
+  position: absolute;
+  right: 8%;
+  bottom: -58px;
+  z-index: 0;
+  width: 290px;
+  height: 128px;
+  background: rgba(248, 250, 247, 0.38);
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+  content: "";
+}
+
+.topbar > * {
+  position: relative;
+  z-index: 1;
 }
 
 h1,
@@ -71,13 +95,15 @@ p {
 h1,
 h2,
 h3 {
-  font-family: "Hiragino Mincho ProN", "Yu Mincho", serif;
+  font-family: inherit;
+  font-weight: 750;
 }
 
 h1 {
-  color: #fff;
+  color: var(--fuji-deep);
   font-size: 30px;
-  letter-spacing: 0.14em;
+  font-weight: 800;
+  letter-spacing: 0.17em;
 }
 
 .controls {
@@ -86,9 +112,9 @@ h1 {
   gap: 14px;
   padding: 18px;
   border: 1px solid var(--line);
-  border-top: 4px solid var(--hinoki);
-  border-radius: 12px;
-  background: var(--surface);
+  border-top: 4px solid var(--water);
+  border-radius: 9px;
+  background: var(--tile-white);
 }
 
 .control {
@@ -122,7 +148,7 @@ input {
 input:focus,
 button:focus-visible,
 a:focus-visible {
-  outline: 3px solid rgba(245, 197, 24, 0.55);
+  outline: 3px solid rgba(242, 197, 21, 0.55);
   outline-offset: 2px;
 }
 
@@ -158,7 +184,7 @@ a:focus-visible {
 }
 
 .form-error {
-  color: var(--shu);
+  color: var(--noren);
   font-size: 12px;
 }
 
@@ -172,18 +198,20 @@ a:focus-visible {
 .panel {
   min-width: 0;
   border: 1px solid var(--line);
-  border-radius: 12px;
-  background: var(--surface);
+  border-radius: 9px;
+  background: var(--tile-white);
   overflow: hidden;
-  box-shadow: 0 12px 30px rgba(11, 40, 56, 0.07);
+  box-shadow: 0 7px 0 rgba(18, 59, 83, 0.045);
 }
 
 .route-panel .panel-heading {
-  border-top: 4px solid var(--moss);
+  border-top: 5px solid var(--fuji-sky);
+  background: linear-gradient(90deg, rgba(191, 231, 238, 0.66), transparent 64%);
 }
 
 .list-panel .panel-heading {
-  border-top: 4px solid var(--hinoki);
+  border-top: 5px solid var(--tile-green);
+  background: linear-gradient(90deg, rgba(159, 205, 191, 0.34), transparent 64%);
 }
 
 .panel-heading {
@@ -219,6 +247,7 @@ a:focus-visible {
   gap: 12px;
   padding: 18px 20px;
   border-bottom: 1px solid var(--line);
+  box-shadow: inset 4px 0 0 rgba(73, 169, 210, 0.22);
 }
 
 .route-card:last-child,
