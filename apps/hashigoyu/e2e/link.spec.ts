@@ -43,6 +43,27 @@ test("3画面に架空サンプルの免責表示がある", async ({ page, base
   }
 });
 
+test("3画面でモダン和風カラーパレットを共有する", async ({ page, baseURL }) => {
+  for (const app of ["guest", "counter", "admin"]) {
+    await page.goto(`${baseURL}/${app}/`);
+    const palette = await page.evaluate(() => {
+      const style = getComputedStyle(document.documentElement);
+      return {
+        midnight: style.getPropertyValue("--midnight").trim(),
+        surface: style.getPropertyValue("--surface").trim(),
+        accent: style.getPropertyValue("--kero").trim(),
+        danger: style.getPropertyValue("--shu").trim(),
+      };
+    });
+    expect(palette).toEqual({
+      midnight: "#17384c",
+      surface: "#f6f4ee",
+      accent: "#f5c518",
+      danger: "#b94840",
+    });
+  }
+});
+
 test("銭湯管理で新規登録と基本情報の編集ができる", async ({ page, baseURL }) => {
   await page.goto(`${baseURL}/admin/`);
   await page.getByRole("button", { name: "銭湯管理", exact: true }).click();

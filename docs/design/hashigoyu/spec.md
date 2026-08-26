@@ -1,6 +1,6 @@
 # はしごゆ 設計仕様書
 
-版: 1.2 ／ 2026-08-26
+版: 1.3 ／ 2026-08-26
 この文書は実装の唯一の正とする。ここに書かれていないことは実装してはならない。判断が必要な箇所は §9 未決事項に集約する。
 
 ---
@@ -384,19 +384,25 @@ hashigoyu/
 
 ## 8. 配色とタイポグラフィ
 
-デモで確定済み。変更しない。
+モダン和風・サウナの落ち着きを基調に、ケロリンイエローを操作アクセントとして残す。本節のトークンを唯一の正とする。
 
 ```css
---ai:      #12496e;   /* 湯船のタイル藍。主要面・数値 */
---ai-dark: #0b3350;
---kero:    #f5c518;   /* ケロリン桶の黄。強調・選択中 */
---shu:     #c8332c;   /* 暖簾の朱。警告・未達 */
---green:   #2f9e5e;   /* 達成 */
---tile:    #eef4f7;   /* guest / admin の背景 */
---paper:   #f7f4ec;   /* counter の背景 */
---gray:    #6d8494;
---line:    #dde5ea;
+--midnight:      #17384c;   /* 水風呂。ヘッダー・主要数値 */
+--midnight-deep: #0b2838;   /* 主要文字・強調文字 */
+--moss:          #466354;   /* 深緑のタイル */
+--sage:          #a8b5ad;   /* サウナストーン */
+--hinoki:        #d8c7a8;   /* 木部・進捗の下地 */
+--surface:       #f6f4ee;   /* オフホワイトの主要面 */
+--surface-muted: #e9eeeb;   /* guest / admin の背景 */
+--kero:          #f5c518;   /* 選択中・＋1・確定 */
+--shu:           #b94840;   /* 警告・未達だけに使用 */
+--green:         #3f7c5b;   /* 達成・営業中 */
+--text:          #1e2b2a;
+--gray:          #687771;
+--line:          #d6ded9;
 ```
+
+`surface` と `surface-muted` を画面の大部分に使い、`midnight` はヘッダーと重要数値、`moss` と `sage` は状態・補助面、`hinoki` は中立的な下地に使う。`kero` は選択中・主要操作だけ、`shu` は警告・未達だけに限定する。
 
 見出しは明朝（`"Hiragino Mincho ProN","Yu Mincho",serif`）、本文とUIはゴシック（`"Hiragino Sans","Noto Sans JP","Yu Gothic",sans-serif`）。数値は `font-variant-numeric: tabular-nums`。
 

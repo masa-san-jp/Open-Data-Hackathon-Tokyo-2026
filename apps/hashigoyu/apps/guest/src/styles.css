@@ -1,13 +1,21 @@
 :root {
-  --ai: #12496e;
-  --ai-dark: #0b3350;
+  --midnight: #17384c;
+  --midnight-deep: #0b2838;
+  --moss: #466354;
+  --sage: #a8b5ad;
+  --hinoki: #d8c7a8;
+  --surface: #f6f4ee;
+  --surface-muted: #e9eeeb;
   --kero: #f5c518;
-  --shu: #c8332c;
-  --green: #2f9e5e;
-  --tile: #eef4f7;
-  --gray: #6d8494;
-  --line: #dde5ea;
-  color: #142b39;
+  --shu: #b94840;
+  --green: #3f7c5b;
+  --text: #1e2b2a;
+  --gray: #687771;
+  --line: #d6ded9;
+  --ai: var(--midnight);
+  --ai-dark: var(--midnight-deep);
+  --tile: var(--surface-muted);
+  color: var(--text);
   font-family: "Hiragino Sans", "Noto Sans JP", "Yu Gothic", sans-serif;
   background: var(--tile);
 }
@@ -74,7 +82,7 @@ h1 {
   padding: 18px;
   border: 1px solid var(--line);
   border-radius: 12px;
-  background: #fff;
+  background: var(--surface);
 }
 
 .control {
@@ -159,7 +167,7 @@ a:focus-visible {
   min-width: 0;
   border: 1px solid var(--line);
   border-radius: 12px;
-  background: #fff;
+  background: var(--surface);
   overflow: hidden;
 }
 
