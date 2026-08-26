@@ -1,6 +1,6 @@
 # はしごゆ 設計仕様書
 
-版: 1.0 ／ 2026-08-22
+版: 1.1 ／ 2026-08-26
 この文書は実装の唯一の正とする。ここに書かれていないことは実装してはならない。判断が必要な箇所は §9 未決事項に集約する。
 
 ---
@@ -90,7 +90,9 @@ export interface Budget {
   // BS（円）
   asset: number;                       // 建物・設備の簿価
   land: number;
-  cash: number;
+  cash: number;                        // 現在の現金
+  targetCash: number;                  // 期末に残したい現金
+  yearsToCashTarget: number;           // 現金目標までの年数。0 = 今年中
   debt: number;
   yearsToRenewal: number;              // 次の大規模更新までの年数
   renewalCost: number;                 // 更新見込額
@@ -147,13 +149,31 @@ annualRenewalReserve(b: Budget): number =
 
 `yearsToRenewal === 0` は「今年来る」を意味し、全額を1年で積むものとする。
 
-### 4-4. 1日の必要客数
+### 4-4. 現金目標と1日の必要客数
+
+```ts
+annualCashIncrease(b: Budget): number =
+  b.targetCash > b.cash
+    ? (b.yearsToCashTarget > 0
+        ? (b.targetCash - b.cash) / b.yearsToCashTarget
+        : b.targetCash - b.cash)
+    : 0
+
+annualRequiredRevenue(b: Budget): number = Math.max(0,
+  annualFixed(b)
+  + b.loanRepayment
+  + annualRenewalReserve(b)
+  + annualCashIncrease(b)
+  - b.subsidy
+)
+```
+
+`targetCash` は期末に残したい運転資金、`cash` は現在の現金とする。目標との差額だけを積み増し、目標以上の現金がある場合は `0` とする。設備更新積立とは別に計算する。
 
 ```ts
 requiredDailyVisitors(b: Budget): number =
   Math.max(1, Math.ceil(
-    (annualFixed(b) + b.loanRepayment + annualRenewalReserve(b) - b.subsidy)
-    / b.operatingDays / unitRevenue(b)
+    annualRequiredRevenue(b) / b.operatingDays / unitRevenue(b)
   ))
 ```
 
@@ -293,7 +313,7 @@ isOpen(y: Bathhouse, hour: number): boolean = hour >= y.openHour && hour < y.clo
 
 ### 6-2. 番台（owner / タブレット）
 
-タブ3つ。
+タブ2つ。
 
 **番台タブ** — 目標までの残り（大）、＋1／−1、きょうの人数・目標・売上、1軒め／はしごの内訳。常時表示前提でスクロールさせない。
 
@@ -301,11 +321,11 @@ isOpen(y: Bathhouse, hour: number): boolean = hour >= y.openHour && hour < y.clo
 
 ### 6-3. 管理（admin / PC）
 
-タブ2つ。
+タブ3つ。
 
-**ダッシュボード** — 参加軒数／目標到達／30日以上未達／はしご率。表は 銭湯・来客・目標・達成率・1軒め・はしご・売上・連続未達。行クリックで各湯へ。
+**ダッシュボード** — 参加軒数／目標到達／30日以上未達／はしご率。表は 銭湯・来客・目標・あと必要・達成率・1軒め・はしご・売上・連続未達。行クリックで各湯へ。
 
-**各湯** — 銭湯セレクタ、KPI 4つ、30日グラフ、PL/BS/CF の**編集可能**フォーム、確定ボタン、改善提案。
+**各湯** — 銭湯セレクタ、今日の来客／1日の必要客数／あと必要／達成率、30日グラフ、必要客数計画、確定ボタン、改善提案。必要客数計画では平均客単価、年間経費、借入返済、設備積立、現在の現金、残したい現金、現金目標までの年数、営業日数、補助金を編集し、年間必要売上と1日の必要客数を即時表示する。PL/BS/CF は「詳しい経営情報」に収納する。
 
 **銭湯管理** — 銭湯一覧の検索、新規登録、登録済み銭湯の基本情報編集。基本情報は銭湯名・住所・区市町村・緯度・経度・サウナ有無・営業時間・組合加盟・営業状態。新規登録時に予算を自動生成せず、予算未登録として表示する。
 
