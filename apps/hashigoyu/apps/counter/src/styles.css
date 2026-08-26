@@ -30,14 +30,14 @@ h1, h2, h3, p { margin: 0; }
 h1, h2, h3 { font-family: "Hiragino Mincho ProN", "Yu Mincho", serif; }
 
 .counter-app { min-height: 100dvh; background: var(--paper); }
-.counter-header { display: flex; align-items: center; justify-content: space-between; gap: 20px; min-height: 58px; padding: 10px 22px; color: #fff; background: var(--ai); }
+.counter-header { display: flex; align-items: center; justify-content: space-between; gap: 20px; min-height: 58px; padding: 10px 22px; color: #fff; background: linear-gradient(120deg, var(--midnight-deep), var(--moss)); }
 .counter-header h1 { font-size: 22px; letter-spacing: .16em; }
 .tabs { display: flex; gap: 3px; padding: 3px; border-radius: 100px; background: rgba(0, 0, 0, .28); }
 .tabs button { border: 0; border-radius: 100px; padding: 8px 16px; color: #b9c7c4; background: transparent; font-size: 13px; }
 .tabs button.active { color: var(--midnight-deep); background: var(--kero); font-weight: 700; }
 
 .counter-view { display: grid; grid-template-columns: 1.2fr 1fr; gap: 22px; height: calc(100dvh - 58px); padding: 20px 22px; }
-.remaining-panel { display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 0; }
+.remaining-panel { display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 0; border: 1px solid var(--line); border-top: 5px solid var(--moss); border-radius: 18px; background: rgba(255,255,255,.42); box-shadow: 0 14px 34px rgba(11,40,56,.08); }
 .remaining-label { color: var(--gray); font-size: 19px; letter-spacing: .18em; }
 .remaining { margin: 4px 0; color: var(--ai); font-size: clamp(96px, 18vw, 190px); font-weight: 800; line-height: .95; font-variant-numeric: tabular-nums; }
 .remaining.achieved { color: var(--green); font-size: clamp(64px, 13vw, 124px); }
@@ -46,7 +46,7 @@ h1, h2, h3 { font-family: "Hiragino Mincho ProN", "Yu Mincho", serif; }
 .progress-track i { display: block; height: 100%; background: var(--ai); transition: width .2s; }
 .counter-kpis { display: flex; gap: 26px; color: var(--gray); font-size: 16px; }
 .counter-kpis b { color: var(--sumi); font-size: 19px; font-variant-numeric: tabular-nums; }
-.counter-actions { display: flex; flex-direction: column; justify-content: center; align-items: center; min-width: 0; gap: 12px; }
+.counter-actions { display: flex; flex-direction: column; justify-content: center; align-items: center; min-width: 0; gap: 12px; border: 1px solid var(--line); border-top: 5px solid var(--hinoki); border-radius: 18px; background: rgba(255,255,255,.3); box-shadow: 0 14px 34px rgba(11,40,56,.06); }
 .add-button { display: flex; flex-direction: column; align-items: center; justify-content: center; width: min(100%, 360px); min-height: 190px; border: 0; border-radius: 14px; color: var(--ai-dark); background: var(--kero); font-size: clamp(58px, 8vw, 92px); font-weight: 800; line-height: .9; }
 .add-button small { margin-top: 12px; font-size: 16px; font-weight: 600; }
 .subtract-button { width: min(100%, 360px); border: 1px solid var(--line); border-radius: 9px; padding: 10px; color: var(--gray); background: transparent; font-size: 22px; }

@@ -44,7 +44,12 @@ test("3画面に架空サンプルの免責表示がある", async ({ page, base
 });
 
 test("3画面でモダン和風カラーパレットを共有する", async ({ page, baseURL }) => {
-  for (const app of ["guest", "counter", "admin"]) {
+  const headerSelectors = {
+    guest: ".topbar",
+    counter: ".counter-header",
+    admin: ".admin-header",
+  } as const;
+  for (const app of ["guest", "counter", "admin"] as const) {
     await page.goto(`${baseURL}/${app}/`);
     const palette = await page.evaluate(() => {
       const style = getComputedStyle(document.documentElement);
@@ -61,6 +66,7 @@ test("3画面でモダン和風カラーパレットを共有する", async ({ p
       accent: "#f5c518",
       danger: "#b94840",
     });
+    await expect.poll(() => page.locator(headerSelectors[app]).evaluate((element) => getComputedStyle(element).backgroundImage)).toContain("linear-gradient");
   }
 });
 

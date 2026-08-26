@@ -29,7 +29,7 @@ h1, h2, h3, p { margin: 0; }
 h1, h2, h3 { font-family: "Hiragino Mincho ProN", "Yu Mincho", serif; }
 
 .admin-app { min-height: 100dvh; }
-.admin-header { display: flex; align-items: center; justify-content: space-between; gap: 20px; min-height: 72px; padding: 12px 28px; color: #fff; background: var(--ai); }
+.admin-header { display: flex; align-items: center; justify-content: space-between; gap: 20px; min-height: 72px; padding: 12px 28px; color: #fff; background: linear-gradient(120deg, var(--midnight-deep), var(--moss)); }
 .admin-header h1 { font-size: 24px; letter-spacing: .13em; }
 .admin-header nav { display: flex; gap: 4px; padding: 3px; border-radius: 100px; background: rgba(0,0,0,.25); }
 .admin-header nav button { border: 0; border-radius: 100px; padding: 8px 16px; color: #b9c7c4; background: transparent; font-size: 13px; }
@@ -37,10 +37,13 @@ h1, h2, h3 { font-family: "Hiragino Mincho ProN", "Yu Mincho", serif; }
 .admin-header nav button:disabled { cursor: not-allowed; opacity: .5; }
 .dashboard-view, .detail-view { width: min(1280px, calc(100% - 56px)); margin: 0 auto; padding: 24px 0 16px; }
 .summary-grid, .detail-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 13px; }
-.summary-grid > div, .detail-kpis > div { display: flex; flex-direction: column; gap: 7px; padding: 16px 18px; border: 1px solid var(--line); border-radius: 9px; background: var(--surface); }
+.summary-grid > div, .detail-kpis > div { display: flex; flex-direction: column; gap: 7px; padding: 16px 18px; border: 1px solid var(--line); border-top: 4px solid var(--sage); border-radius: 9px; background: var(--surface); box-shadow: 0 10px 24px rgba(11,40,56,.06); }
+.summary-grid > div:nth-child(2), .detail-kpis > div:nth-child(2) { border-top-color: var(--moss); }
+.summary-grid > div:nth-child(3), .detail-kpis > div:nth-child(3) { border-top-color: var(--shu); }
+.summary-grid > div:nth-child(4), .detail-kpis > div:nth-child(4) { border-top-color: var(--hinoki); }
 .summary-grid span, .detail-kpis span { color: var(--gray); font-size: 12px; }
 .summary-grid b, .detail-kpis b { color: var(--ai); font-size: 26px; font-variant-numeric: tabular-nums; }
-.dashboard-panel, .detail-panel { margin-top: 20px; padding: 18px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+.dashboard-panel, .detail-panel { margin-top: 20px; padding: 18px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); box-shadow: 0 14px 34px rgba(11,40,56,.07); }
 .section-title-row { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; }
 .section-title-row h2, .detail-panel > h2 { color: var(--ai); font-size: 19px; }
 .section-title-row > span { color: var(--gray); font-size: 12px; }
@@ -76,6 +79,7 @@ tbody tr.critical { background: #f8efed; }
 .draft { color: var(--shu); }
 .plan-results { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 16px; }
 .plan-results > div { display: flex; flex-direction: column; gap: 6px; padding: 16px 18px; border-radius: 8px; color: #fff; background: var(--ai); }
+.plan-results > div:last-child { background: var(--moss); }
 .plan-results span { color: #d9e3df; font-size: 12px; }
 .plan-results b { font-size: 24px; font-variant-numeric: tabular-nums; }
 .plan-input-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 14px; }
@@ -111,7 +115,7 @@ tbody tr.critical { background: #f8efed; }
 .primary-button { border: 0; color: var(--midnight-deep); background: var(--kero); }
 .secondary-button { border: 1px solid var(--line); color: var(--gray); background: #fff; }
 .master-layout { display: grid; grid-template-columns: minmax(360px, .9fr) minmax(480px, 1.1fr); gap: 18px; margin-top: 20px; align-items: start; }
-.master-list-panel, .master-editor-panel { min-width: 0; padding: 18px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+.master-list-panel, .master-editor-panel { min-width: 0; padding: 18px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); box-shadow: 0 14px 34px rgba(11,40,56,.07); }
 .master-list-toolbar { display: flex; align-items: center; gap: 12px; }
 .search-field { flex: 1; }
 .search-field input { width: 100%; min-height: 36px; border: 1px solid var(--line); border-radius: 6px; padding: 7px 10px; color: var(--ai-dark); background: #fff; }
