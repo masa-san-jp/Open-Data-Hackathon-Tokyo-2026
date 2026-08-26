@@ -89,10 +89,18 @@ h1, h2, h3 { font-family: "Hiragino Mincho ProN", "Yu Mincho", serif; }
 .sample-notice { padding: 0 22px 16px; color: var(--gray); font-size: 11px; text-align: right; }
 
 @media (max-width: 760px) {
+  .counter-header { min-height: 64px; padding: 8px 16px; }
+  .tabs button { min-height: 44px; padding: 10px 16px; }
   .counter-view { grid-template-columns: 1fr; height: auto; min-height: calc(100dvh - 58px); }
   .counter-kpis { gap: 12px; font-size: 13px; }
   .counter-kpis b { font-size: 16px; }
   .management-kpis { grid-template-columns: repeat(2, 1fr); }
   .budget-grid { grid-template-columns: 1fr; }
   .management-view { width: min(100% - 20px, 620px); }
+}
+
+@media (max-width: 480px) {
+  .counter-header h1 { font-size: 20px; }
+  .counter-view { min-height: calc(100dvh - 64px); padding: 18px 22px; }
+  .management-section { padding: 14px; }
 }

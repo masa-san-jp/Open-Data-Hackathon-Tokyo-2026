@@ -514,9 +514,14 @@ function Dashboard({
               {stats.map((item) => (
                 <tr key={item.bathhouse.id} className={item.streak >= 30 ? "critical" : ""} onClick={() => onSelect(item.bathhouse.id)}>
                   <td><button type="button" className="row-button">{item.bathhouse.name}<small>{item.bathhouse.address}</small></button></td>
-                  <td>{item.today.total}</td><td>{item.required}</td><td className={item.today.total < item.required ? "bad" : "muted"}>{Math.max(0, item.required - item.today.total)}</td><td className={item.achievement >= 1 ? "good" : ""}>{percent(item.achievement)}</td>
-                  <td>{Math.max(0, item.today.total - item.today.hop)}</td><td>{item.today.hop}</td>
-                  <td>{yen(item.sales)}</td><td className={item.streak >= 30 ? "bad" : "muted"}>{item.streak || text.noValue}</td>
+                  <td data-label={text.today}>{item.today.total}</td>
+                  <td data-label={text.target}>{item.required}</td>
+                  <td data-label={text.remaining} className={item.today.total < item.required ? "bad" : "muted"}>{Math.max(0, item.required - item.today.total)}</td>
+                  <td data-label={text.achievement} className={item.achievement >= 1 ? "good" : ""}>{percent(item.achievement)}</td>
+                  <td data-label={text.first}>{Math.max(0, item.today.total - item.today.hop)}</td>
+                  <td data-label={text.hop}>{item.today.hop}</td>
+                  <td data-label={text.sales}>{yen(item.sales)}</td>
+                  <td data-label={text.streak} className={item.streak >= 30 ? "bad" : "muted"}>{item.streak || text.noValue}</td>
                 </tr>
               ))}
             </tbody>

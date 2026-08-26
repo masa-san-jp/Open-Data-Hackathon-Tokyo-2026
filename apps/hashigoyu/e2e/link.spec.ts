@@ -67,3 +67,28 @@ test("銭湯管理で新規登録と基本情報の編集ができる", async ({
   await page.getByRole("button", { name: "保存", exact: true }).click();
   await expect(page.getByRole("button", { name: /新町温泉/ })).toBeVisible();
 });
+
+test("390px幅で3画面の主要操作がスマホ向けに表示される", async ({ page, baseURL }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+
+  await page.goto(`${baseURL}/guest/`);
+  await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await expect.poll(() => page.getByRole("button", { name: "現在地", exact: true }).evaluate((element) => element.getBoundingClientRect().height)).toBeGreaterThanOrEqual(44);
+  await expect.poll(() => page.getByRole("link", { name: "地図", exact: true }).first().evaluate((element) => element.getBoundingClientRect().height)).toBeGreaterThanOrEqual(44);
+
+  await page.goto(`${baseURL}/counter/`);
+  await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await expect.poll(() => page.getByRole("button", { name: "番台", exact: true }).evaluate((element) => element.getBoundingClientRect().height)).toBeGreaterThanOrEqual(44);
+  await expect.poll(() => page.getByRole("button", { name: "−1", exact: true }).evaluate((element) => element.getBoundingClientRect().height)).toBeGreaterThanOrEqual(44);
+
+  await page.goto(`${baseURL}/admin/`);
+  await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  const firstBathhouseCard = page.locator(".dashboard-panel tbody tr").first();
+  await expect(firstBathhouseCard.locator('td[data-label="来客"]')).toBeVisible();
+  await expect(firstBathhouseCard.locator('td[data-label="目標"]')).toBeVisible();
+  await expect(firstBathhouseCard.locator('td[data-label="あと必要"]')).toBeVisible();
+  await expect(firstBathhouseCard.locator('td[data-label="達成率"]')).toBeVisible();
+
+  await page.getByRole("button", { name: /若葉湯/ }).click();
+  await expect.poll(() => page.getByRole("spinbutton", { name: "残したい現金", exact: true }).evaluate((element) => element.getBoundingClientRect().height)).toBeGreaterThanOrEqual(44);
+});
