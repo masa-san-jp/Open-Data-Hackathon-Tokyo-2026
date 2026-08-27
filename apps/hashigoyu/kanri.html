@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>はしごゆ 管理</title>
+<style>
+:root{--ai:#12496e;--ai-dark:#0b3350;--kero:#f5c518;--shu:#c8332c;--green:#2f9e5e;
+--bg:#f2f5f7;--line:#dde5ea;--sumi:#1b1b1b;--gray:#6d8494}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--sumi);font-family:"Hiragino Sans","Noto Sans JP","Yu Gothic",sans-serif;font-size:14px}
+.bar{background:var(--ai);color:#fff;padding:13px 26px;display:flex;justify-content:space-between;align-items:center}
+.bar h1{font-family:"Hiragino Mincho ProN","Yu Mincho",serif;font-size:18px;letter-spacing:.2em;font-weight:600}
+.tabs{display:flex;gap:4px;background:rgba(0,0,0,.28);border-radius:100px;padding:3px}
+.tabs button{border:none;background:none;color:#9fc0d4;font-family:inherit;font-size:13px;
+ padding:8px 16px;border-radius:100px;cursor:pointer}
+.tabs button.on{background:var(--kero);color:#072437;font-weight:700}
+.wrap{max-width:1240px;margin:0 auto;padding:22px 26px 60px}
+h2{font-size:12px;letter-spacing:.16em;color:var(--gray);margin:24px 0 10px}
+h2:first-child{margin-top:0}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+.stat{background:#fff;border:1px solid var(--line);border-radius:10px;padding:15px 13px}
+.stat b{display:block;font-size:28px;font-weight:800;color:var(--ai);font-variant-numeric:tabular-nums;line-height:1.15}
+.stat b.ok{color:var(--green)}.stat b.warn{color:var(--shu)}
+.stat small{display:block;font-size:11px;color:var(--gray);margin-top:5px}
+
+table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+th{background:#e7eef2;color:var(--gray);font-size:11px;padding:9px;text-align:left;font-weight:600;white-space:nowrap}
+td{padding:11px 9px;border-top:1px solid #eef3f6}
+td.n{text-align:right;font-variant-numeric:tabular-nums}
+tbody tr{cursor:pointer}
+tbody tr:hover{background:#f4f9fc}
+tr.crit{background:#fdf1f0}
+.nm{font-weight:700}
+.sub{font-size:11px;color:var(--gray);margin-top:2px}
+.mini{height:6px;background:#e7eef2;border-radius:100px;overflow:hidden;width:70px;margin-top:4px}
+.mini i{display:block;height:100%;background:var(--ai)}
+.mini i.ok{background:var(--green)}.mini i.bad{background:var(--shu)}
+
+/* 各湯 */
+.head{display:flex;justify-content:space-between;align-items:flex-end;
+ border-bottom:3px solid var(--ai);padding-bottom:12px;margin-bottom:18px;flex-wrap:wrap;gap:12px}
+.head .t{font-family:"Hiragino Mincho ProN",serif;font-size:26px;letter-spacing:.14em;color:var(--ai)}
+.head .a{font-size:12px;color:var(--gray);margin-top:5px}
+select{font-family:inherit;font-size:14px;padding:9px 12px;border:2px solid var(--line);
+ border-radius:8px;background:#fff;color:var(--ai);font-weight:700}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
+.chart{background:#fff;border:1px solid var(--line);border-radius:10px;padding:17px;margin-bottom:18px}
+.chart .h{font-size:12px;letter-spacing:.14em;color:var(--gray);margin-bottom:14px}
+.bars{display:flex;align-items:flex-end;gap:4px;height:130px}
+.bars .col{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;position:relative}
+.bars .col i{display:block;background:var(--ai);border-radius:3px 3px 0 0}
+.bars .col i.bad{background:var(--shu)}
+.bars .col i.ok{background:var(--green)}
+.bars .col span{font-size:9px;color:var(--gray);text-align:center;margin-top:5px}
+.goal{position:absolute;left:0;right:0;border-top:2px dashed var(--kero);pointer-events:none}
+
+.budget{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+@media(max-width:940px){.budget{grid-template-columns:1fr}.kpis{grid-template-columns:1fr 1fr}}
+.bcard{background:#fff;border:1px solid var(--line);border-radius:10px;padding:17px}
+.bcard h4{font-size:13px;color:var(--ai);letter-spacing:.1em;margin-bottom:12px}
+.row{display:flex;align-items:center;gap:8px;margin:7px 0}
+.row label{flex:1;font-size:13px}
+.row input{width:118px;font-family:inherit;font-size:14px;padding:7px 9px;text-align:right;
+ border:2px solid var(--line);border-radius:7px;color:var(--ai);font-weight:700}
+.row span{font-size:11px;color:var(--gray);width:24px}
+.sum{display:flex;justify-content:space-between;font-size:14px;font-weight:700;color:var(--ai);
+ border-top:2px solid var(--ai);margin-top:11px;padding-top:10px}
+.sum.neg{color:var(--shu);border-color:var(--shu)}
+
+.sv{background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.svrow{display:flex;gap:13px;padding:15px 17px;border-top:1px solid #eef3f6;align-items:flex-start}
+.svrow:first-child{border:none}
+.pri{width:56px;flex-shrink:0}
+.pri b{display:block;font-size:11px;font-weight:800;padding:4px 0;border-radius:5px;color:#fff;text-align:center}
+.p1{background:var(--shu)}.p2{background:#d98324}.p3{background:var(--gray)}
+.svrow .t{font-size:15px;font-weight:700}
+.svrow .why{font-size:12.5px;color:var(--gray);margin-top:4px;line-height:1.7}
+.svrow .do{font-size:12.5px;margin-top:8px;line-height:1.75;background:#f4f8fa;border-radius:7px;padding:10px 12px}
+.svrow .do b{color:var(--ai)}
+.back{background:none;border:1px solid var(--line);border-radius:100px;padding:7px 14px;
+ font-family:inherit;font-size:12px;color:var(--gray);cursor:pointer}
+</style>
+</head>
+<body>
+<div class="bar">
+  <h1>はしごゆ 管理</h1>
+  <div class="tabs">
+    <button id="t1" class="on">ダッシュボード</button>
+    <button id="t2">各湯</button>
+  </div>
+</div>
+<div class="wrap">
+
+<!-- ダッシュボード -->
+<section id="v1">
+  <div class="stats">
+    <div class="stat"><b id="s-n">—</b><small>参加軒数</small></div>
+    <div class="stat"><b id="s-ok" class="ok">—</b><small>目標に到達</small></div>
+    <div class="stat"><b id="s-under" class="warn">—</b><small>30日以上 目標未達</small></div>
+    <div class="stat"><b id="s-hop">—</b><small>はしご率</small></div>
+  </div>
+  <h2>今日</h2>
+  <table>
+    <thead><tr><th>銭湯</th><th class="n">来客</th><th class="n">目標</th><th class="n">達成率</th>
+      <th class="n">1軒め</th><th class="n">はしご</th><th class="n">売上</th><th class="n">連続未達</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+</section>
+
+<!-- 各湯 -->
+<section id="v2" hidden>
+  <div class="head">
+    <div><div class="t" id="d-nm">—</div><div class="a" id="d-ad">—</div></div>
+    <select id="pick"></select>
+  </div>
+
+  <div class="kpis">
+    <div class="stat"><b id="d-now">—</b><small>今日の来客</small></div>
+    <div class="stat"><b id="d-be">—</b><small>1日の目標</small></div>
+    <div class="stat"><b id="d-mtd">—</b><small>今月累計（人）</small></div>
+    <div class="stat"><b id="d-fc">—</b><small>月末見込（人）</small></div>
+  </div>
+
+  <div class="chart">
+    <div class="h">直近30日の来客数（破線＝目標）</div>
+    <div class="bars" id="bars"></div>
+  </div>
+
+  <h2>年間予算</h2>
+  <div class="budget">
+    <div class="bcard"><h4>PL</h4>
+      <div class="row"><label>入浴料</label><input type="number" id="b-p1"><span>円</span></div>
+      <div class="row"><label>サウナ・物販</label><input type="number" id="b-p2"><span>円</span></div>
+      <div class="row"><label>年間客数</label><input type="number" id="b-q"><span>人</span></div>
+      <div class="row"><label>燃料・水道</label><input type="number" id="b-c1"><span>円</span></div>
+      <div class="row"><label>人件費</label><input type="number" id="b-c2"><span>円</span></div>
+      <div class="row"><label>その他固定費</label><input type="number" id="b-c5"><span>円</span></div>
+      <div class="row"><label>減価償却</label><input type="number" id="b-dep"><span>円</span></div>
+      <div class="row"><label>補助金</label><input type="number" id="b-sub"><span>円</span></div>
+      <div class="sum" id="pl-s"><span>売上</span><b>—</b></div>
+      <div class="sum" id="pl-o"><span>営業利益</span><b>—</b></div>
+    </div>
+    <div class="bcard"><h4>BS</h4>
+      <div class="row"><label>建物・設備</label><input type="number" id="b-asset"><span>円</span></div>
+      <div class="row"><label>土地</label><input type="number" id="b-land"><span>円</span></div>
+      <div class="row"><label>現預金</label><input type="number" id="b-cash"><span>円</span></div>
+      <div class="row"><label>借入残高</label><input type="number" id="b-debt"><span>円</span></div>
+      <div class="row"><label>次の更新まで</label><input type="number" id="b-yr"><span>年</span></div>
+      <div class="row"><label>更新見込額</label><input type="number" id="b-renew"><span>円</span></div>
+      <div class="sum" id="bs-n"><span>純資産</span><b>—</b></div>
+      <div class="sum" id="bs-need"><span>更新の年間積立額</span><b>—</b></div>
+    </div>
+    <div class="bcard"><h4>CF</h4>
+      <div class="row"><label>借入返済</label><input type="number" id="b-repay"><span>円</span></div>
+      <div class="sum" id="cf-o"><span>営業CF</span><b>—</b></div>
+      <div class="sum" id="cf-f"><span>手元に残る額</span><b>—</b></div>
+      <div class="sum" id="cf-g"><span>積立との差</span><b>—</b></div>
+      <div class="sum" id="cf-be"><span>1日の必要客数</span><b>—</b></div>
+    </div>
+  </div>
+
+  <h2>今月の改善提案</h2>
+  <div class="sv" id="sv"></div>
+</section>
+</div>
+
+<script>
+const $=i=>document.getElementById(i);
+const yen=n=>Math.round(n).toLocaleString()+'円';
+const PRICE=550;
+const YU=[
+{nm:"松の湯",addr:"墨田区東向島3-2-11",now:64,be:120,hop:.28,streak:0,
+ hist:[112,98,121,133,88,104,119,127,95,110,131,102,87,118,124,99,106,128,113,91,120,135,101,94,117,122,108,86,115,64],
+ b:{p1:550,p2:180,q:36000,c1:5400000,c2:7200000,c5:2640000,dep:2600000,sub:900000,
+    asset:22000000,land:180000000,cash:3800000,debt:14000000,yr:7,renew:32000000,repay:2160000}},
+{nm:"あけぼの湯",addr:"墨田区京島2-4-8",now:38,be:95,hop:.16,streak:34,
+ hist:[62,55,71,48,66,59,74,51,63,45,68,57,49,72,54,61,47,66,52,58,70,44,60,53,67,49,56,62,41,38],
+ b:{p1:550,p2:60,q:22000,c1:4600000,c2:5000000,c5:2100000,dep:1400000,sub:600000,
+    asset:9000000,land:150000000,cash:900000,debt:6000000,yr:3,renew:28000000,repay:1200000}},
+{nm:"富士見湯",addr:"台東区三ノ輪1-9-3",now:118,be:140,hop:.31,streak:0,
+ hist:[143,152,131,148,160,127,155,139,166,134,149,158,142,171,136,153,145,162,130,157,140,168,133,151,146,164,138,150,159,118],
+ b:{p1:550,p2:290,q:44000,c1:6200000,c2:9600000,c5:3400000,dep:3800000,sub:1400000,
+    asset:41000000,land:210000000,cash:7200000,debt:26000000,yr:12,renew:36000000,repay:3000000}},
+{nm:"鶴亀湯",addr:"荒川区町屋4-6-1",now:152,be:110,hop:.44,streak:0,
+ hist:[128,141,119,136,150,124,145,132,158,127,139,148,131,161,125,143,137,154,122,147,133,159,126,142,138,156,129,144,151,152],
+ b:{p1:550,p2:340,q:48000,c1:5800000,c2:8800000,c5:3100000,dep:3200000,sub:1100000,
+    asset:36000000,land:160000000,cash:9400000,debt:19000000,yr:15,renew:34000000,repay:2400000}},
+{nm:"若葉湯",addr:"江東区森下2-11-5",now:29,be:88,hop:.08,streak:61,
+ hist:[51,44,58,39,53,47,61,36,49,42,56,33,48,40,54,37,45,51,34,46,38,52,31,43,49,35,41,47,30,29],
+ b:{p1:480,p2:40,q:16000,c1:4200000,c2:4400000,c5:1900000,dep:900000,sub:500000,
+    asset:5000000,land:140000000,cash:400000,debt:3000000,yr:1,renew:26000000,repay:720000}}
+];
+let cur=0;
+const F=['p1','p2','q','c1','c2','c5','dep','sub','asset','land','cash','debt','yr','renew','repay'];
+
+/* ── ダッシュボード ── */
+function dash(){
+  const tot=YU.reduce((s,y)=>s+y.now,0);
+  const hop=YU.reduce((s,y)=>s+y.now*y.hop,0);
+  $('s-n').textContent=YU.length;
+  $('s-ok').textContent=YU.filter(y=>y.now>=y.be).length;
+  $('s-under').textContent=YU.filter(y=>y.streak>=30).length;
+  $('s-hop').textContent=Math.round(hop/tot*100)+'%';
+  $('rows').innerHTML=YU.map((y,i)=>{
+    const pct=Math.round(y.now/y.be*100), c=pct>=100?'ok':pct<60?'bad':'';
+    const h=Math.round(y.now*y.hop);
+    return `<tr class="${y.streak>=30?'crit':''}" data-i="${i}">
+      <td><span class="nm">${y.nm}</span><div class="sub">${y.addr}</div></td>
+      <td class="n">${y.now}</td><td class="n">${y.be}</td>
+      <td class="n">${pct}%<div class="mini"><i class="${c}" style="width:${Math.min(100,pct)}%"></i></div></td>
+      <td class="n">${y.now-h}</td><td class="n">${h}</td>
+      <td class="n">${(y.now*PRICE).toLocaleString()}</td>
+      <td class="n" style="color:${y.streak>=30?'var(--shu)':'var(--gray)'}">${y.streak||'—'}</td></tr>`;
+  }).join('');
+  $('rows').querySelectorAll('tr').forEach(tr=>tr.onclick=()=>{cur=+tr.dataset.i;go('v2')});
+}
+
+/* ── 各湯 ── */
+function loadYu(){
+  const y=YU[cur];
+  $('pick').innerHTML=YU.map((v,i)=>`<option value="${i}">${v.nm}</option>`).join('');
+  $('pick').value=cur;
+  $('d-nm').textContent=y.nm; $('d-ad').textContent=y.addr;
+  F.forEach(k=>$('b-'+k).value=y.b[k]);
+  /* 30日グラフ */
+  const max=Math.max(...y.hist,y.be)*1.08;
+  $('bars').innerHTML=y.hist.map((v,i)=>{
+    const c=v>=y.be?'ok':v<y.be*.6?'bad':'';
+    return `<div class="col"><i class="${c}" style="height:${v/max*100}%"></i>
+      <span>${i%7===0?i+1:''}</span></div>`;
+  }).join('')+`<div class="goal" style="bottom:${y.be/max*100*1.0}%;top:auto"></div>`;
+  $('bars').style.position='relative';
+  const mtd=y.hist.reduce((s,v)=>s+v,0);
+  $('d-now').textContent=y.now; $('d-be').textContent=y.be;
+  $('d-mtd').textContent=mtd.toLocaleString();
+  $('d-fc').textContent=Math.round(mtd/y.hist.length*30).toLocaleString();
+  calc();
+}
+function calc(){
+  const y=YU[cur], b=y.b;
+  F.forEach(k=>b[k]=+$('b-'+k).value||0);
+  const unit=b.p1+b.p2, sales=unit*b.q, fix=b.c1+b.c2+b.c5;
+  const op=sales-fix-b.dep+b.sub;
+  const need=b.yr>0?b.renew/b.yr:b.renew;
+  const opCF=op+b.dep, free=opCF-b.repay, gap=free-need;
+  const be=unit>0?Math.ceil((fix+b.repay+need-b.sub)/312/unit):0;
+  y.be=be; $('d-be').textContent=be;
+  const set=(id,l,v,neg)=>{$(id).innerHTML=`<span>${l}</span><b>${yen(v)}</b>`;
+    $(id).classList.toggle('neg',neg??v<0)};
+  set('pl-s','売上',sales); set('pl-o','営業利益',op);
+  set('bs-n','純資産',b.asset+b.cash-b.debt);
+  set('bs-need','更新の年間積立額',need,false);
+  set('cf-o','営業CF',opCF); set('cf-f','手元に残る額',free); set('cf-g','積立との差',gap);
+  $('cf-be').innerHTML=`<span>1日の必要客数</span><b>${be} 人</b>`;
+  $('cf-be').classList.toggle('neg',y.now<be);
+  sv(gap,unit,be);
+  dash();
+}
+function sv(gap,unit,be){
+  const y=YU[cur], b=y.b, items=[];
+  if(gap<0&&b.yr<=3) items.push({p:1,t:'更新資金の不足',
+    why:`次の更新まで${b.yr}年、${yen(b.renew)}。手元に残るのは年${yen(y.b?0:0)||''}${yen(gap+b.renew/Math.max(1,b.yr))}。積立に${yen(-gap)}不足。`,
+    do:`<b>集客だけでは埋まりません。</b>都の承継マッチング、健康増進型改築支援、クリーンエネルギー化補助を併用。`});
+  else if(gap<0) items.push({p:1,t:'更新資金の不足',
+    why:`積立に年${yen(-gap)}不足。次の更新は${b.yr}年後。`,
+    do:`1日 <b>${Math.ceil(-gap/312/unit)}人</b>の上積み、または固定費の削減。`});
+  if(y.now<be*.6) items.push({p:1,t:'必要客数に対する不足',
+    why:`今日 ${y.now}人／必要 ${be}人（${Math.round(y.now/be*100)}%）。${y.streak?`${y.streak}日連続。`:''}`,
+    do:`客アプリのはしご提案で受け入れ側に設定。営業時間の見直し。`});
+  if(b.p2<100) items.push({p:2,t:'客単価の上乗せ不足',
+    why:`サウナ・物販が1人${b.p2}円。入浴料は統制額のため変更不可。`,
+    do:`サウナは+200〜500円が相場。1人+200円で年 <b>${yen(200*b.q)}</b>。`});
+  if(y.hop<.12) items.push({p:2,t:'はしご客が少ない',
+    why:`はしご率 ${Math.round(y.hop*100)}%。1軒めで終わる客が大半。`,
+    do:`客アプリの2軒め候補として優先度を上げる。`});
+  if(b.c1/(b.c1+b.c2+b.c5)>.34) items.push({p:3,t:'燃料・水道の比率が高い',
+    why:`固定費に占める燃料・水道が ${Math.round(b.c1/(b.c1+b.c2+b.c5)*100)}%。`,
+    do:`都のクリーンエネルギー化等推進事業（都市ガス転換、LED、コージェネ、太陽光、高効率空調）。`});
+  items.sort((a,b)=>a.p-b.p);
+  $('sv').innerHTML=items.length?items.map(x=>`<div class="svrow">
+    <div class="pri"><b class="p${x.p}">${x.p===1?'最優先':x.p===2?'次に':'余力で'}</b></div>
+    <div><div class="t">${x.t}</div><div class="why">${x.why}</div><div class="do">${x.do}</div></div></div>`).join('')
+   :`<div class="svrow"><div class="t">提案なし</div></div>`;
+}
+$('pick').onchange=e=>{cur=+e.target.value;loadYu()};
+F.forEach(k=>$('b-'+k).oninput=calc);
+
+const T=[['t1','v1'],['t2','v2']];
+function go(v){T.forEach(([t,vv])=>{$(t).classList.toggle('on',vv===v);$(vv).hidden=(vv!==v)});
+ if(v==='v2')loadYu()}
+T.forEach(([t,v])=>$(t).onclick=()=>go(v));
+dash(); loadYu();
+</script>
+</body>
+</html>

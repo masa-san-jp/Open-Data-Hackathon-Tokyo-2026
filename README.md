@@ -40,6 +40,14 @@
 - [調査資料](#調査資料-docsresearch)
 - [コンセプトリサーチ](#コンセプトリサーチ-docsconcept-research)
 
+## 現在の実装
+
+このリポジトリには、都知事杯オープンデータ・ハッカソン2026に向けた複数の調査・試作を収録しています。動作するReactプロトタイプ「はしごゆ」の実装、起動方法、公開URLは [`apps/hashigoyu/README.md`](apps/hashigoyu/README.md) にまとめています。
+
+- 公開デモ: <https://hashigoyu.machikado-qr.workers.dev>
+- 実装: [`apps/hashigoyu/`](apps/hashigoyu/)
+- 仕様・計画: [`docs/design/hashigoyu/`](docs/design/hashigoyu/)
+
 ## サービス概要
 
 <!-- フォーム 2-3「サービスの詳細」の詳述版。誰が・何に困っているときに・何をすると・どうなるか -->

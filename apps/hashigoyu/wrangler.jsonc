@@ -1,0 +1,13 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "hashigoyu",
+  "main": "cloudflare/worker.js",
+  "account_id": "8f6f97693e8c5803bcecc4f66dbdbf2b",
+  "compatibility_date": "2026-08-23",
+  "workers_dev": true,
+  "assets": {
+    "binding": "ASSETS",
+    "directory": "./cloudflare/public",
+    "html_handling": "none"
+  }
+}

@@ -1,0 +1,46 @@
+name: hashigoyu
+
+on:
+  pull_request:
+    paths:
+      - "apps/hashigoyu/**"
+      - "docs/design/hashigoyu/**"
+      - ".github/workflows/hashigoyu.yml"
+  push:
+    branches: [main]
+    paths:
+      - "apps/hashigoyu/**"
+      - "docs/design/hashigoyu/**"
+      - ".github/workflows/hashigoyu.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/hashigoyu
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.34.5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: apps/hashigoyu/pnpm-lock.yaml
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Typecheck
+        run: pnpm typecheck
+      - name: Unit tests
+        run: pnpm test
+      - name: Build
+        run: pnpm build
+      - name: Install Playwright browser
+        run: pnpm exec playwright install --with-deps chromium
+      - name: End-to-end tests
+        run: pnpm e2e

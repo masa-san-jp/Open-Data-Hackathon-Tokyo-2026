@@ -1,0 +1,20 @@
+{
+  "name": "domain",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./types": "./src/types.ts",
+    "./calc": "./src/calc.ts",
+    "./route": "./src/route.ts",
+    "./advice": "./src/advice.ts"
+  },
+  "scripts": {
+    "build": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
+  }
+}
