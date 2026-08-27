@@ -7,7 +7,7 @@ export default defineConfig({
   expect: { timeout: 5_000 },
   use: {
     baseURL: "http://127.0.0.1:4173",
-    channel: "chrome",
+    channel: process.env.CI ? undefined : "chrome",
     trace: "retain-on-failure",
   },
   webServer: {

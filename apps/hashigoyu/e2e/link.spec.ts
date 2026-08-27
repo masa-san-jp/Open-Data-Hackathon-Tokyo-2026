@@ -2,6 +2,23 @@ import { expect, test } from "@playwright/test";
 
 const sampleNotice = "銭湯名・住所・人数・金額はすべて架空のサンプルです";
 
+test("トップと旧URLからReact 3画面へ到達できる", async ({ page, baseURL }) => {
+  await page.goto(`${baseURL}/`);
+  await expect(page.locator('a[href="/guest/"]')).toHaveCount(1);
+  await expect(page.locator('a[href="/counter/"]')).toHaveCount(1);
+  await expect(page.locator('a[href="/admin/"]')).toHaveCount(1);
+
+  const legacyPaths = new Map([
+    ["kyaku.html", "/guest/"],
+    ["bandai.html", "/counter/"],
+    ["kanri.html", "/admin/"],
+  ]);
+  for (const [legacyPath, destination] of legacyPaths) {
+    await page.goto(`${baseURL}/${legacyPath}`);
+    await expect(page).toHaveURL(`${baseURL}${destination}`);
+  }
+});
+
 test("管理の現金目標変更が番台へリロードなしで反映される", async ({ browser, baseURL }) => {
   const context = await browser.newContext();
   const counter = await context.newPage();

@@ -1,6 +1,6 @@
 # はしごゆ 設計仕様書
 
-版: 1.5 ／ 2026-08-26
+版: 1.6 ／ 2026-08-27
 この文書は実装の唯一の正とする。ここに書かれていないことは実装してはならない。判断が必要な箇所は §9 未決事項に集約する。
 
 ---
@@ -351,8 +351,11 @@ isOpen(y: Bathhouse, hour: number): boolean = hour >= y.openHour && hour < y.clo
 | DB | SQLite（`better-sqlite3`）。P4 で移行検討 |
 | テスト | Vitest（ドメイン）／ Playwright（E2E スモーク） |
 | パッケージ管理 | pnpm workspaces |
+| 公開 | Cloudflare Workers Static Assets |
 
 **localStorage / sessionStorage を使用しない。** 状態はサーバまたは React state に置く。
+
+公開時はトップページを `/`、React 3画面を `/guest/` `/counter/` `/admin/` で配信する。`pnpm deploy:prepare` で3アプリをビルドし、Cloudflareへ渡す静的ファイルを `cloudflare/public/` に集約する。旧デモURLの `/kyaku.html` `/bandai.html` `/kanri.html` は対応するReact画面へ恒久リダイレクトする。
 
 ### ディレクトリ
 

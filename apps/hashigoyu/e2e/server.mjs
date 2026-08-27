@@ -10,6 +10,11 @@ const apps = new Map([
   ["counter", join(root, "apps/counter/dist")],
   ["admin", join(root, "apps/admin/dist")],
 ]);
+const legacyPaths = new Map([
+  ["/kyaku.html", "/guest/"],
+  ["/bandai.html", "/counter/"],
+  ["/kanri.html", "/admin/"],
+]);
 const mimeTypes = new Map([
   [".html", "text/html; charset=utf-8"],
   [".js", "text/javascript; charset=utf-8"],
@@ -19,6 +24,9 @@ const mimeTypes = new Map([
 ]);
 
 function fileForRequest(pathname) {
+  if (pathname === "/") {
+    return { appRoot: root, candidate: join(root, "index.html") };
+  }
   const [, appName, ...parts] = pathname.split("/");
   const appRoot = apps.get(appName);
   if (!appRoot) return null;
@@ -30,6 +38,12 @@ function fileForRequest(pathname) {
 
 const server = createServer(async (request, response) => {
   const pathname = new URL(request.url ?? "/", "http://127.0.0.1").pathname;
+  const legacyDestination = legacyPaths.get(pathname);
+  if (legacyDestination) {
+    response.writeHead(308, { location: legacyDestination });
+    response.end();
+    return;
+  }
   const target = fileForRequest(pathname);
   if (!target) {
     response.writeHead(404);
