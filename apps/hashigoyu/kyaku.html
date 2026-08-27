@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>はしごゆ</title>
+<style>
+:root{--ai:#12496e;--ai-dark:#0b3350;--kero:#f5c518;--tile:#eef4f7;
+--shu:#c8332c;--sumi:#1b1b1b;--gray:#6d8494;--green:#2f9e5e}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:var(--tile);color:var(--sumi);font-family:"Hiragino Sans","Noto Sans JP","Yu Gothic",sans-serif}
+.app{max-width:520px;margin:0 auto;min-height:100dvh;padding-bottom:40px}
+header{background:var(--ai);color:#fff;padding:16px 18px}
+h1{font-family:"Hiragino Mincho ProN","Yu Mincho",serif;font-size:24px;letter-spacing:.3em;font-weight:600}
+main{padding:16px 14px}
+.sec{font-size:12px;letter-spacing:.16em;color:var(--gray);margin:20px 0 9px}
+.sec:first-child{margin-top:0}
+
+.cond{background:#fff;border-radius:12px;padding:14px}
+.r{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.r:last-child{margin-bottom:0}
+.k{font-size:13px;color:var(--gray);width:64px;flex-shrink:0}
+.f{flex:1;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+input[type=text],input[type=time]{flex:1;min-width:0;font-family:inherit;font-size:15px;
+ padding:10px 11px;border:2px solid #dde5ea;border-radius:9px;color:var(--sumi)}
+.btn{border:2px solid #dde5ea;background:#fff;border-radius:9px;padding:10px 13px;
+ font-family:inherit;font-size:14px;cursor:pointer;color:var(--ai);font-weight:700;white-space:nowrap}
+.pill{display:flex;gap:6px}
+.pill button{border:2px solid #dde5ea;background:#fff;border-radius:100px;padding:9px 15px;
+ font-family:inherit;font-size:14px;cursor:pointer;color:var(--gray)}
+.pill button.on{background:var(--ai);border-color:var(--ai);color:#fff;font-weight:700}
+
+/* ルート */
+.route{background:var(--ai-dark);color:#fff;border-radius:12px;padding:14px;margin-top:10px}
+.leg{display:flex;gap:11px;padding:13px 0;border-top:1px solid rgba(255,255,255,.13)}
+.leg:first-child{border:none;padding-top:2px}
+.no{width:25px;height:25px;border-radius:50%;background:var(--kero);color:#072437;
+ display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0}
+.leg .b{flex:1}
+.leg .nm{font-size:18px;font-weight:700}
+.leg .mt{font-size:12.5px;color:#9fc0d4;margin-top:5px;line-height:1.7}
+.leg .ad{font-size:12.5px;color:#cfe0ea;margin-top:4px}
+.leg a{display:inline-block;margin-top:7px;background:rgba(255,255,255,.13);color:#fff;
+ text-decoration:none;font-size:12.5px;padding:7px 12px;border-radius:100px}
+.leg .yen{font-size:15px;font-weight:700;color:var(--kero);white-space:nowrap}
+.tot{display:flex;justify-content:space-between;font-size:15px;font-weight:700;
+ border-top:2px solid rgba(255,255,255,.25);margin-top:6px;padding-top:12px}
+.tot b{color:var(--kero);font-size:18px}
+
+/* 一覧 */
+.yu{background:#fff;border-radius:12px;margin-bottom:9px;border-left:8px solid var(--gray);
+ display:flex;overflow:hidden;min-height:76px}
+.yu.free{border-left-color:var(--green)}.yu.mid{border-left-color:var(--kero)}
+.yu.full{border-left-color:var(--shu)}.yu.closed{opacity:.42;border-left-color:#bbb}
+.yu .m{flex:1;padding:13px 14px}
+.nm{font-size:18px;font-weight:700}
+.sub{font-size:12.5px;color:var(--gray);margin-top:5px;line-height:1.7}
+.badge{display:inline-block;font-size:11px;padding:3px 8px;border-radius:3px;
+ background:var(--ai);color:#fff;margin-right:5px}
+.badge.sauna{background:var(--shu)}
+.yu a{display:inline-block;margin-top:7px;border:1px solid #dde5ea;color:var(--ai);
+ text-decoration:none;font-size:12px;padding:6px 11px;border-radius:100px}
+.st{width:80px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+ background:#f6f9fb;border-left:1px solid #e2eaef;flex-shrink:0}
+.st b{font-size:14px}.yu.free .st b{color:var(--green)}
+.yu.mid .st b{color:#9a7c00}.yu.full .st b{color:var(--shu)}
+.st small{font-size:11px;color:var(--gray);margin-top:3px}
+.foot{font-size:11px;color:var(--gray);line-height:1.7;margin-top:18px}
+</style>
+</head>
+<body>
+<div class="app">
+<header><h1>はしごゆ</h1></header>
+<main>
+  <div class="cond">
+    <div class="r"><span class="k">いる場所</span>
+      <span class="f"><input type="text" id="addr" placeholder="住所を入力" value="墨田区押上1-1-2">
+      <button class="btn" id="geo">現在地</button></span></div>
+    <div class="r"><span class="k">入る時間</span>
+      <span class="f"><input type="time" id="time"></span></div>
+    <div class="r"><span class="k">軒数</span>
+      <span class="f"><span class="pill" id="cnt"></span></span></div>
+  </div>
+
+  <div id="routebox"></div>
+
+  <p class="sec">近くの湯</p>
+  <div id="list"></div>
+  <p class="foot">銭湯名・住所・空き状況は架空のサンプルです。</p>
+</main>
+</div>
+
+<script>
+const YU=[
+ {id:1,nm:"松の湯",addr:"東京都墨田区東向島3-2-11",area:"墨田区 東向島",lat:35.7196,lng:139.8206,sauna:true,open:15,close:25,state:"free"},
+ {id:2,nm:"あけぼの湯",addr:"東京都墨田区京島2-4-8",area:"墨田区 京島",lat:35.7148,lng:139.8172,sauna:false,open:15,close:24,state:"free"},
+ {id:3,nm:"富士見湯",addr:"東京都台東区三ノ輪1-9-3",area:"台東区 三ノ輪",lat:35.7318,lng:139.7913,sauna:true,open:14,close:24.5,state:"mid"},
+ {id:4,nm:"鶴亀湯",addr:"東京都荒川区町屋4-6-1",area:"荒川区 町屋",lat:35.7443,lng:139.7817,sauna:true,open:15,close:25,state:"full"},
+ {id:5,nm:"若葉湯",addr:"東京都江東区森下2-11-5",area:"江東区 森下",lat:35.6899,lng:139.7982,sauna:false,open:13,close:23.5,state:"free"},
+ {id:6,nm:"日の出湯",addr:"東京都墨田区錦糸4-3-7",area:"墨田区 錦糸町",lat:35.6970,lng:139.8140,sauna:true,open:16,close:24,state:"mid"}
+];
+const LB={free:["空き","待ち0人"],mid:["やや混雑","待ち2人"],full:["混雑","待ち9人"]};
+const PRICE=550, W=0.7;
+let me={lat:35.7100,lng:139.8130};
+let plan={cnt:2};
+const $=i=>document.getElementById(i);
+
+/* 分岐点までの不足率は管理側から配信される想定。ここでは固定値 */
+const NEED={1:0.47,2:0.60,3:0.16,4:0,5:0.67,6:0.26};
+
+function km(a,b){const R=6371,dLat=(b.lat-a.lat)*Math.PI/180,dLng=(b.lng-a.lng)*Math.PI/180;
+ const x=Math.sin(dLat/2)**2+Math.cos(a.lat*Math.PI/180)*Math.cos(b.lat*Math.PI/180)*Math.sin(dLng/2)**2;
+ return 2*R*Math.asin(Math.sqrt(x))}
+const walk=(a,b)=>Math.max(2,Math.round(km(a,b)*13));
+function moveMin(a,b){const m=walk(a,b);return m<=18?m:Math.round(m*0.55)}
+function moveTxt(a,b){const m=walk(a,b);return m<=18?`徒歩${m}分`:`電車 ${Math.round(m*0.55)}分`}
+const hhmm=t=>`${String(Math.floor(t)%24).padStart(2,'0')}:${String(Math.round((t%1)*60)).padStart(2,'0')}`;
+const mapURL=a=>`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(a)}`;
+const openTxt=y=>`${y.open}:00〜${Math.floor(y.close)}:${y.close%1?'30':'00'}`;
+const isOpen=(y,h)=>h>=y.open&&h<y.close;
+function hourNow(){const v=$('time').value;if(!v){const d=new Date();return d.getHours()+d.getMinutes()/60}
+ const[a,b]=v.split(':').map(Number);return a+b/60}
+const score=(y,from)=>W*NEED[y.id]+(1-W)*(1-Math.min(1,moveMin(from,y)/35));
+
+/* 初期値 */
+(function(){const d=new Date();$('time').value=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')})();
+function pills(){$('cnt').innerHTML=[1,2,3].map(n=>
+  `<button data-v="${n}" class="${n===plan.cnt?'on':''}">${n}軒</button>`).join('');
+ $('cnt').querySelectorAll('button').forEach(b=>b.onclick=()=>{plan.cnt=+b.dataset.v;render()})}
+
+$('geo').onclick=()=>{
+  if(!navigator.geolocation){$('addr').value='現在地を取得できません';return}
+  $('addr').value='取得中…';
+  navigator.geolocation.getCurrentPosition(
+    p=>{me={lat:p.coords.latitude,lng:p.coords.longitude};
+        $('addr').value=`現在地（${p.coords.latitude.toFixed(4)}, ${p.coords.longitude.toFixed(4)}）`;render()},
+    ()=>{$('addr').value='現在地を取得できません'});
+};
+
+function buildRoute(){
+  let from=me,t=hourNow(),out=[],used=[];
+  for(let i=0;i<plan.cnt;i++){
+    const cand=YU.filter(y=>!used.includes(y.id)&&isOpen(y,t+moveMin(from,y)/60+0.1));
+    if(!cand.length)break;
+    const pick=i===0
+      ? cand.sort((a,b)=>moveMin(from,a)-moveMin(from,b))[0]
+      : cand.map(y=>({y,v:score(y,from)})).sort((a,b)=>b.v-a.v)[0].y;
+    t+=moveMin(from,pick)/60;
+    out.push({y:pick,from,at:t});
+    t+=1.1; from=pick; used.push(pick.id);
+  }
+  return out;
+}
+function drawRoute(){
+  const r=buildRoute();
+  if(!r.length){$('routebox').innerHTML='';return}
+  $('routebox').innerHTML=`<div class="route">
+    ${r.map((x,i)=>`<div class="leg">
+      <div class="no">${i+1}</div>
+      <div class="b">
+        <div class="nm">${x.y.nm}</div>
+        <div class="mt">${moveTxt(x.from,x.y)} ／ ${hhmm(x.at)}着 ／ ${openTxt(x.y)}</div>
+        <div class="ad">${x.y.addr}</div>
+        <a href="${mapURL(x.y.addr)}" target="_blank" rel="noopener">地図で開く</a>
+      </div>
+      <div class="yen">${PRICE}円</div></div>`).join('')}
+    <div class="tot"><span>合計</span><b>${(PRICE*r.length).toLocaleString()}円</b></div></div>`;
+}
+function drawList(){
+  const h=hourNow();
+  $('list').innerHTML=[...YU].sort((a,b)=>moveMin(me,a)-moveMin(me,b)).map(y=>{
+    const op=isOpen(y,h);
+    return `<div class="yu ${op?y.state:'closed'}"><div class="m">
+      <div class="nm">${y.nm}</div>
+      <div class="sub">${y.sauna?'<span class="badge sauna">サウナ</span>':''}<span class="badge">${moveTxt(me,y)}</span><br>
+        ${y.addr}<br>${openTxt(y)} ／ ${PRICE}円</div>
+      <a href="${mapURL(y.addr)}" target="_blank" rel="noopener">地図で開く</a></div>
+      <div class="st"><b>${op?LB[y.state][0]:'時間外'}</b><small>${op?LB[y.state][1]:''}</small></div></div>`;
+  }).join('');
+}
+function render(){pills();drawRoute();drawList()}
+$('time').oninput=render; $('addr').oninput=render;
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>松の湯</title>
+<style>
+:root{--ai:#12496e;--kero:#f5c518;--shu:#c8332c;--green:#2f9e5e;
+--paper:#f7f4ec;--sumi:#1b1b1b;--gray:#7a8894;--line:#e2ddd0}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:var(--paper);color:var(--sumi);
+ font-family:"Hiragino Sans","Noto Sans JP","Yu Gothic",sans-serif}
+body.counter{overflow:hidden;height:100%}
+.top{display:flex;justify-content:space-between;align-items:center;
+ background:var(--ai);color:#fff;padding:12px 22px}
+.mise{font-family:"Hiragino Mincho ProN","Yu Mincho",serif;font-size:22px;letter-spacing:.16em}
+.rt{display:flex;align-items:center;gap:14px}
+.clock{font-size:19px;font-variant-numeric:tabular-nums;opacity:.75}
+.tabs{display:flex;gap:3px;background:rgba(0,0,0,.28);border-radius:100px;padding:3px}
+.tabs button{border:none;background:none;color:#9fc0d4;font-family:inherit;font-size:13px;
+ padding:8px 16px;border-radius:100px;cursor:pointer}
+.tabs button.on{background:var(--kero);color:#072437;font-weight:700}
+
+#v1{height:calc(100dvh - 56px);display:grid;grid-template-columns:1.2fr 1fr;gap:22px;padding:20px 22px}
+@media(max-width:760px){#v1{grid-template-columns:1fr;height:auto;overflow:auto}}
+.left{display:flex;flex-direction:column;justify-content:center;align-items:center}
+.lbl{font-size:19px;color:var(--gray);letter-spacing:.18em}
+.big{font-size:clamp(96px,18vw,190px);font-weight:800;line-height:.95;color:var(--ai);
+ font-variant-numeric:tabular-nums;margin:4px 0}
+.big.ok{color:var(--green);font-size:clamp(64px,13vw,124px)}
+.unit{font-size:20px;color:var(--gray)}
+.bar{width:100%;height:14px;background:#e6e2d6;border-radius:100px;overflow:hidden;margin:22px 0 12px}
+.bar i{display:block;height:100%;background:var(--ai);transition:width .3s}
+.bar.over i{background:var(--green)}
+.kpi{display:flex;gap:26px;font-size:16px;color:var(--gray)}
+.kpi b{color:var(--sumi);font-variant-numeric:tabular-nums;font-size:19px}
+.pane{display:flex;flex-direction:column;justify-content:center;gap:13px}
+.plus{border:none;border-radius:20px;background:var(--ai);color:#fff;height:190px;
+ font-family:inherit;font-size:56px;font-weight:800;cursor:pointer;
+ display:flex;flex-direction:column;align-items:center;justify-content:center}
+.plus:active{transform:scale(.985)}
+.plus small{font-size:17px;font-weight:400;opacity:.8}
+.minus{border:2px solid var(--line);background:#fff;border-radius:12px;padding:14px;
+ font-family:inherit;font-size:16px;color:var(--gray);cursor:pointer}
+.brk{background:#fff;border:1px solid var(--line);border-radius:14px;padding:15px}
+.brk .h{font-size:11px;letter-spacing:.14em;color:var(--gray);margin-bottom:9px}
+.lg{display:flex;justify-content:space-between;font-size:13px;color:var(--gray);margin-bottom:7px}
+.lg b{color:var(--sumi);font-variant-numeric:tabular-nums}
+.stack{display:flex;height:24px;border-radius:6px;overflow:hidden;background:#eee9dc}
+.stack i{display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;font-weight:700;transition:width .3s}
+.s1{background:var(--ai)}.s2{background:var(--kero);color:#1b1b1b!important}
+
+#v2{max-width:1140px;margin:0 auto;padding:22px 22px 60px}
+h2{font-size:12px;letter-spacing:.16em;color:var(--gray);margin:24px 0 10px}
+h2:first-child{margin-top:0}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.stat{background:#fff;border:1px solid var(--line);border-radius:10px;padding:15px 13px}
+.stat b{display:block;font-size:27px;font-weight:800;color:var(--ai);font-variant-numeric:tabular-nums;line-height:1.15}
+.stat small{display:block;font-size:11px;color:var(--gray);margin-top:5px}
+.chart{background:#fff;border:1px solid var(--line);border-radius:10px;padding:17px}
+.chart .h{font-size:12px;letter-spacing:.14em;color:var(--gray);margin-bottom:14px}
+.bars{display:flex;align-items:flex-end;gap:4px;height:130px;position:relative}
+.col{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%}
+.col i{display:block;background:var(--ai);border-radius:3px 3px 0 0}
+.col i.bad{background:var(--shu)}.col i.ok{background:var(--green)}
+.col span{font-size:9px;color:var(--gray);text-align:center;margin-top:5px}
+.goal{position:absolute;left:0;right:0;border-top:2px dashed var(--kero)}
+.budget{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+@media(max-width:900px){.budget{grid-template-columns:1fr}.kpis{grid-template-columns:1fr 1fr}}
+.bcard{background:#fff;border:1px solid var(--line);border-radius:10px;padding:17px}
+.bcard h4{font-size:13px;color:var(--ai);letter-spacing:.1em;margin-bottom:12px}
+.kv{display:flex;justify-content:space-between;align-items:baseline;
+ font-size:13px;padding:8px 0;border-bottom:1px solid #f2eee2}
+.kv:last-of-type{border-bottom:none}
+.kv span{color:var(--gray)}
+.kv b{font-variant-numeric:tabular-nums;font-weight:700}
+.fix{float:right;font-size:10.5px;letter-spacing:.04em;color:var(--gray);
+ border:1px solid var(--line);border-radius:100px;padding:3px 10px;background:#fff}
+.sum{display:flex;justify-content:space-between;font-size:14px;font-weight:700;color:var(--ai);
+ border-top:2px solid var(--ai);margin-top:11px;padding-top:10px}
+.sum.neg{color:var(--shu);border-color:var(--shu)}
+.sv{background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.svrow{display:flex;gap:13px;padding:15px 17px;border-top:1px solid #f0ece0;align-items:flex-start}
+.svrow:first-child{border:none}
+.pri{width:56px;flex-shrink:0}
+.pri b{display:block;font-size:11px;font-weight:800;padding:4px 0;border-radius:5px;color:#fff;text-align:center}
+.p1{background:var(--shu)}.p2{background:#d98324}.p3{background:var(--gray)}
+.svrow .t{font-size:15px;font-weight:700}
+.svrow .why{font-size:12.5px;color:var(--gray);margin-top:4px;line-height:1.7}
+.svrow .do{font-size:12.5px;margin-top:8px;line-height:1.75;background:#f6f3ea;border-radius:7px;padding:10px 12px}
+.svrow .do b{color:var(--ai)}
+</style>
+</head>
+<body class="counter">
+<div class="top">
+  <div class="mise">松の湯</div>
+  <div class="rt">
+    <span class="clock" id="clock">--:--</span>
+    <div class="tabs"><button id="t1" class="on">番台</button><button id="t2">経営</button></div>
+  </div>
+</div>
+
+<section id="v1">
+  <div class="left">
+    <div class="lbl">目標まで あと</div>
+    <div class="big" id="big">—</div>
+    <div class="unit" id="unit">人</div>
+    <div class="bar" id="bar"><i></i></div>
+    <div class="kpi">
+      <span>きょう <b id="k-now">0</b></span>
+      <span>目標 <b id="k-be">0</b></span>
+      <span>売上 <b id="k-yen">0</b>円</span>
+    </div>
+  </div>
+  <div class="pane">
+    <button class="plus" id="plus">＋1<small>お客さん</small></button>
+    <button class="minus" id="minus">−1</button>
+    <div class="brk">
+      <div class="h">1軒め ／ はしご</div>
+      <div class="lg"><span id="l-txt">—</span><b id="l-pct">—</b></div>
+      <div class="stack"><i class="s1" id="b-first"></i><i class="s2" id="b-hop"></i></div>
+    </div>
+  </div>
+</section>
+
+<section id="v2" hidden>
+  <div class="kpis">
+    <div class="stat"><b id="d-now">—</b><small>今日の来客</small></div>
+    <div class="stat"><b id="d-be">—</b><small>1日の必要客数</small></div>
+    <div class="stat"><b id="d-mtd">—</b><small>今月累計（人）</small></div>
+    <div class="stat"><b id="d-fc">—</b><small>月末見込（人）</small></div>
+  </div>
+  <h2>直近30日の来客数</h2>
+  <div class="chart"><div class="h">破線＝必要客数</div><div class="bars" id="bars"></div></div>
+  <h2>年間予算<span class="fix">確定 2026-04-01 ／ 東京都浴場組合</span></h2>
+  <div class="budget">
+    <div class="bcard"><h4>PL</h4>
+      <div class="kv"><span>入浴料</span><b id="f-p1"></b></div>
+      <div class="kv"><span>サウナ・物販</span><b id="f-p2"></b></div>
+      <div class="kv"><span>年間客数</span><b id="f-q"></b></div>
+      <div class="kv"><span>燃料・水道</span><b id="f-c1"></b></div>
+      <div class="kv"><span>人件費</span><b id="f-c2"></b></div>
+      <div class="kv"><span>その他固定費</span><b id="f-c5"></b></div>
+      <div class="kv"><span>減価償却</span><b id="f-dep"></b></div>
+      <div class="kv"><span>補助金</span><b id="f-sub"></b></div>
+      <div class="sum" id="pl-s"><span>売上</span><b>—</b></div>
+      <div class="sum" id="pl-o"><span>営業利益</span><b>—</b></div>
+    </div>
+    <div class="bcard"><h4>BS</h4>
+      <div class="kv"><span>建物・設備</span><b id="f-asset"></b></div>
+      <div class="kv"><span>土地</span><b id="f-land"></b></div>
+      <div class="kv"><span>現預金</span><b id="f-cash"></b></div>
+      <div class="kv"><span>借入残高</span><b id="f-debt"></b></div>
+      <div class="kv"><span>次の更新まで</span><b id="f-yr"></b></div>
+      <div class="kv"><span>更新見込額</span><b id="f-renew"></b></div>
+      <div class="sum" id="bs-n"><span>純資産</span><b>—</b></div>
+      <div class="sum" id="bs-need"><span>更新の年間積立額</span><b>—</b></div>
+    </div>
+    <div class="bcard"><h4>CF</h4>
+      <div class="kv"><span>借入返済</span><b id="f-repay"></b></div>
+      <div class="sum" id="cf-o"><span>営業CF</span><b>—</b></div>
+      <div class="sum" id="cf-f"><span>手元に残る額</span><b>—</b></div>
+      <div class="sum" id="cf-g"><span>積立との差</span><b>—</b></div>
+      <div class="sum" id="cf-be"><span>1日の必要客数</span><b>—</b></div>
+    </div>
+  </div>
+
+  <h2>今月の改善提案</h2>
+  <div class="sv" id="sv"></div>
+</section>
+
+<script>
+const $=i=>document.getElementById(i);
+const yen=n=>Math.round(n).toLocaleString()+'円';
+const PRICE=550, HOPRATE=0.28;
+const HIST=[112,98,121,133,88,104,119,127,95,110,131,102,87,118,124,99,106,128,113,91,120,135,101,94,117,122,108,86,115];
+let now=64, be=120;
+const B={p1:550,p2:180,q:36000,c1:5400000,c2:7200000,c5:2640000,dep:2600000,sub:900000,
+ asset:22000000,land:180000000,cash:3800000,debt:14000000,yr:7,renew:32000000,repay:2160000};
+function tick(){const d=new Date();
+ $('clock').textContent=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')}
+tick();setInterval(tick,20000);
+
+function counter(){
+  const rem=be-now;
+  $('big').textContent=rem>0?rem:'達成';
+  $('big').classList.toggle('ok',rem<=0);
+  $('unit').textContent=rem>0?'人':'';
+  $('bar').classList.toggle('over',rem<=0);
+  $('bar').querySelector('i').style.width=Math.min(100,now/be*100)+'%';
+  $('k-now').textContent=now; $('k-be').textContent=be;
+  $('k-yen').textContent=(now*PRICE).toLocaleString();
+  const f=Math.round(now*(1-HOPRATE)), h=now-f;
+  $('l-txt').textContent=now?`${f}人 ／ ${h}人`:'—';
+  $('l-pct').textContent=now?`はしご ${Math.round(HOPRATE*100)}%`:'—';
+  const set=(el,v)=>{const w=now?v/now*100:0;$(el).style.width=w+'%';$(el).textContent=w>14?v:''};
+  set('b-first',f); set('b-hop',h);
+}
+$('plus').onclick=()=>{now++;calc()};
+$('minus').onclick=()=>{if(now>0)now--;calc()};
+
+function showFixed(){
+  const yl=k=>yen(B[k]);
+  ['p1','p2','c1','c2','c5','dep','sub','asset','land','cash','debt','renew','repay']
+    .forEach(k=>$('f-'+k).textContent=yl(k));
+  $('f-q').textContent=B.q.toLocaleString()+'人';
+  $('f-yr').textContent=B.yr+'年';
+}
+function calc(){
+  const v=k=>B[k];
+  const unit=v('p1')+v('p2'), sales=unit*v('q'), fix=v('c1')+v('c2')+v('c5');
+  const op=sales-fix-v('dep')+v('sub');
+  const need=v('yr')>0?v('renew')/v('yr'):v('renew');
+  const opCF=op+v('dep'), free=opCF-v('repay'), gap=free-need;
+  be=unit>0?Math.max(1,Math.ceil((fix+v('repay')+need-v('sub'))/312/unit)):1;
+  const set=(id,l,x,neg)=>{$(id).innerHTML=`<span>${l}</span><b>${yen(x)}</b>`;
+    $(id).classList.toggle('neg',neg??x<0)};
+  set('pl-s','売上',sales); set('pl-o','営業利益',op);
+  set('bs-n','純資産',v('asset')+v('cash')-v('debt'));
+  set('bs-need','更新の年間積立額',need,false);
+  set('cf-o','営業CF',opCF); set('cf-f','手元に残る額',free); set('cf-g','積立との差',gap);
+  $('cf-be').innerHTML=`<span>1日の必要客数</span><b>${be} 人</b>`;
+  $('cf-be').classList.toggle('neg',now<be);
+
+  const all=[...HIST,now], max=Math.max(...all,be)*1.08;
+  $('bars').innerHTML=all.map((x,i)=>{
+    const c=x>=be?'ok':x<be*.6?'bad':'';
+    return `<div class="col"><i class="${c}" style="height:${x/max*100}%"></i><span>${i%7===0?i+1:''}</span></div>`;
+  }).join('')+`<div class="goal" style="bottom:${be/max*100}%"></div>`;
+  const mtd=all.reduce((s,x)=>s+x,0);
+  $('d-now').textContent=now; $('d-be').textContent=be;
+  $('d-mtd').textContent=mtd.toLocaleString();
+  $('d-fc').textContent=Math.round(mtd/all.length*30).toLocaleString();
+
+  const it=[];
+  if(gap<0&&v('yr')<=3) it.push({p:1,t:'更新資金の不足',
+    why:`次の更新まで${v('yr')}年、${yen(v('renew'))}。積立に年${yen(-gap)}不足。`,
+    do:`<b>集客だけでは埋まりません。</b>都の承継マッチング、健康増進型改築支援、クリーンエネルギー化補助を併用。`});
+  else if(gap<0) it.push({p:1,t:'更新資金の不足',
+    why:`積立に年${yen(-gap)}不足。次の更新は${v('yr')}年後。`,
+    do:`1日 <b>${Math.ceil(-gap/312/unit)}人</b>の上積み、または固定費の削減。`});
+  if(now<be*.6) it.push({p:1,t:'必要客数に対する不足',
+    why:`今日 ${now}人／必要 ${be}人（${Math.round(now/be*100)}%）。`,
+    do:`客アプリのはしご提案で受け入れ側に設定。営業時間の見直し。`});
+  if(v('p2')<100) it.push({p:2,t:'客単価の上乗せ不足',
+    why:`サウナ・物販が1人${v('p2')}円。入浴料は統制額のため変更不可。`,
+    do:`サウナは+200〜500円が相場。1人+200円で年 <b>${yen(200*v('q'))}</b>。`});
+  if(HOPRATE<.12) it.push({p:2,t:'はしご客が少ない',
+    why:`はしご率 ${Math.round(HOPRATE*100)}%。`, do:`客アプリの2軒め候補として優先度を上げる。`});
+  if(v('c1')/fix>.34) it.push({p:3,t:'燃料・水道の比率が高い',
+    why:`固定費に占める割合 ${Math.round(v('c1')/fix*100)}%。`,
+    do:`都のクリーンエネルギー化等推進事業（都市ガス転換、LED、コージェネ、太陽光、高効率空調）。`});
+  it.sort((a,b)=>a.p-b.p);
+  $('sv').innerHTML=it.length?it.map(x=>`<div class="svrow">
+    <div class="pri"><b class="p${x.p}">${x.p===1?'最優先':x.p===2?'次に':'余力で'}</b></div>
+    <div><div class="t">${x.t}</div><div class="why">${x.why}</div><div class="do">${x.do}</div></div></div>`).join('')
+   :`<div class="svrow"><div><div class="t">提案なし</div></div></div>`;
+  counter();
+}
+const T=[['t1','v1'],['t2','v2']];
+T.forEach(([t,v])=>$(t).onclick=()=>{
+  T.forEach(([tt,vv])=>{$(tt).classList.toggle('on',tt===t);$(vv).hidden=(vv!==v)});
+  document.body.classList.toggle('counter',v==='v1');
+});
+showFixed(); calc();
+</script>
+</body>
+</html>
