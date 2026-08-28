@@ -38,6 +38,8 @@ jobs:
         run: pnpm typecheck
       - name: Unit tests
         run: pnpm test
+      - name: Validate SQLite schema
+        run: test "$(sqlite3 :memory: ".read apps/server/src/db/schema.sql" "SELECT count(*) FROM sqlite_master WHERE type = 'table' AND name IN ('bathhouses', 'budgets', 'visits', 'daily_counts', 'closures');")" = "5"
       - name: Build
         run: pnpm build
       - name: Install Playwright browser

@@ -58,10 +58,11 @@ apps/hashigoyu/
 ├── apps/guest/       # 入浴者向けReact画面
 ├── apps/counter/     # 番台向けReact画面
 ├── apps/admin/       # 管理向けReact画面
+├── apps/server/      # P2で追加する永続化層。現在はSQLiteスキーマのみ
 ├── packages/domain/  # 型・計算・ルート・改善提案
 ├── packages/store/   # P1用インメモリ共有ストア
 ├── cloudflare/       # Workerと公開用静的アセットの入口
 └── e2e/              # 3画面と旧URLのPlaywright検証
 ```
 
-現在はP1〜P2のプロトタイプです。銭湯名・住所・人数・金額はすべて架空のサンプルで、データはインメモリです。SQLite、API、ロール認証、QR/POS連携は未実装です。仕様と実装計画は [`docs/design/hashigoyu/spec.md`](../../docs/design/hashigoyu/spec.md) と [`docs/design/hashigoyu/plan.md`](../../docs/design/hashigoyu/plan.md) を参照してください。
+現在はP1〜P2のプロトタイプです。銭湯名・住所・人数・金額はすべて架空のサンプルで、画面のデータはインメモリです。SQLiteスキーマは [`apps/server/src/db/schema.sql`](apps/server/src/db/schema.sql) にあり、永続化処理・API・ロール認証・QR/POS連携は未実装です。仕様と実装計画は [`docs/design/hashigoyu/spec.md`](../../docs/design/hashigoyu/spec.md) と [`docs/design/hashigoyu/plan.md`](../../docs/design/hashigoyu/plan.md) を参照してください。
