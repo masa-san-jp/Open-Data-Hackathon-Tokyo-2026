@@ -239,7 +239,7 @@ pnpm e2e                      # 全緑
 
 | ID | 内容 | 依存 | 状態 | 受け入れ条件 |
 | :-- | :-- | :-- | :-- | :-- |
-| `T2-01` | SQLite スキーマ（`bathhouses` `budgets` `visits` `daily_counts` `closures`） | P1完了 | 未着手 | `schema.sql` を流して全テーブルが作られる |
+| `T2-01` | SQLite スキーマ（`bathhouses` `budgets` `visits` `daily_counts` `closures`） | P1完了 | 完了 | `apps/server/src/db/schema.sql` をSQLiteへ流し、5テーブル・外部キー・来店検索用インデックスが作られることを確認済み。GitHub Actionsでもスキーマ検査を実行 |
 | `T2-02` | Hono サーバの雛形とヘルスチェック | `T2-01` | 未着手 | `GET /health` が `200 {ok:true}` |
 | `T2-03` | spec §5 の全エンドポイント | `T2-02` | 未着手 | 各エンドポイントの成功系・失敗系にテスト |
 | `T2-04` | `owner` の `PUT /budget` を `403` で拒否 | `T2-03` | 未着手 | テストで確認 |
