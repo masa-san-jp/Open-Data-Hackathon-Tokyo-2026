@@ -45,6 +45,7 @@
 
 このリポジトリには、都知事杯オープンデータ・ハッカソン2026に向けた複数の調査・試作を収録しています。動作するReactプロトタイプ「はしごゆ」の実装、起動方法、公開URLは [`apps/hashigoyu/README.md`](apps/hashigoyu/README.md) にまとめています。
 
+- プレゼンテーション動画: <https://youtu.be/ymgFsucM3dw>（First Stage で収録した2分の説明）
 - 公開デモ: <https://hashigoyu.machikado-qr.workers.dev>
 - 実装: [`apps/hashigoyu/`](apps/hashigoyu/)
 - 仕様・計画: [`docs/design/hashigoyu/`](docs/design/hashigoyu/)
@@ -249,6 +250,7 @@ flowchart LR
 
 | 項目 | URL |
 | :-- | :-- |
+| プレゼンテーション動画（First Stage 収録・2分） | <https://youtu.be/ymgFsucM3dw> |
 | デモサイト | <https://hashigoyu.machikado-qr.workers.dev> |
 | デモ案内ページ | <https://hashigoyu.machikado-qr.workers.dev/demo.html> |
 | はしご湯ルート（入浴者） | <https://hashigoyu.machikado-qr.workers.dev/guest/> |
