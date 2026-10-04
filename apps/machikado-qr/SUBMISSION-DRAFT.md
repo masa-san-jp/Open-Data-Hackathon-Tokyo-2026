@@ -102,7 +102,7 @@ https://github.com/masa-san-jp/Open-Data-Hackathon-Tokyo-2026
 
 フォームの画面キャプチャとは別に、必要に応じて街角の利用場面を示す画像として使用する。
 
-[QRステッカー街角貼付イメージ](assets/machikado-qr-sticker-street-scene.png)
+QRステッカー街角貼付イメージは当時の検討項目。画像ファイルはこのリポジトリに保存されていない。
 
 ## 6. First Stage収録
 
