@@ -1,4 +1,6 @@
-# まちかどQR — ここはどこ
+# まちかどQR — ここはどこ（没案・保存資料）
+
+**2026-10-04：没案として開発を終了。** 都知事杯2026に向けて検討・試作した別案です。制作した応募作品「はしごゆ」とは別に、検討過程のコード・資料・画像を保存します。実サービスとしての公開・設置実証は行いません。
 
 軒先のQRと印字住所を「位置が確定した点」として使い、迷った子ども・高齢者・外国人が、現在地を自分で説明できなくても助けを求められるようにする実証プロトタイプ。
 
@@ -57,6 +59,32 @@ make verify
 - 場所コード重複、データ隔離、デモ経路、外部リソース非依存などの自動テスト
 
 正常終了の基準は `verification passed` と全テストの `OK`。
+
+## 保存したCloudflare Workers公開設定
+
+公開準備時に作成した設定を履歴として保存しています。没案の保存にあたりデプロイは行っていません。
+
+生成済みの単体HTML `prototype/` をCloudflare WorkersのStatic Assetsとして配信できる設定を用意している。Worker本体は `cloudflare/worker.js`、設定は `wrangler.jsonc`。
+
+```bash
+cd apps/machikado-qr
+wrangler whoami
+wrangler deploy --dry-run
+```
+
+`prototype/index.html` を公開するため、`prototype/demo.html` は `/demo.html` で開ける。実デプロイは、公開責任者・データ帰属表示・実機確認（MQR-008）を確認してから次で実行する。
+
+```bash
+wrangler deploy
+```
+
+## 保存資料
+
+- [提出フォーム下書き（未提出の検討資料）](SUBMISSION-DRAFT.md)
+
+| 住所表示 | 緊急番号の確認 | 帰り道の未検証警告 |
+| --- | --- | --- |
+| ![住所表示](assets/machikado-qr-screen-01-address.jpg) | ![緊急番号の確認](assets/machikado-qr-screen-02-emergency.jpg) | ![帰り道の警告](assets/machikado-qr-screen-03-route.jpg) |
 
 ## 画面の原則
 
